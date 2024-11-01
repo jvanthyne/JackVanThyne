@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Portfolio</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Times New Roman', serif;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        header {
+            padding: 20px;
+            text-align: left;
+            width: 100%;
+        }
+        .refresh-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #009688;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .refresh-btn:hover {
+            background-color: #00796b;
+            transform: scale(1.05);
+        }
+        .portfolio {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+        }
+        .project {
+            position: absolute;
+            cursor: pointer;
+            width: 130px; /* Adjusted width */
+            height: 130px; /* Adjusted height */
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .bw-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Scale images to fit without cutting off */
+        }
+        .logo {
+            cursor: pointer;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/JACK_JOSEPH_VAN_THYNE.svg" alt="Jack Joseph Van Thyne" class="logo" onclick="location.href='about.html'">
+        <div class="refresh-btn" onclick="location.href='index.html'"></div>
+    </header>
+    <main>
+        <div class="portfolio" id="portfolio"></div>
+    </main>
+
+    <script>
+        const projects = [
+            { number: "001", bw: "images/project001_bw.png", color: "images/project001_color.png" },
+            { number: "002", bw: "images/project002_bw.png", color: "images/project002_color.png" },
+            { number: "003", bw: "images/project003_bw.png", color: "images/project003_color.png" },
+            { number: "004", bw: "images/project004_bw.png", color: "images/project004_color.png" },
+            { number: "005", bw: "images/project005_bw.png", color: "images/project005_color.png" },
+            { number: "006", bw: "images/project006_bw.png", color: "images/project006_color.png" },
+            { number: "007", bw: "images/project007_bw.png", color: "images/project007_color.png" },
+            { number: "008", bw: "images/project008_bw.png", color: "images/project008_color.png" },
+            { number: "009", bw: "images/project009_bw.png", color: "images/project009_color.png" },
+            { number: "010", bw: "images/project010_bw.png", color: "images/project010_color.png" },
+            { number: "011", bw: "images/project011_bw.png", color: "images/project011_color.png" },
+            { number: "012", bw: "images/project012_bw.png", color: "images/project012_color.png" },
+            { number: "013", bw: "images/project013_bw.png", color: "images/project013_color.png" },
+            { number: "014", bw: "images/project014_bw.png", color: "images/project014_color.png" },
+            { number: "015", bw: "images/project015_bw.png", color: "images/project015_color.png" },
+            { number: "016", bw: "images/project016_bw.png", color: "images/project016_color.png" },
+            { number: "017", bw: "images/project017_bw.png", color: "images/project017_color.png" },
+            { number: "018", bw: "images/project018_bw.png", color: "images/project018_color.png" },
+            { number: "019", bw: "images/project019_bw.png", color: "images/project019_color.png" },
+            { number: "020", bw: "images/project020_bw.png", color: "images/project020_color.png" }
+        ];
+
+        function positionProjects() {
+            const portfolio = document.getElementById("portfolio");
+            const projectSize = 130; // Adjusted for project size
+            const spacing = 30; // Increased spacing for better separation
+            const nameAreaHeight = 120; // Height of the area where the name is
+            const placedProjects = []; // Array to track placed project coordinates
+
+            // Function to generate a random RGB color
+            function getRandomColor() {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+
+            projects.forEach(project => {
+                let overlap, attempts = 0;
+                let xPos, yPos;
+
+                // Loop until a non-overlapping position is found or attempts are exceeded
+                do {
+                    overlap = false;
+                    attempts++;
+
+                    xPos = Math.random() * (window.innerWidth - projectSize - spacing);
+                    yPos = Math.random() * (window.innerHeight - projectSize - spacing - nameAreaHeight);
+
+                    // Check for overlap with already placed projects
+                    for (let i = 0; i < placedProjects.length; i++) {
+                        const placed = placedProjects[i];
+                        if (
+                            xPos < placed.x + projectSize + spacing &&
+                            xPos + projectSize + spacing > placed.x &&
+                            yPos < placed.y + projectSize + spacing &&
+                            yPos + projectSize + spacing > placed.y
+                        ) {
+                            overlap = true;
+                            break;
+                        }
+                    }
+                } while (overlap && attempts < 50); // Limit attempts to 50
+
+                // Store the coordinates of the placed project if positioning was successful
+                if (!overlap) {
+                    placedProjects.push({ x: xPos, y: yPos });
+
+                    const projectDiv = document.createElement("div");
+                    projectDiv.className = "project";
+                    projectDiv.style.left = `${xPos}px`;
+                    projectDiv.style.top = `${yPos}px`;
+
+                    projectDiv.innerHTML = `
+                        <img src="${project.bw}" alt="Project ${project.number}" class="bw-image">
+                        <p>PROJECT ${project.number}</p>
+                    `;
+
+                    // Add hover effect to change the image color
+                    const projectImage = projectDiv.querySelector(".bw-image");
+                    projectDiv.addEventListener("mouseenter", () => {
+                        projectImage.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random() * 360}deg)`;
+                    });
+                    projectDiv.addEventListener("mouseleave", () => {
+                        projectImage.style.filter = "none"; // Reset the filter on mouse leave
+                    });
+
+                    // Add click event to navigate to the project page
+                    projectDiv.onclick = () => {
+                        const formattedNumber = project.number.padStart(3, '0');
+                        window.location.href = `project_${formattedNumber}.html`;
+                    };
+
+                    portfolio.appendChild(projectDiv);
+                }
+            });
+        }
+
+        window.onload = positionProjects; // Position projects on page load
+    </script>
+</body>
+</html>
