@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42.68 58.31">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Times-Roman, Times;
+        font-size: 12px;
+      }
+
+      .cls-2 {
+        letter-spacing: -.13em;
+      }
+    </style>
+  </defs>
+  <text class="cls-1" transform="translate(0 9.97)"><tspan x="0" y="0">JACK</tspan><tspan x="0" y="14.4">JOSEPH</tspan><tspan class="cls-2" x="0" y="28.8">V</tspan><tspan x="7.12" y="28.8">AN</tspan><tspan x="0" y="43.2">THYNE</tspan></text>
+</svg>
