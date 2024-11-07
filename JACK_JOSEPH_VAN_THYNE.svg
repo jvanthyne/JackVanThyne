@@ -12,8 +12,8 @@
 
       .cls-3 {
         font-family: TimesNewRomanPS-BoldMT, 'Times New Roman';
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 18px;
+        font-weight: 500;
       }
     </style>
   </defs>
