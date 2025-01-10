@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> PROJECTS - Project Title</title>
-   
-</head>
-<body>
-   body {
+    <title>Projects List</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
             margin: 0;
             font-family: 'Times New Roman', serif;
             overflow-y: auto; /* Enable vertical scrolling */
@@ -17,83 +16,42 @@
             text-align: left;
             width: 100%;
         }
-        .refresh-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #009688;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .refresh-btn:hover {
-            background-color: #00796b;
-            transform: scale(1.05);
-        }
-        .projects-list-btn {
-           position: absolute;
-            top: 100px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background-color: #FF5722;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-    }
-    .projects-list-btn:hover {
-            background-color: #D84315;
-            transform: scale(1.05);
-    }
-        .portfolio {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-        }
-        .project {
-            position: absolute;
-            cursor: pointer;
-            width: 200px; /* Adjusted width */
-            height: 200px; /* Adjusted height */
-            overflow: hidden;
-            box-sizing: border-box;
-            
-        }
-        .bw-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Scale images to fit without cutting off */
-        }
         .logo {
             cursor: pointer;
             width: 150px;
         }
-    </style>
-</head>
-<body> 
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects List</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-      
+        .refresh-btn, .projects-list-btn {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .refresh-btn {
+            top: 20px;
+            right: 20px;
+            background-color: #009688;
+        }
+        .projects-list-btn {
+            top: 100px;
+            right: 20px;
+            background-color: #FF5722;
+        }
+        .refresh-btn:hover, .projects-list-btn:hover {
+            transform: scale(1.05);
+        }
+        .projects-list-btn:hover {
+            background-color: #D84315;
+        }
+        .projects-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 40px;
         }
         .project-item {
             width: 200px;
@@ -113,112 +71,110 @@
     </style>
 </head>
 <body>
-   <img src="JACK_JOSEPH_VAN_THYNE.svg" alt="Jack Joseph Van Thyne" class="logo" onclick="location.href='about.html'">
-        <div class="refresh-btn" onclick="location.href='index.html'"></div>
-        <div class="projects-list-btn" onclick="location.href='projects-list.html'"></div>
-   
+    <!-- Logo and Navigation Buttons -->
+    <img src="JACK_JOSEPH_VAN_THYNE.svg" alt="Jack Joseph Van Thyne" class="logo" onclick="location.href='about.html'">
+    <div class="refresh-btn" onclick="location.href='index.html'"></div>
+    <div class="projects-list-btn" onclick="location.href='projects-list.html'"></div>
 
+    <!-- Projects List -->
     <main>
         <div class="projects-list">
             <!-- Project 001 -->
             <div class="project-item" onclick="location.href='project_001.html'">
-                
+                <img src="images/project001_color.png" alt="Project 001">
+                <p>Project 001</p>
+            </div>
             <!-- Project 002 -->
             <div class="project-item" onclick="location.href='project_002.html'">
-             
+                <img src="images/project002_color.png" alt="Project 002">
+                <p>Project 002</p>
             </div>
             <!-- Project 003 -->
             <div class="project-item" onclick="location.href='project_003.html'">
-              
+                <img src="images/project003_color.png" alt="Project 003">
+                <p>Project 003</p>
             </div>
             <!-- Project 004 -->
             <div class="project-item" onclick="location.href='project_004.html'">
+                <img src="images/project004_color.png" alt="Project 004">
+                <p>Project 004</p>
             </div>
-            
             <!-- Project 005 -->
             <div class="project-item" onclick="location.href='project_005.html'">
-                
+                <img src="images/project005_color.png" alt="Project 005">
+                <p>Project 005</p>
+            </div>
             <!-- Project 006 -->
             <div class="project-item" onclick="location.href='project_006.html'">
+                <img src="images/project006_color.png" alt="Project 006">
+                <p>Project 006</p>
             </div>
-                
             <!-- Project 007 -->
             <div class="project-item" onclick="location.href='project_007.html'">
+                <img src="images/project007_color.png" alt="Project 007">
+                <p>Project 007</p>
             </div>
-
             <!-- Project 008 -->
             <div class="project-item" onclick="location.href='project_008.html'">
+                <img src="images/project008_color.png" alt="Project 008">
+                <p>Project 008</p>
             </div>
-
             <!-- Project 009 -->
             <div class="project-item" onclick="location.href='project_009.html'">
+                <img src="images/project009_color.png" alt="Project 009">
+                <p>Project 009</p>
             </div>
-            
             <!-- Project 010 -->
             <div class="project-item" onclick="location.href='project_010.html'">
-             
+                <img src="images/project010_color.png" alt="Project 010">
+                <p>Project 010</p>
             </div>
             <!-- Project 011 -->
             <div class="project-item" onclick="location.href='project_011.html'">
-         
+                <img src="images/project011_color.png" alt="Project 011">
+                <p>Project 011</p>
             </div>
             <!-- Project 012 -->
             <div class="project-item" onclick="location.href='project_012.html'">
-         
+                <img src="images/project012_color.png" alt="Project 012">
+                <p>Project 012</p>
             </div>
             <!-- Project 013 -->
             <div class="project-item" onclick="location.href='project_013.html'">
-           
+                <img src="images/project013_color.png" alt="Project 013">
+                <p>Project 013</p>
             </div>
             <!-- Project 015 -->
             <div class="project-item" onclick="location.href='project_015.html'">
-               
+                <img src="images/project015_color.png" alt="Project 015">
+                <p>Project 015</p>
             </div>
             <!-- Project 016 -->
             <div class="project-item" onclick="location.href='project_016.html'">
-
+                <img src="images/project016_color.png" alt="Project 016">
+                <p>Project 016</p>
             </div>
             <!-- Project 017 -->
             <div class="project-item" onclick="location.href='project_017.html'">
-
+                <img src="images/project017_color.png" alt="Project 017">
+                <p>Project 017</p>
             </div>
-             <!-- Project 018 -->
+            <!-- Project 018 -->
             <div class="project-item" onclick="location.href='project_018.html'">
-            
+                <img src="images/project018_color.png" alt="Project 018">
+                <p>Project 018</p>
             </div>
-             <!-- Project 019 -->
+            <!-- Project 019 -->
             <div class="project-item" onclick="location.href='project_019.html'">
-
+                <img src="images/project019_color.png" alt="Project 019">
+                <p>Project 019</p>
             </div>
-             <!-- Project 020 -->
+            <!-- Project 020 -->
             <div class="project-item" onclick="location.href='project_020.html'">
-
+                <img src="images/project020_color.png" alt="Project 020">
+                <p>Project 020</p>
             </div>
         </div>
     </main>
 </body>
 </html>
-
-</html>
-<div class="refresh-btn" onclick="location.href='index.html'"></div>
-
-<style>
-    .refresh-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background-color: #009688;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-    .refresh-btn:hover {
-        background-color: #00796b;
-        transform: scale(1.05);
-    }
-</style>
