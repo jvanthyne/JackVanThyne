@@ -6,6 +6,24 @@
     <title>Your Portfolio</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
     <style>
+        .projects-list-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #FF5722; /* Red-Orange color */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+.projects-list-btn:hover {
+    background-color: #D84315;
+    transform: scale(1.05);
+}
         body {
             margin: 0;
             font-family: 'Times New Roman', serif;
@@ -46,6 +64,7 @@
             height: 200px; /* Adjusted height */
             overflow: hidden;
             box-sizing: border-box;
+            
         }
         .bw-image {
             width: 100%;
@@ -59,6 +78,8 @@
     </style>
 </head>
 <body>
+    <!-- New Projects List Button -->
+    <div class="projects-list-btn" onclick="location.href='projects-list.html'"></div>
     <header>
         <img src="JACK_JOSEPH_VAN_THYNE.svg" alt="Jack Joseph Van Thyne" class="logo" onclick="location.href='about.html'">
         <div class="refresh-btn" onclick="location.href='index.html'"></div>
