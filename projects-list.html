@@ -14,40 +14,129 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stacked Images with Scroll</title>
+    <title>Projects List</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             margin: 0;
             font-family: 'Times New Roman', serif;
-            background-color: #f5f5f5;
+        }
+        header {
+            padding: 20px;
+            text-align: left;
+            width: 100%;
+            background-color: #f1f1f1;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #009688;
+            border-radius: 50%;
             display: flex;
             justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto; /* Enable scrolling on the page */
+            align-items: center;
+            cursor: pointer;
         }
-        .image-stack {
+        .back-btn:hover {
+            background-color: #00796b;
+        }
+        .projects-list {
             display: flex;
-            flex-direction: column;
-            gap: 20px; /* Space between images */
-            max-width: 600px;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 40px;
         }
-        .image-stack img {
-            max-width: 100%;
-            border-radius: 5px;
+        .project-item {
+            width: 200px;
+            text-align: center;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .project-item img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        .project-item p {
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="image-stack">
-        <img src="project001_bw.png" alt="Project 1">
-        <img src="project002_bw.png" alt="Project 2">
-        <img src="project003_bw.png" alt="Project 3">
-    </div>
+
+    <!-- Back Button -->
+    <div class="back-btn" onclick="location.href='index.html'">←</div>
+
+    <header>
+        <h1>Projects List</h1>
+    </header>
+
+    <main>
+        <div class="projects-list">
+            <!-- Project 002 -->
+            <div class="project-item" onclick="location.href='project_002.html'">
+                <img src="images/project002_color.png" alt="Project 002">
+                <p>Project 002</p>
+            </div>
+            <!-- Project 003 -->
+            <div class="project-item" onclick="location.href='project_003.html'">
+                <img src="images/project003_color.png" alt="Project 003">
+                <p>Project 003</p>
+            </div>
+            <!-- Project 004 -->
+            <div class="project-item" onclick="location.href='project_004.html'">
+                <img src="images/project004_color.png" alt="Project 004">
+                <p>Project 004</p>
+            </div>
+            <!-- Project 005 -->
+            <div class="project-item" onclick="location.href='project_005.html'">
+                <img src="images/project005_color.png" alt="Project 005">
+                <p>Project 005</p>
+            </div>
+            <!-- Project 010 -->
+            <div class="project-item" onclick="location.href='project_010.html'">
+                <img src="images/project010_color.png" alt="Project 010">
+                <p>Project 010</p>
+            </div>
+            <!-- Project 011 -->
+            <div class="project-item" onclick="location.href='project_011.html'">
+                <img src="images/project011_color.png" alt="Project 011">
+                <p>Project 011</p>
+            </div>
+            <!-- Project 012 -->
+            <div class="project-item" onclick="location.href='project_012.html'">
+                <img src="images/project012_color.png" alt="Project 012">
+                <p>Project 012</p>
+            </div>
+            <!-- Project 013 -->
+            <div class="project-item" onclick="location.href='project_013.html'">
+                <img src="images/project013_color.png" alt="Project 013">
+                <p>Project 013</p>
+            </div>
+            <!-- Project 015 -->
+            <div class="project-item" onclick="location.href='project_015.html'">
+                <img src="images/project015_color.png" alt="Project 015">
+                <p>Project 015</p>
+            </div>
+            <!-- Project 016 -->
+            <div class="project-item" onclick="location.href='project_016.html'">
+                <img src="images/project016_color.png" alt="Project 016">
+                <p>Project 016</p>
+            </div>
+        </div>
+    </main>
 </body>
+</html>
+
 </html>
 <div class="refresh-btn" onclick="location.href='index.html'"></div>
 
