@@ -3,25 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Shop</title>
+  <title>Shop</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       overflow-x: hidden;
+      background-color: #eaeaea;
+      /* Using flex to help center content vertically if needed */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-    }
-    /* Horizontal shelf container */
+    /* Wood shelf styling */
     .shelf-container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px 10px;
+      /* Replace the URL below with your own wood texture image */
+      background: url('path/to/your/wood-texture.jpg') repeat-x;
+      background-size: contain;
+      border: 3px solid #8B4513;
+      border-radius: 5px;
       overflow-x: auto;
       white-space: nowrap;
-      padding: 20px;
-      background-color: #f9f9f9;
     }
-    /* Each product item */
     .product {
       display: inline-block;
       margin-right: 20px;
@@ -32,12 +40,14 @@
       height: auto;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     }
-    /* Shopping cart at the bottom (fixed position) */
+    /* Shopping cart centered at bottom */
     .shopping-cart {
       position: fixed;
       bottom: 10px;
-      right: 10px;
+      left: 50%;
+      transform: translateX(-50%);
       width: 220px;
       min-height: 120px;
       background-color: #fff;
@@ -68,11 +78,9 @@
   </style>
 </head>
 <body>
-  <h1>My Shop</h1>
-  
   <!-- Shelf container for products -->
   <div class="shelf-container">
-    <!-- Example product items (replace src with your PNG image paths) -->
+    <!-- 10 Product items -->
     <div class="product" draggable="true" data-product-id="1">
       <img src="path/to/your/product1.png" alt="Product 1" />
     </div>
@@ -82,10 +90,30 @@
     <div class="product" draggable="true" data-product-id="3">
       <img src="path/to/your/product3.png" alt="Product 3" />
     </div>
-    <!-- Add more products as needed -->
+    <div class="product" draggable="true" data-product-id="4">
+      <img src="path/to/your/product4.png" alt="Product 4" />
+    </div>
+    <div class="product" draggable="true" data-product-id="5">
+      <img src="path/to/your/product5.png" alt="Product 5" />
+    </div>
+    <div class="product" draggable="true" data-product-id="6">
+      <img src="path/to/your/product6.png" alt="Product 6" />
+    </div>
+    <div class="product" draggable="true" data-product-id="7">
+      <img src="path/to/your/product7.png" alt="Product 7" />
+    </div>
+    <div class="product" draggable="true" data-product-id="8">
+      <img src="path/to/your/product8.png" alt="Product 8" />
+    </div>
+    <div class="product" draggable="true" data-product-id="9">
+      <img src="path/to/your/product9.png" alt="Product 9" />
+    </div>
+    <div class="product" draggable="true" data-product-id="10">
+      <img src="path/to/your/product10.png" alt="Product 10" />
+    </div>
   </div>
   
-  <!-- Shopping Cart (fixed at the bottom) -->
+  <!-- Shopping Cart (centered at the bottom) -->
   <div class="shopping-cart" id="shoppingCart">
     <h3>Cart</h3>
     <div class="cart-items" id="cartItems"></div>
@@ -101,11 +129,11 @@
     products.forEach(product => {
       product.addEventListener('dragstart', (e) => {
         // Set product ID as transferable data
-        e.dataTransfer.setData('text/plain', product.dataset.productId);
+        e.dataTransfer.setData('text/plain', product.dataset.product-id);
       });
     });
 
-    // Prevent default behavior to allow dropping
+    // Allow dropping on the cart by preventing default behavior
     shoppingCart.addEventListener('dragover', (e) => {
       e.preventDefault();
       shoppingCart.classList.add('dragover');
@@ -116,7 +144,7 @@
       shoppingCart.classList.remove('dragover');
     });
 
-    // Handle the drop event to add product to the cart
+    // Handle drop event to add product to the cart
     shoppingCart.addEventListener('drop', (e) => {
       e.preventDefault();
       shoppingCart.classList.remove('dragover');
