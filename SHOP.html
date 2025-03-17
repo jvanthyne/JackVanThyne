@@ -3,163 +3,178 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shop</title>
+  <title>Shop Page</title>
   <style>
+    /* Overall page styling */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      overflow-x: hidden;
-      background-color: #eaeaea;
-      /* Using flex to help center content vertically if needed */
+      background-color: #d3d3d3; /* Light gray background */
+      cursor: none; /* Hide the default cursor */
+    }
+    /* Container for the product grid */
+    .products-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
     }
-    /* Wood shelf styling */
-    .shelf-container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px 10px;
-      /* Replace the URL below with your own wood texture image */
-      background: url('path/to/your/wood-texture.jpg') repeat-x;
-      background-size: contain;
-      border: 3px solid #8B4513;
-      border-radius: 5px;
-      overflow-x: auto;
-      white-space: nowrap;
-    }
+    /* Styling each product */
     .product {
-      display: inline-block;
-      margin-right: 20px;
+      width: 150px;
       cursor: grab;
+      position: relative;
     }
     .product img {
-      width: 150px;
+      width: 100%;
       height: auto;
       border: 1px solid #ccc;
       border-radius: 5px;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     }
-    /* Shopping cart centered at bottom */
+    /* Shopping cart container at bottom center */
     .shopping-cart {
       position: fixed;
       bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 220px;
-      min-height: 120px;
-      background-color: #fff;
-      border: 2px dashed #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    }
-    .shopping-cart.dragover {
-      border-color: #333;
-    }
-    .shopping-cart h3 {
-      margin: 0 0 10px;
       text-align: center;
     }
+    .shopping-cart img.cart-image {
+      width: 220px;
+      height: auto;
+    }
+    .shopping-cart p {
+      margin: 5px 0 0;
+      font-size: 14px;
+    }
     .cart-items {
+      margin-top: 10px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
       justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
     }
     .cart-item {
-      width: 50px;
+      width: 50px; /* Smaller version of product PNG */
       height: auto;
       border: 1px solid #ccc;
       border-radius: 3px;
     }
+    /* Custom circular cursor */
+    #customCursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: black; /* default color */
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      transition: background-color 0.3s;
+    }
   </style>
 </head>
 <body>
-  <!-- Shelf container for products -->
-  <div class="shelf-container">
-    <!-- 10 Product items -->
-    <div class="product" draggable="true" data-product-id="1">
-      <img src="path/to/your/product1.png" alt="Product 1" />
+  <!-- Custom Cursor Element -->
+  <div id="customCursor"></div>
+
+  <!-- Grid of Products -->
+  <div class="products-container">
+    <!-- 10 products with draggable and click-to-open-detail functionality.
+         Replace image sources and detail URLs with your own files. -->
+    <div class="product" draggable="true" data-product-id="1" data-detail-url="product1-detail.html">
+      <img src="path/to/your/product1.png" alt="Product 1">
     </div>
-    <div class="product" draggable="true" data-product-id="2">
-      <img src="path/to/your/product2.png" alt="Product 2" />
+    <div class="product" draggable="true" data-product-id="2" data-detail-url="product2-detail.html">
+      <img src="path/to/your/product2.png" alt="Product 2">
     </div>
-    <div class="product" draggable="true" data-product-id="3">
-      <img src="path/to/your/product3.png" alt="Product 3" />
+    <div class="product" draggable="true" data-product-id="3" data-detail-url="product3-detail.html">
+      <img src="path/to/your/product3.png" alt="Product 3">
     </div>
-    <div class="product" draggable="true" data-product-id="4">
-      <img src="path/to/your/product4.png" alt="Product 4" />
+    <div class="product" draggable="true" data-product-id="4" data-detail-url="product4-detail.html">
+      <img src="path/to/your/product4.png" alt="Product 4">
     </div>
-    <div class="product" draggable="true" data-product-id="5">
-      <img src="path/to/your/product5.png" alt="Product 5" />
+    <div class="product" draggable="true" data-product-id="5" data-detail-url="product5-detail.html">
+      <img src="path/to/your/product5.png" alt="Product 5">
     </div>
-    <div class="product" draggable="true" data-product-id="6">
-      <img src="path/to/your/product6.png" alt="Product 6" />
+    <div class="product" draggable="true" data-product-id="6" data-detail-url="product6-detail.html">
+      <img src="path/to/your/product6.png" alt="Product 6">
     </div>
-    <div class="product" draggable="true" data-product-id="7">
-      <img src="path/to/your/product7.png" alt="Product 7" />
+    <div class="product" draggable="true" data-product-id="7" data-detail-url="product7-detail.html">
+      <img src="path/to/your/product7.png" alt="Product 7">
     </div>
-    <div class="product" draggable="true" data-product-id="8">
-      <img src="path/to/your/product8.png" alt="Product 8" />
+    <div class="product" draggable="true" data-product-id="8" data-detail-url="product8-detail.html">
+      <img src="path/to/your/product8.png" alt="Product 8">
     </div>
-    <div class="product" draggable="true" data-product-id="9">
-      <img src="path/to/your/product9.png" alt="Product 9" />
+    <div class="product" draggable="true" data-product-id="9" data-detail-url="product9-detail.html">
+      <img src="path/to/your/product9.png" alt="Product 9">
     </div>
-    <div class="product" draggable="true" data-product-id="10">
-      <img src="path/to/your/product10.png" alt="Product 10" />
+    <div class="product" draggable="true" data-product-id="10" data-detail-url="product10-detail.html">
+      <img src="path/to/your/product10.png" alt="Product 10">
     </div>
   </div>
-  
-  <!-- Shopping Cart (centered at the bottom) -->
+
+  <!-- Shopping Cart (using a PNG for the cart) -->
   <div class="shopping-cart" id="shoppingCart">
-    <h3>Cart</h3>
+    <img src="path/to/your/cart.png" alt="Shopping Cart" class="cart-image">
+    <p>Drag and drop items into cart</p>
     <div class="cart-items" id="cartItems"></div>
   </div>
-  
+
   <script>
-    // Get product elements and cart elements
+    // --- Drag and Drop Functionality ---
     const products = document.querySelectorAll('.product');
     const shoppingCart = document.getElementById('shoppingCart');
     const cartItemsContainer = document.getElementById('cartItems');
 
-    // Enable dragging for each product
     products.forEach(product => {
+      // Initiate dragging of a product
       product.addEventListener('dragstart', (e) => {
-        // Set product ID as transferable data
-        e.dataTransfer.setData('text/plain', product.dataset.product-id);
+        e.dataTransfer.setData('text/plain', product.dataset.productId);
+      });
+
+      // Open detailed product page in a new window when product is clicked
+      product.addEventListener('click', (e) => {
+        const detailUrl = product.dataset.detailUrl;
+        if(detailUrl) {
+          window.open(detailUrl, '_blank');
+        }
+      });
+
+      // Change the custom cursor color on hover over a product
+      product.addEventListener('mouseenter', () => {
+        const customCursor = document.getElementById('customCursor');
+        customCursor.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
       });
     });
 
-    // Allow dropping on the cart by preventing default behavior
+    // Allow dropping on the shopping cart
     shoppingCart.addEventListener('dragover', (e) => {
       e.preventDefault();
-      shoppingCart.classList.add('dragover');
     });
 
-    // Remove visual cue when dragging leaves the cart area
-    shoppingCart.addEventListener('dragleave', () => {
-      shoppingCart.classList.remove('dragover');
-    });
-
-    // Handle drop event to add product to the cart
     shoppingCart.addEventListener('drop', (e) => {
       e.preventDefault();
-      shoppingCart.classList.remove('dragover');
       const productId = e.dataTransfer.getData('text/plain');
-      // Find the product element using its data attribute
       const product = document.querySelector(`.product[data-product-id="${productId}"]`);
-      if (product) {
+      if(product) {
         const imgSrc = product.querySelector('img').src;
-        // Create a thumbnail image for the cart
+        // Create a smaller version of the product image for the cart
         const cartItem = document.createElement('img');
         cartItem.src = imgSrc;
         cartItem.alt = `Product ${productId}`;
         cartItem.classList.add('cart-item');
         cartItemsContainer.appendChild(cartItem);
       }
+    });
+
+    // --- Custom Cursor Implementation ---
+    const customCursor = document.getElementById('customCursor');
+    document.addEventListener('mousemove', (e) => {
+      customCursor.style.left = e.clientX + 'px';
+      customCursor.style.top = e.clientY + 'px';
     });
   </script>
 </body>
