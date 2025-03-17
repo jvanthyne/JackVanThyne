@@ -5,25 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop Page</title>
   <style>
-    /* Overall page styling */
+    /* Hide all default cursors */
+    * {
+      cursor: none !important;
+    }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #d3d3d3; /* Light gray background */
-      cursor: none; /* Hide the default cursor */
     }
-    /* Container for the product grid */
+    /* Custom circular cursor */
+    #customCursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: black; /* default color */
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      transition: background-color 0.3s;
+    }
+    /* Products grid: 3 items per row */
     .products-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
       padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
     /* Styling each product */
     .product {
-      width: 150px;
-      cursor: grab;
       position: relative;
     }
     .product img {
@@ -32,6 +45,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
     }
     /* Shopping cart container at bottom center */
     .shopping-cart {
@@ -40,6 +54,7 @@
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
+      z-index: 1000;
     }
     .shopping-cart img.cart-image {
       width: 220px;
@@ -57,22 +72,10 @@
       flex-wrap: wrap;
     }
     .cart-item {
-      width: 50px; /* Smaller version of product PNG */
+      width: 50px; /* Shrunken version */
       height: auto;
       border: 1px solid #ccc;
       border-radius: 3px;
-    }
-    /* Custom circular cursor */
-    #customCursor {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: black; /* default color */
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      transition: background-color 0.3s;
     }
   </style>
 </head>
@@ -82,8 +85,7 @@
 
   <!-- Grid of Products -->
   <div class="products-container">
-    <!-- 10 products with draggable and click-to-open-detail functionality.
-         Replace image sources and detail URLs with your own files. -->
+    <!-- 10 Products; update src and data-detail-url as needed -->
     <div class="product" draggable="true" data-product-id="1" data-detail-url="product1-detail.html">
       <img src="path/to/your/product1.png" alt="Product 1">
     </div>
@@ -116,7 +118,7 @@
     </div>
   </div>
 
-  <!-- Shopping Cart (using a PNG for the cart) -->
+  <!-- Shopping Cart (using a PNG) -->
   <div class="shopping-cart" id="shoppingCart">
     <img src="path/to/your/cart.png" alt="Shopping Cart" class="cart-image">
     <p>Drag and drop items into cart</p>
@@ -124,31 +126,36 @@
   </div>
 
   <script>
-    // --- Drag and Drop Functionality ---
+    // Global variable for tracking a cart item being dragged
+    let draggingCartItem = null;
+
+    // --- Product Drag & Click Functionality ---
     const products = document.querySelectorAll('.product');
-    const shoppingCart = document.getElementById('shoppingCart');
     const cartItemsContainer = document.getElementById('cartItems');
 
     products.forEach(product => {
-      // Initiate dragging of a product
+      // Initiate dragging for products
       product.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', product.dataset.productId);
+        e.dataTransfer.setData('text/product-id', product.dataset.productId);
       });
 
       // Open detailed product page in a new window when product is clicked
-      product.addEventListener('click', (e) => {
+      product.addEventListener('click', () => {
         const detailUrl = product.dataset.detailUrl;
         if(detailUrl) {
           window.open(detailUrl, '_blank');
         }
       });
 
-      // Change the custom cursor color on hover over a product
+      // Change custom cursor color on hover over a product
       product.addEventListener('mouseenter', () => {
         const customCursor = document.getElementById('customCursor');
         customCursor.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
       });
     });
+
+    // --- Cart Drop Functionality for Adding Items ---
+    const shoppingCart = document.getElementById('shoppingCart');
 
     // Allow dropping on the shopping cart
     shoppingCart.addEventListener('dragover', (e) => {
@@ -157,17 +164,39 @@
 
     shoppingCart.addEventListener('drop', (e) => {
       e.preventDefault();
-      const productId = e.dataTransfer.getData('text/plain');
-      const product = document.querySelector(`.product[data-product-id="${productId}"]`);
-      if(product) {
-        const imgSrc = product.querySelector('img').src;
-        // Create a smaller version of the product image for the cart
-        const cartItem = document.createElement('img');
-        cartItem.src = imgSrc;
-        cartItem.alt = `Product ${productId}`;
-        cartItem.classList.add('cart-item');
-        cartItemsContainer.appendChild(cartItem);
+      // Check if a product is being dropped (not a cart item)
+      const productId = e.dataTransfer.getData('text/product-id');
+      if(productId) {
+        const product = document.querySelector(`.product[data-product-id="${productId}"]`);
+        if (product) {
+          const imgSrc = product.querySelector('img').src;
+          // Create a shrunken version of the product image for the cart
+          const cartItem = document.createElement('img');
+          cartItem.src = imgSrc;
+          cartItem.alt = `Product ${productId}`;
+          cartItem.classList.add('cart-item');
+          // Make the cart item draggable for removal
+          cartItem.draggable = true;
+          cartItem.addEventListener('dragstart', () => {
+            draggingCartItem = cartItem;
+          });
+          cartItemsContainer.appendChild(cartItem);
+        }
       }
+    });
+
+    // --- Global Drop & Dragover to Enable Removing Cart Items ---
+    document.body.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    // When a drop occurs anywhere on the body (outside the shopping cart),
+    // if a cart item is being dragged, remove it.
+    document.body.addEventListener('drop', (e) => {
+      if (draggingCartItem && !e.target.closest('.shopping-cart')) {
+        draggingCartItem.remove();
+      }
+      draggingCartItem = null;
     });
 
     // --- Custom Cursor Implementation ---
