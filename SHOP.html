@@ -40,11 +40,11 @@
       position: relative;
     }
     .product img {
-      width: 100%;
-      height: auto;
+      width: 150px; /* Fixed width */
+      height: 150px; /* Fixed height */
+      object-fit: contain; /* Maintains aspect ratio */
       border: 1px solid #ccc;
       border-radius: 5px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
       transition: transform 0.2s;
     }
     /* Shopping cart container at bottom center */
@@ -72,7 +72,7 @@
       flex-wrap: wrap;
     }
     .cart-item {
-      width: 50px; /* Shrunken version */
+      width: 50px; /* Shrunken version for cart items */
       height: auto;
       border: 1px solid #ccc;
       border-radius: 3px;
@@ -85,36 +85,36 @@
 
   <!-- Grid of Products -->
   <div class="products-container">
-    <!-- 10 Products; update src and data-detail-url as needed -->
+    <!-- 10 Products; update data-detail-url as needed -->
     <div class="product" draggable="true" data-product-id="1" data-detail-url="product1-detail.html">
-      <img src="product1.png" alt="Product 1">
+      <img src="products/product1.png" alt="Product 1">
     </div>
     <div class="product" draggable="true" data-product-id="2" data-detail-url="product2-detail.html">
-      <img src="path/to/your/product2.png" alt="Product 2">
+      <img src="products/product2.png" alt="Product 2">
     </div>
     <div class="product" draggable="true" data-product-id="3" data-detail-url="product3-detail.html">
-      <img src="path/to/your/product3.png" alt="Product 3">
+      <img src="products/product3.png" alt="Product 3">
     </div>
     <div class="product" draggable="true" data-product-id="4" data-detail-url="product4-detail.html">
-      <img src="path/to/your/product4.png" alt="Product 4">
+      <img src="products/product4.png" alt="Product 4">
     </div>
     <div class="product" draggable="true" data-product-id="5" data-detail-url="product5-detail.html">
-      <img src="path/to/your/product5.png" alt="Product 5">
+      <img src="products/product5.png" alt="Product 5">
     </div>
     <div class="product" draggable="true" data-product-id="6" data-detail-url="product6-detail.html">
-      <img src="path/to/your/product6.png" alt="Product 6">
+      <img src="products/product6.png" alt="Product 6">
     </div>
     <div class="product" draggable="true" data-product-id="7" data-detail-url="product7-detail.html">
-      <img src="path/to/your/product7.png" alt="Product 7">
+      <img src="products/product7.png" alt="Product 7">
     </div>
     <div class="product" draggable="true" data-product-id="8" data-detail-url="product8-detail.html">
-      <img src="path/to/your/product8.png" alt="Product 8">
+      <img src="products/product8.png" alt="Product 8">
     </div>
     <div class="product" draggable="true" data-product-id="9" data-detail-url="product9-detail.html">
-      <img src="path/to/your/product9.png" alt="Product 9">
+      <img src="products/product9.png" alt="Product 9">
     </div>
     <div class="product" draggable="true" data-product-id="10" data-detail-url="product10-detail.html">
-      <img src="path/to/your/product10.png" alt="Product 10">
+      <img src="products/product10.png" alt="Product 10">
     </div>
   </div>
 
