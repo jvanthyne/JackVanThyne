@@ -5,78 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Film Competition Interest Form</title>
   <style>
+    /* Base styling for the page */
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
       padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      overflow-x: hidden;
     }
+    
+    /* Container takes up full width on mobile, with an optional max-width on larger screens */
     .container {
-      width: 90%;
-      max-width: 600px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
+    
+    /* Center logo styling */
     .logo {
       display: block;
-      margin: 0 auto 20px auto;
+      margin: 0 auto 20px;
       max-width: 200px;
     }
+    
+    /* Form styling: each box is separated by space */
     form {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
+    
+    /* Styling for each question box */
     .question-box {
       padding: 15px;
-      border-radius: 8px;
+      box-sizing: border-box;
+      width: 100%;
+      /* No border radius for sharp edges */
+      border-radius: 0;
+      transition: transform 0.3s ease-out;
     }
-    /* Random colorful backgrounds for each question box */
+    
+    /* Vibrant background colors */
     #interest-box {
-      background-color: #FFCDD2; /* light red */
+      background-color: #FF5252; /* Vibrant Red */
+      color: white;
     }
     #name-box {
-      background-color: #C8E6C9; /* light green */
+      background-color: #00E676; /* Vibrant Green */
+      color: white;
     }
     #email-box {
-      background-color: #BBDEFB; /* light blue */
+      background-color: #448AFF; /* Vibrant Blue */
+      color: white;
     }
+    
+    /* Label styling */
     label {
       font-size: 16px;
       display: block;
       margin-bottom: 5px;
     }
-    /* Text input styling */
+    
+    /* Input styling for text fields */
     input[type="text"],
     input[type="email"] {
       width: 100%;
       padding: 8px;
       font-size: 16px;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 0;
       box-sizing: border-box;
     }
-    /* Styling for the radio options */
+    
+    /* Radio button container styling */
     .radio-option {
       display: inline-block;
       margin-right: 15px;
       font-size: 16px;
     }
+    
     /* Submit button styling */
     .submit-btn {
-      background-color: #4CAF50;
+      background-color: #333;
       border: none;
       color: white;
       padding: 15px;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 0;
       cursor: pointer;
       width: 100%;
+      transition: background-color 0.3s ease;
     }
     .submit-btn:hover {
-      background-color: #45a049;
+      background-color: #555;
     }
   </style>
 </head>
@@ -85,6 +108,7 @@
     <!-- Replace FILM_LOGO.png with your actual logo URL -->
     <img class="logo" src="FILM_LOGO.png" alt="Logo">
     <form action="https://formspree.io/f/your-email-here" method="POST">
+      <!-- Question 1: Interest in competing -->
       <div class="question-box" id="interest-box">
         <label>Are you interested in competing?</label>
         <div>
@@ -96,16 +120,38 @@
           </label>
         </div>
       </div>
+      
+      <!-- Question 2: Full name -->
       <div class="question-box" id="name-box">
         <label for="name">Full Name</label>
         <input type="text" id="name" name="name" required>
       </div>
+      
+      <!-- Question 3: Email address -->
       <div class="question-box" id="email-box">
         <label for="email">Email Address</label>
         <input type="email" id="email" name="email" required>
       </div>
+      
+      <!-- Submit button -->
       <input type="submit" value="Submit" class="submit-btn">
     </form>
   </div>
+
+  <!-- JavaScript for a weird scroll effect -->
+  <script>
+    window.addEventListener('scroll', function() {
+      const boxes = document.querySelectorAll('.question-box');
+      const scrollPos = window.scrollY;
+      
+      boxes.forEach((box, index) => {
+        // Generate a "weird" transform based on the scroll amount and box index.
+        // Feel free to adjust the multiplier values to get your desired effect.
+        const translateX = Math.sin(scrollPos / 100 + index) * 20; 
+        const rotate = Math.cos(scrollPos / 100 + index) * 5;
+        box.style.transform = `translateX(${translateX}px) rotate(${rotate}deg)`;
+      });
+    });
+  </script>
 </body>
 </html>
