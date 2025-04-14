@@ -42,7 +42,7 @@
       padding: 15px;
       box-sizing: border-box;
       width: 100%;
-      /* No border radius for sharp edges */
+      /* Sharp edges with no border radius */
       border-radius: 0;
       transition: transform 0.3s ease-out;
     }
@@ -79,7 +79,27 @@
       box-sizing: border-box;
     }
     
-    /* Radio button container styling */
+    /* Custom styling for radio buttons: square shape */
+    input[type="radio"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #888;
+      border-radius: 0;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-right: 5px;
+      position: relative;
+    }
+    input[type="radio"]:checked {
+      background-color: #448AFF;
+      border: none;
+      z-index: 10;
+    }
+    
+    /* Radio option container styling */
     .radio-option {
       display: inline-block;
       margin-right: 15px;
@@ -107,7 +127,8 @@
   <div class="container">
     <!-- Replace FILM_LOGO.png with your actual logo URL -->
     <img class="logo" src="FILM_LOGO.png" alt="Logo">
-    <form action="https://formspree.io/f/your-email-here" method="POST">
+    <!-- Updated action attribute with your Formspree endpoint -->
+    <form action="https://formspree.io/f/myzeoryg" method="POST">
       <!-- Question 1: Interest in competing -->
       <div class="question-box" id="interest-box">
         <label>Are you interested in competing?</label>
@@ -145,8 +166,6 @@
       const scrollPos = window.scrollY;
       
       boxes.forEach((box, index) => {
-        // Generate a "weird" transform based on the scroll amount and box index.
-        // Feel free to adjust the multiplier values to get your desired effect.
         const translateX = Math.sin(scrollPos / 100 + index) * 20; 
         const rotate = Math.cos(scrollPos / 100 + index) * 5;
         box.style.transform = `translateX(${translateX}px) rotate(${rotate}deg)`;
