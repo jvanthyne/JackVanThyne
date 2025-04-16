@@ -6,12 +6,42 @@
   <title>Film Competition Interest Form</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      overflow: hidden; /* hide scrollbars from our floating layer */
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
     }
+
+    /* floating objects container sits behind everything */
+    .floating-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* clicks go through */
+      overflow: hidden;
+      z-index: 0;
+    }
+    .floating-object {
+      position: absolute;
+      width: 80px;
+      opacity: 0.6;
+      animation-name: float;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateY(0)   translateX(0)   rotate(0deg); }
+      50%  { transform: translateY(-30px) translateX(20px) rotate(10deg); }
+      100% { transform: translateY(0)   translateX(0)   rotate(0deg); }
+    }
+
+    /* make your form container stack above the floaters */
     .container {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 800px;
       margin: 0 auto;
@@ -27,19 +57,32 @@
     }
     .gform-iframe {
       width: 100%;
-      /* Set a min-height that’s tall enough for desktop browsers;
-         mobile users will scroll inside the iframe as needed. */
       min-height: 900px;
       border: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Your logo filling the container width -->
-    <img class="logo" src="FILM_LOGO.png" alt="Logo">
+  <!-- 1) Floating objects layer -->
+  <div class="floating-container">
+    <img src="FILM_OBJECT_01.png" class="floating-object"
+         style="top: 10%; left: 15%; animation-duration: 14s;" alt="">
+    <img src="FILM_OBJECT_02.png" class="floating-object"
+         style="top: 25%; left: 70%; animation-duration: 16s;" alt="">
+    <img src="FILM_OBJECT_03.png" class="floating-object"
+         style="top: 40%; left: 30%; animation-duration: 12s;" alt="">
+    <img src="FILM_OBJECT_04.png" class="floating-object"
+         style="top: 60%; left: 10%; animation-duration: 18s;" alt="">
+    <img src="FILM_OBJECT_05.png" class="floating-object"
+         style="top: 75%; left: 80%; animation-duration: 15s;" alt="">
+    <img src="FILM_OBJECT_06.png" class="floating-object"
+         style="top: 50%; left: 50%; animation-duration: 20s;" alt="">
 
-    <!-- Google Form embed; replace the src with yours if it changes -->
+  </div>
+
+  <!-- 2) Your existing form/content layer -->
+  <div class="container">
+    <img class="logo" src="FILM_LOGO.png" alt="Logo">
     <iframe
       class="gform-iframe"
       src="https://docs.google.com/forms/d/e/1FAIpQLSfM82vJovMRD23mJKiGWUh40MlUw3dbZAPZXXNT05B3N1jLrw/viewform?embedded=true"
