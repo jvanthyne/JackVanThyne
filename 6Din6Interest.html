@@ -1,135 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Film Competition Interest Form</title>
+  <!-- … your meta tags … -->
   <style>
-    /* Base styling for the page */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-    
-    /* Container takes up full width on mobile, with an optional max-width on larger screens */
-    .container {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    
-    /* Center logo styling */
+    body { /* … */ }
+    .container { width:100%; max-width:800px; margin:0 auto; padding:20px; }
     .logo {
       display: block;
       margin: 0 auto 20px;
-      max-width: 200px;
-    }
-    
-    /* Form styling: each box is separated by space */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    /* Styling for each question box */
-    .question-box {
-      padding: 15px;
-      box-sizing: border-box;
       width: 100%;
-      /* Sharp edges with no border radius */
-      border-radius: 0;
-      transition: transform 0.3s ease-out;
+      max-width: 800px;
+      height: auto;
     }
-    
-    /* Vibrant background colors */
-    #interest-box {
-      background-color: #000000; /* Vibrant Red */
-      color: white;
-    }
-    #name-box {
-      background-color: #000000; /* Vibrant Green */
-      color: white;
-    }
-    #email-box {
-      background-color: #000000; /* Vibrant Blue */
-      color: white;
-    }
-    
-    /* Label styling */
-    label {
-      font-size: 16px;
-      display: block;
-      margin-bottom: 5px;
-    }
-    
-    /* Input styling for text fields */
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 8px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 0;
-      box-sizing: border-box;
-    }
-    
-    /* Custom styling for radio buttons: square shape */
-    input[type="radio"] {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #888;
-      border-radius: 0;
-      cursor: pointer;
-      vertical-align: middle;
-      margin-right: 5px;
-      position: relative;
-    }
-    input[type="radio"]:checked {
-      background-color: #448AFF;
-      border: none;
-      z-index: 10;
-    }
-    
-    /* Radio option container styling */
-    .radio-option {
-      display: inline-block;
-      margin-right: 15px;
-      font-size: 16px;
-    }
-    
-    /* Submit button styling */
-    .submit-btn {
-      background-color: #333;
-      border: none;
-      color: white;
-      padding: 15px;
-      font-size: 16px;
-      border-radius: 0;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
-    }
-    .submit-btn:hover {
-      background-color: #555;
-    }
+    form { display:flex; flex-direction:column; gap:20px; }
+    .question-box { /* … */ }
+    /* … rest of your CSS … */
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Replace FILM_LOGO.png with your actual logo URL -->
     <img class="logo" src="FILM_LOGO.png" alt="Logo">
-    <!-- Updated action attribute with your Formspree endpoint -->
+
     <form action="https://formspree.io/f/myzeoryg" method="POST">
-      <!-- Question 1: Interest in competing -->
+      <!-- hidden helpers for Formspree -->
+      <input type="hidden" name="_next" value="https://your-site.com/thank-you.html">
+      <input type="hidden" name="_replyto" value="">
+      <input type="hidden" name="_subject" value="🎬 New Film Comp Interest">
+
       <div class="question-box" id="interest-box">
         <label>Are you interested in competing?</label>
         <div>
@@ -141,34 +38,29 @@
           </label>
         </div>
       </div>
-      
-      <!-- Question 2: Full name -->
+
       <div class="question-box" id="name-box">
         <label for="name">Full Name</label>
         <input type="text" id="name" name="name" required>
       </div>
-      
-      <!-- Question 3: Email address -->
+
       <div class="question-box" id="email-box">
         <label for="email">Email Address</label>
         <input type="email" id="email" name="email" required>
       </div>
-      
-      <!-- Submit button -->
+
       <input type="submit" value="Submit" class="submit-btn">
     </form>
   </div>
 
-  <!-- JavaScript for a weird scroll effect -->
   <script>
     window.addEventListener('scroll', function() {
       const boxes = document.querySelectorAll('.question-box');
       const scrollPos = window.scrollY;
-      
-      boxes.forEach((box, index) => {
-        const translateX = Math.sin(scrollPos / 100 + index) * 20; 
-        const rotate = Math.cos(scrollPos / 100 + index) * 5;
-        box.style.transform = `translateX(${translateX}px) rotate(${rotate}deg)`;
+      boxes.forEach((box, i) => {
+        const x = Math.sin(scrollPos/100 + i) * 20;
+        const r = Math.cos(scrollPos/100 + i) * 5;
+        box.style.transform = `translateX(${x}px) rotate(${r}deg)`;
       });
     });
   </script>
