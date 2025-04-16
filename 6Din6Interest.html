@@ -1,68 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- … your meta tags … -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Film Competition Interest Form</title>
   <style>
-    body { /* … */ }
-    .container { width:100%; max-width:800px; margin:0 auto; padding:20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
     .logo {
       display: block;
-      margin: 0 auto 20px;
       width: 100%;
       max-width: 800px;
       height: auto;
+      margin-bottom: 20px;
     }
-    form { display:flex; flex-direction:column; gap:20px; }
-    .question-box { /* … */ }
-    /* … rest of your CSS … */
+    .gform-iframe {
+      width: 100%;
+      /* Set a min-height that’s tall enough for desktop browsers;
+         mobile users will scroll inside the iframe as needed. */
+      min-height: 900px;
+      border: none;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Your logo filling the container width -->
     <img class="logo" src="FILM_LOGO.png" alt="Logo">
 
-    <form action="https://formspree.io/f/myzeoryg" method="POST">
-      <!-- hidden helpers for Formspree -->
-      <input type="hidden" name="_next" value="https://your-site.com/thank-you.html">
-      <input type="hidden" name="_replyto" value="">
-      <input type="hidden" name="_subject" value="🎬 New Film Comp Interest">
-
-      <div class="question-box" id="interest-box">
-        <label>Are you interested in competing?</label>
-        <div>
-          <label class="radio-option">
-            <input type="radio" name="interest" value="Yes" required> Yes
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="interest" value="No" required> No
-          </label>
-        </div>
-      </div>
-
-      <div class="question-box" id="name-box">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" required>
-      </div>
-
-      <div class="question-box" id="email-box">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" required>
-      </div>
-
-      <input type="submit" value="Submit" class="submit-btn">
-    </form>
+    <!-- Google Form embed; replace the src with yours if it changes -->
+    <iframe
+      class="gform-iframe"
+      src="https://docs.google.com/forms/d/e/1FAIpQLSfM82vJovMRD23mJKiGWUh40MlUw3dbZAPZXXNT05B3N1jLrw/viewform?embedded=true"
+      marginheight="0"
+      marginwidth="0"
+    >
+      Loading…
+    </iframe>
   </div>
-
-  <script>
-    window.addEventListener('scroll', function() {
-      const boxes = document.querySelectorAll('.question-box');
-      const scrollPos = window.scrollY;
-      boxes.forEach((box, i) => {
-        const x = Math.sin(scrollPos/100 + i) * 20;
-        const r = Math.cos(scrollPos/100 + i) * 5;
-        box.style.transform = `translateX(${x}px) rotate(${r}deg)`;
-      });
-    });
-  </script>
 </body>
 </html>
