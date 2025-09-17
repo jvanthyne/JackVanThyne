@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>INFO — LIGHTING DESIGN/BUILD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --spot-radius: 140px; /* spotlight radius; tweak to taste */
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    /* Content layer (hidden by the black veil except under the cursor) */
+    .content {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      font-family: Helvetica, Arial, sans-serif;
+      text-transform: uppercase;
+      background:
+        radial-gradient(1200px 1200px at 50% 50%,
+          #ffd77a 0%,
+          #ffcd5c 35%,
+          #ffb53a 60%,
+          #ff9f2a 80%,
+          #ff8f1a 100%);
+      /* Soft glow bloom */
+      box-shadow:
+        inset 0 0 150px 20px rgba(255, 165, 0, 0.6),
+        inset 0 0 300px 60px rgba(255, 200, 0, 0.4);
+    }
+
+    .wrap {
+      /* Scale text responsively so it “fills” the screen without overflowing */
+      font-size: clamp(18px, 4.5vw, 44px);
+      line-height: 1.15;
+      color: #000;
+      max-width: 90vw;
+      padding: 5vh 5vw;
+      letter-spacing: 0.02em;
+    }
+
+    .headline {
+      font-weight: 700;
+      font-size: clamp(28px, 8vw, 96px);
+      margin: 0 0 0.4em 0;
+    }
+
+    .body {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    /* Black veil overlay with a circular hole (spotlight) that follows the cursor */
+    .veil {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      pointer-events: none; /* keep page interactive if needed */
+      /* CSS variables updated by JS to position the hole */
+      --x: 50vw;
+      --y: 50vh;
+      /* Use mask so the circle is transparent (reveals content), rest stays black */
+      -webkit-mask: radial-gradient(
+        circle var(--spot-radius) at var(--x) var(--y),
+        transparent 0 98%,
+        #000 100%
+      );
+      mask: radial-gradient(
+        circle var(--spot-radius) at var(--x) var(--y),
+        transparent 0 98%,
+        #000 100%
+      );
+    }
+
+    /* Optional: a subtle instruction hint (screen readers will read it; sighted users won’t see it due to veil) */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="content" aria-describedby="hint">
+    <div class="wrap" role="main">
+      <h1 class="headline">Info,</h1>
+      <p class="body">
+        Lighting design/ build competition, the light must be able to hang, there is no size limit, you can ether buy a bulb and socket housing+ some wire for $10, or (recommended) use an old lamp or fixture you find for free, the design is very open endeded but if you need some direction think about bioficlc design and the moon. Good luck and enjoy, prizes will be given to top three most pleasing designs.
+      </p>
+    </div>
+    <p id="hint" class="sr-only">Move your cursor to reveal the information.</p>
+  </div>
+
+  <!-- Black overlay with a circular “see-through” spotlight -->
+  <div class="veil" id="veil"></div>
+
+  <script>
+    (function () {
+      const veil = document.getElementById('veil');
+
+      function updateSpot(e) {
+        // Use clientX/Y for mouse, and fallback to center if unavailable
+        let x = e.clientX;
+        let y = e.clientY;
+
+        // For touch devices
+        if ((e.touches && e.touches[0])) {
+          x = e.touches[0].clientX;
+          y = e.touches[0].clientY;
+        }
+
+        veil.style.setProperty('--x', x + 'px');
+        veil.style.setProperty('--y', y + 'px');
+      }
+
+      // Track pointer position
+      document.addEventListener('mousemove', updateSpot, { passive: true });
+      document.addEventListener('touchmove', updateSpot, { passive: true });
+
+      // On load/resize, center the spotlight so something is visible before move
+      function centerSpot() {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        veil.style.setProperty('--x', cx + 'px');
+        veil.style.setProperty('--y', cy + 'px');
+      }
+      window.addEventListener('resize', centerSpot);
+      centerSpot();
+    })();
+  </script>
+</body>
+</html>
