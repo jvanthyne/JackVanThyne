@@ -6,55 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root{
-      /* Responsive spotlight size: min/max keep it usable on phones & desktops */
       --spot-size: clamp(120px, 22vmin, 260px);
-      --bg: #ffb53a; /* warm yellow-orange solid */
+      --bg: #ffb53a; /* warm yellow-orange */
     }
 
     html, body {
       margin: 0;
       height: 100%;
       width: 100%;
-      background: #000; /* covered by veil; content sits underneath */
+      background: #000;
       font-family: Helvetica, Arial, sans-serif;
     }
 
     .content {
-      position: relative;
       min-height: 100%;
       background: var(--bg);
       color: #000;
-      /* All caps, tight leading for poster feel */
       text-transform: uppercase;
-      line-height: 1.15;
       display: grid;
       align-items: center;
     }
 
-    /* Single paragraph that stretches edge-to-edge with breathable padding */
     .copy {
-      /* Full width, but keep small gutters for readability */
       padding: 4vw;
       margin: 0;
-      /* Scale text fluidly across devices */
       font-weight: 600;
-      font-size: clamp(16px, 5.2vw, 44px);
-      /* Fill from one side to the other */
+      font-size: clamp(16px, 5vw, 36px);
+      line-height: 1.2;
       max-width: 100vw;
-      /* Make long lines look clean on mobile too */
       text-align: justify;
       text-justify: inter-word;
-      hyphens: auto;
-      -webkit-hyphens: auto;
-      -ms-hyphens: auto;
     }
 
-    /* Black veil with a circular “window” that follows pointer/touch */
     .veil {
       position: fixed;
       inset: 0;
       background: #000;
-      pointer-events: none; /* keep page interactive if needed */
+      pointer-events: none;
       --x: 50vw;
       --y: 50vh;
       -webkit-mask: radial-gradient(
@@ -68,15 +56,42 @@
         #000 100%
       );
     }
-
-    /* Improve tap targets & rendering on iOS */
-    body {
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
-    }
   </style>
 </head>
 <body>
   <main class="content">
     <p class="copy">
-      INFO: LIGHTING DESIGN/BUILD COMPETITION — ALL ENTRIES MUST BE DESIGNED TO HANG FROM A WIRE OR CABLE. THERE ARE NO RESTRICTIONS ON SIZE. PARTICIPANTS MAY EITHER PURCHASE A BULB AND
+      INFO: LIGHTING DESIGN/BUILD COMPETITION — ALL ENTRIES MUST BE DESIGNED TO HANG FROM A WIRE OR CABLE. THERE ARE NO SIZE RESTRICTIONS. PARTICIPANTS MUST SOURCE THEIR OWN COMPONENTS. ALLOWED MATERIALS INCLUDE PAPER, METAL, AND CLOTH. THE COMPETITION IS OPEN-ENDED, BUT FOR INSPIRATION THINK ABOUT BIOPHILIC DESIGN AND THE MOON. PRIZES WILL BE AWARDED TO THE TOP THREE MOST VISUALLY COMPELLING DESIGNS.
+    </p>
+  </main>
+
+  <div class="veil" id="veil"></div>
+
+  <script>
+    (function () {
+      const veil = document.getElementById('veil');
+
+      function updateSpot(e) {
+        let x = e.clientX, y = e.clientY;
+        if (e.touches && e.touches[0]) {
+          x = e.touches[0].clientX;
+          y = e.touches[0].clientY;
+        }
+        veil.style.setProperty('--x', x + 'px');
+        veil.style.setProperty('--y', y + 'px');
+      }
+
+      document.addEventListener('mousemove', updateSpot, { passive: true });
+      document.addEventListener('touchstart', updateSpot, { passive: true });
+      document.addEventListener('touchmove', updateSpot, { passive: true });
+
+      function centerSpot() {
+        veil.style.setProperty('--x', (window.innerWidth / 2) + 'px');
+        veil.style.setProperty('--y', (window.innerHeight / 2) + 'px');
+      }
+      window.addEventListener('resize', centerSpot);
+      centerSpot();
+    })();
+  </script>
+</body>
+</html>
