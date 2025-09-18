@@ -5,103 +5,78 @@
   <title>Lighting Design/Build Competition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --spot-radius: 160px; /* spotlight radius */
+    :root{
+      /* Responsive spotlight size: min/max keep it usable on phones & desktops */
+      --spot-size: clamp(120px, 22vmin, 260px);
+      --bg: #ffb53a; /* warm yellow-orange solid */
     }
 
     html, body {
       margin: 0;
       height: 100%;
       width: 100%;
+      background: #000; /* covered by veil; content sits underneath */
+      font-family: Helvetica, Arial, sans-serif;
     }
 
-    /* Content background and text */
     .content {
       position: relative;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #ffb53a; /* solid warm yellow-orange */
-      font-family: Helvetica, Arial, sans-serif;
-      text-transform: uppercase;
-    }
-
-    .wrap {
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow: auto;
+      min-height: 100%;
+      background: var(--bg);
       color: #000;
-      font-size: clamp(20px, 5vw, 48px); /* responsive scaling */
-      line-height: 1.2;
-      text-align: center;
-      font-weight: 600;
+      /* All caps, tight leading for poster feel */
+      text-transform: uppercase;
+      line-height: 1.15;
+      display: grid;
+      align-items: center;
     }
 
-    /* Black veil with circular spotlight */
+    /* Single paragraph that stretches edge-to-edge with breathable padding */
+    .copy {
+      /* Full width, but keep small gutters for readability */
+      padding: 4vw;
+      margin: 0;
+      /* Scale text fluidly across devices */
+      font-weight: 600;
+      font-size: clamp(16px, 5.2vw, 44px);
+      /* Fill from one side to the other */
+      max-width: 100vw;
+      /* Make long lines look clean on mobile too */
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+    }
+
+    /* Black veil with a circular “window” that follows pointer/touch */
     .veil {
       position: fixed;
       inset: 0;
       background: #000;
-      pointer-events: none;
+      pointer-events: none; /* keep page interactive if needed */
       --x: 50vw;
       --y: 50vh;
       -webkit-mask: radial-gradient(
-        circle var(--spot-radius) at var(--x) var(--y),
+        circle var(--spot-size) at var(--x) var(--y),
         transparent 0 98%,
         #000 100%
       );
       mask: radial-gradient(
-        circle var(--spot-radius) at var(--x) var(--y),
+        circle var(--spot-size) at var(--x) var(--y),
         transparent 0 98%,
         #000 100%
       );
     }
+
+    /* Improve tap targets & rendering on iOS */
+    body {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
   </style>
 </head>
 <body>
-  <div class="content">
-    <div class="wrap">
-      INFO: Lighting Design/Build Competition<br><br>
-      All entries must be designed to hang from a wire or cable. There are no restrictions on size.<br><br>
-      Participants may either purchase a bulb and socket set with wire for $10 by emailing 
-      <strong>bluetilespace@gmail.com</strong>, or source their own components from scrap or discarded fixtures.<br><br>
-      The competition is intentionally open-ended. For inspiration, consider themes of biophilic design and the moon.<br><br>
-      Prizes will be awarded to the top three most visually compelling designs.
-    </div>
-  </div>
-
-  <!-- Black overlay with spotlight -->
-  <div class="veil" id="veil"></div>
-
-  <script>
-    (function () {
-      const veil = document.getElementById('veil');
-
-      function updateSpot(e) {
-        let x = e.clientX;
-        let y = e.clientY;
-        if (e.touches && e.touches[0]) {
-          x = e.touches[0].clientX;
-          y = e.touches[0].clientY;
-        }
-        veil.style.setProperty('--x', x + 'px');
-        veil.style.setProperty('--y', y + 'px');
-      }
-
-      document.addEventListener('mousemove', updateSpot, { passive: true });
-      document.addEventListener('touchmove', updateSpot, { passive: true });
-
-      function centerSpot() {
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2;
-        veil.style.setProperty('--x', cx + 'px');
-        veil.style.setProperty('--y', cy + 'px');
-      }
-      window.addEventListener('resize', centerSpot);
-      centerSpot();
-    })();
-  </script>
-</body>
-</html>
+  <main class="content">
+    <p class="copy">
+      INFO: LIGHTING DESIGN/BUILD COMPETITION — ALL ENTRIES MUST BE DESIGNED TO HANG FROM A WIRE OR CABLE. THERE ARE NO RESTRICTIONS ON SIZE. PARTICIPANTS MAY EITHER PURCHASE A BULB AND
