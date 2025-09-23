@@ -16,8 +16,12 @@
       background: var(--bg);
       color: var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      cursor: none !important;
       overflow: hidden;
+    }
+
+    /* Remove all system cursors */
+    * {
+      cursor: none !important;
     }
 
     .wrap {
@@ -25,7 +29,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      height: 100%;
+      height: 200vh; /* extra space to allow scroll */
+      width: 200vw;
       padding-left: 6vw;
       gap: 1.5rem;
     }
@@ -55,15 +60,19 @@
     }
 
     .bird {
-      position: fixed;
-      bottom: 50%;
-      left: 50%;
-      width: 30px;
-      height: 20px;
-      background: var(--fg);
-      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
-      opacity: 0.85;
+      position: absolute;
+      width: 40px;
+      height: 40px;
       z-index: 5000;
+    }
+
+    #upload {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: var(--fg);
+      font-size: 0.9rem;
+      z-index: 10000;
     }
   </style>
 </head>
@@ -77,29 +86,38 @@
     <a class="nav" href="art.html">ART</a>
   </div>
 
+  <!-- Custom triangle cursor -->
   <div id="custom-cursor"></div>
-  <div class="bird" id="bird"></div>
+
+  <!-- Bird element -->
+  <img class="bird" id="bird" src="" alt="bird" />
+
+  <!-- Upload bird PNG -->
+  <input type="file" id="upload" accept="image/png, image/jpeg" />
 
   <script>
     const cursor = document.getElementById('custom-cursor');
     const bird = document.getElementById('bird');
+    const upload = document.getElementById('upload');
 
-    // Hide native cursor completely
-    document.body.style.cursor = 'none';
-
+    // Triangle cursor follow
     window.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     }, { passive: true });
 
-    // Bird movement
+    // Bird starting position
     let birdX = window.innerWidth / 2;
     let birdY = window.innerHeight / 2;
-    const step = 20;
+    const step = 40;
 
     function updateBird() {
-      bird.style.transform = `translate(${birdX - 15}px, ${birdY - 10}px)`;
+      bird.style.left = birdX + 'px';
+      bird.style.top = birdY + 'px';
+      // Scroll screen so bird stays centered
+      window.scrollTo(birdX - window.innerWidth / 2, birdY - window.innerHeight / 2);
     }
 
+    // Initial update
     updateBird();
 
     window.addEventListener('keydown', (e) => {
@@ -112,11 +130,21 @@
       updateBird();
     });
 
-    // Touch fallback
-    if (matchMedia('(pointer: coarse)').matches) {
-      cursor.style.display = 'none';
-      bird.style.display = 'none';
-      document.body.style.cursor = 'auto';
+    // Handle bird image upload
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        bird.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Default placeholder (triangle bird if no upload)
+    if (!bird.src) {
+      bird.src = "data:image/svg+xml;utf8," + 
+        encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><polygon points="0,40 20,0 40,40" fill="white"/></svg>');
     }
   </script>
 </body>
