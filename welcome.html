@@ -61,15 +61,6 @@
       background: white;
       mix-blend-mode: difference;
     }
-
-    /* Bird */
-    .bird {
-      position: fixed;
-      width: 40px;
-      height: 40px;
-      z-index: 500;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body>
@@ -82,45 +73,15 @@
     <a class="nav" href="art.html">ART</a>
   </div>
 
-  <img class="bird" id="bird" src="bird.png" alt="bird" />
   <div id="custom-cursor"></div>
 
   <script>
     const cursor = document.getElementById('custom-cursor');
-    const bird = document.getElementById('bird');
 
-    // custom cursor
+    // custom cursor follows mouse
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     });
-
-    // Bird movement
-    let birdX = window.innerWidth / 2;
-    let birdY = window.innerHeight / 2;
-    const step = 25;
-
-    function updateBird() {
-      bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-    }
-
-    updateBird();
-
-    window.addEventListener('keydown', (e) => {
-      switch (e.key) {
-        case 'ArrowUp': birdY = Math.max(0, birdY - step); break;
-        case 'ArrowDown': birdY = Math.min(window.innerHeight - 40, birdY + step); break;
-        case 'ArrowLeft': birdX = Math.max(0, birdX - step); break;
-        case 'ArrowRight': birdX = Math.min(window.innerWidth - 40, birdX + step); break;
-      }
-      updateBird();
-    });
-
-    // Fallback if bird.png is missing
-    bird.onerror = () => {
-      bird.style.background = 'white';
-      bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
-      bird.removeAttribute('src');
-    };
   </script>
 </body>
 </html>
