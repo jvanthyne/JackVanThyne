@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hidden Wireframe Earth</title>
+  <title>Hidden Sun – Edge Reveal</title>
   <style>
     :root { --bg:#0a0a0a; --fg:#eaeaea; }
     html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
@@ -22,29 +22,23 @@
     .world { position:absolute; inset:0 auto 0 0; width:200vw; height:100vh; display:flex; will-change:transform; }
     .main-area { width:100vw; height:100vh; }
 
-    .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background: radial-gradient(1000px 600px at 60% 40%, #060e18 0%, #000 70%); position:relative; overflow:hidden; }
+    .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background: radial-gradient(1000px 600px at 60% 40%, #0b0b00 0%, #000 70%); position:relative; overflow:hidden; }
 
-    /* Cooler, simpler wireframe globe */
-    .globe { width:min(50vmin, 420px); aspect-ratio:1; position:relative; display:grid; place-items:center; filter: drop-shadow(0 0 18px rgba(120,220,255,.18)); }
-    .globe-tilt { transform: rotateX(18deg) rotateZ(-8deg); transform-style:preserve-3d; }
-    .globe-spin { animation: spin 36s linear infinite; }
-    @keyframes spin { to { transform: rotateY(360deg); } }
+    /* Large yellow sun (simple) */
+    .sun { width:min(52vmin, 440px); aspect-ratio:1; border-radius:50%;
+      background: radial-gradient(40% 40% at 35% 30%, rgba(255,255,210,.95), rgba(255,235,120,.88) 40%, rgba(255,210,50,.78) 65%, rgba(255,180,0,.62) 78%, rgba(255,150,0,.0) 100%);
+      box-shadow: 0 0 60px rgba(255,210,80,.35), 0 0 140px rgba(255,180,0,.15);
+      position: relative;
+    }
 
-    .glow { position:absolute; inset:0; border-radius:50%; background: radial-gradient(45% 45% at 35% 30%, rgba(120,220,255,.18), transparent 60%), radial-gradient(120% 120% at 50% 50%, rgba(0,40,80,.9) 0%, rgba(0,0,0,1) 70%); mix-blend-mode:screen; pointer-events:none; }
-    .ring { position:absolute; inset:-6% -6% 0 -6%; transform: rotateX(75deg); border-radius:50%; box-shadow: 0 0 0 1px rgba(150,220,255,.12) inset; filter: blur(0.5px) drop-shadow(0 0 10px rgba(140,220,255,.08)); pointer-events:none; }
-
-    /* Wireframe via SVG strokes */
-    .globe svg { width:100%; height:auto; display:block; }
-    .stroke { stroke: rgba(180,230,255,.32); stroke-width:0.8; fill:none; }
-
-    /* Swarm of tiny birds orbiting the globe */
-    .swarm { position:absolute; width: min(60vmin, 480px); aspect-ratio:1; display:grid; place-items:center; pointer-events:none; }
+    /* Swarm of tiny birds orbiting the sun */
+    .swarm { position:absolute; width: min(62vmin, 500px); aspect-ratio:1; display:grid; place-items:center; pointer-events:none; }
     .orbit { position:absolute; inset:0; animation: orbit linear infinite; }
     @keyframes orbit { to { transform: rotate(360deg); } }
-    .dot, .tri { position:absolute; left:50%; top:50%; transform-origin: 0 0; opacity:.9; }
-    .dot { width:3px; height:3px; background:#eaf6ff; border-radius:50%; filter: drop-shadow(0 0 2px rgba(200,255,255,.35)); animation: flutter 2.6s ease-in-out infinite alternate; }
-    .tri { width:0; height:0; border-left:3px solid transparent; border-right:3px solid transparent; border-bottom:5px solid #e7faff; filter: drop-shadow(0 0 2px rgba(200,255,255,.35)); animation: flutter 2.2s ease-in-out infinite alternate; }
-    @keyframes flutter { from { transform: translate(calc(50% + var(--r,120px)), 50%) rotate(-8deg) scale(1); } to { transform: translate(calc(50% + var(--r,120px)), 50%) rotate(8deg) scale(1.12); } }
+    .dot, .tri { position:absolute; left:50%; top:50%; transform-origin: 0 0; opacity:.95; }
+    .dot { width:3px; height:3px; background:#fff7d1; border-radius:50%; filter: drop-shadow(0 0 2px rgba(255,240,160,.5)); animation: flutter 2.6s ease-in-out infinite alternate; }
+    .tri { width:0; height:0; border-left:3px solid transparent; border-right:3px solid transparent; border-bottom:5px solid #fff0a8; filter: drop-shadow(0 0 2px rgba(255,240,160,.45)); animation: flutter 2.2s ease-in-out infinite alternate; }
+    @keyframes flutter { from { transform: translate(calc(50% + var(--r,120px)), 50%) rotate(-6deg) scale(1); } to { transform: translate(calc(50% + var(--r,120px)), 50%) rotate(6deg) scale(1.08); } }
 
     /* Bird controlled by arrows (eased, natural) */
     #bird { position:fixed; width:40px; height:40px; z-index:500; pointer-events:none; }
@@ -65,34 +59,8 @@
   <div class="world" id="world">
     <div class="main-area"></div>
     <div class="hidden-page">
-      <div class="globe">
-        <div class="glow"></div>
-        <div class="ring"></div>
-        <div class="globe-tilt">
-          <div class="globe-spin">
-            <!-- Minimal wireframe using SVG: denser latitudes + meridians -->
-            <svg viewBox="-50 -50 100 100" aria-hidden="true">
-              <circle class="stroke" r="49"/>
-              <!-- latitudes -->
-              <ellipse class="stroke" rx="49" ry="40"/>
-              <ellipse class="stroke" rx="49" ry="30"/>
-              <ellipse class="stroke" rx="49" ry="20"/>
-              <ellipse class="stroke" rx="49" ry="10"/>
-              <!-- meridians -->
-              <circle class="stroke" r="49" transform="rotate(15) skewX(40)"/>
-              <circle class="stroke" r="49" transform="rotate(45) skewX(20)"/>
-              <circle class="stroke" r="49" transform="rotate(75) skewX(10)"/>
-              <circle class="stroke" r="49" transform="rotate(-15) skewX(-40)"/>
-              <circle class="stroke" r="49" transform="rotate(-45) skewX(-20)"/>
-              <circle class="stroke" r="49" transform="rotate(-75) skewX(-10)"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <!-- orbiting birds around the globe -->
-      <div class="swarm" id="swarm"></div>
-    </div>
-      <!-- orbiting birds around the globe -->
+      <div class="sun"></div>
+      <!-- orbiting birds around the sun -->
       <div class="swarm" id="swarm"></div>
     </div>
   </div>
@@ -117,14 +85,15 @@
     let birdY = Math.round(window.innerHeight * 0.5);
     let vx = 0, vy = 0;           // velocity
     const accel = 1.2;            // acceleration per frame when key held
-    const maxSpeed = 12;          // clamp top speed
+    const maxSpeed = 10;          // top speed (slower)
     const friction = 0.90;        // slow down when no input
     const birdSize = 40;
 
-    // World sliding (eased) when pushing right edge
+    // World sliding (eased) when pushing right edge; and allows flying back left
     let offsetX = 0;              // current world offset
     let targetOffsetX = 0;        // target world offset (we ease toward this)
-    const slideSpeed = 14;        // how much target moves per push
+    const slideSpeed = 12;        // how much target moves per push
+    const maxWorldOffset = () => Math.max(0, world.scrollWidth - window.innerWidth);
 
     const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
     addEventListener('keydown', (e) => { if (e.key in keys) { keys[e.key] = true; e.preventDefault(); } }, {passive:false});
@@ -133,33 +102,39 @@
     function clamp(v,min,max){ return v<min?min:v>max?max:v; }
 
     function physics(){
-      // accelerate
+      // accelerate by input
       if (keys.ArrowLeft)  vx -= accel;
       if (keys.ArrowRight) vx += accel;
       if (keys.ArrowUp)    vy -= accel;
       if (keys.ArrowDown)  vy += accel;
 
-      // friction
+      // friction & clamp
       vx *= friction; vy *= friction;
-
-      // clamp speed
-      const speed = Math.hypot(vx, vy);
-      if (speed > maxSpeed){ const s = maxSpeed / speed; vx *= s; vy *= s; }
+      const sp = Math.hypot(vx, vy);
+      if (sp > maxSpeed){ const s = maxSpeed / sp; vx *= s; vy *= s; }
 
       // integrate
       birdX += vx; birdY += vy;
 
-      // bounds (before world slide)
+      // bounds
       const rightEdge = window.innerWidth - birdSize;
       if (birdX < 0){ birdX = 0; vx = 0; }
-      if (birdX > rightEdge){ birdX = rightEdge; if (keys.ArrowRight){ targetOffsetX = Math.min(window.innerWidth, targetOffsetX + slideSpeed); } }
+      if (birdX > rightEdge){ birdX = rightEdge; }
       if (birdY < 0){ birdY = 0; vy = 0; }
       if (birdY > window.innerHeight - birdSize){ birdY = window.innerHeight - birdSize; vy = 0; }
+
+      // world slide when at edges
+      if (keys.ArrowRight && birdX >= rightEdge){
+        targetOffsetX = Math.min(maxWorldOffset(), targetOffsetX + slideSpeed);
+      }
+      if (keys.ArrowLeft && targetOffsetX > 0 && birdX <= 0){
+        targetOffsetX = Math.max(0, targetOffsetX - slideSpeed);
+      }
 
       // ease world toward target offset
       offsetX += (targetOffsetX - offsetX) * 0.08;
 
-      // apply transforms
+      // apply
       bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
       world.style.transform = `translateX(${-offsetX}px)`;
 
@@ -175,32 +150,34 @@
     requestAnimationFrame(physics);
 
     // Build orbiting birds with varied radii/speeds
-    function buildSwarm(count=64){
+    function buildSwarm(count=90){
       swarm.innerHTML='';
       for(let i=0;i<count;i++){
         const o = document.createElement('div');
         o.className = 'orbit';
-        o.style.animationDuration = (38 + Math.random()*62) + 's'; // slower, natural
+        o.style.animationDuration = (48 + Math.random()*72) + 's'; // slower
         o.style.transform = `rotate(${Math.random()*360}deg)`;
         const d = document.createElement('div');
         d.className = Math.random() < 0.7 ? 'dot' : 'tri';
-        const r = 70 + Math.random()*90; // radius from center
+        const r = 80 + Math.random()*110; // radius from center
         d.style.setProperty('--r', r + 'px');
         o.appendChild(d);
         swarm.appendChild(o);
       }
     }
-    buildSwarm(72);
+    buildSwarm(90);
 
-    // Click anywhere on hidden page to close
+    // Click anywhere on hidden page to close (also allowed to fly back with ←)
     document.querySelector('.hidden-page').addEventListener('click', () => {
       targetOffsetX = 0; // ease back
     });
 
     // Resize handling
     addEventListener('resize', () => {
-      birdX = clamp(birdX, 0, window.innerWidth - birdSize);
-      birdY = clamp(birdY, 0, window.innerHeight - birdSize);
+      const clampX = clamp(birdX, 0, window.innerWidth - birdSize);
+      const clampY = clamp(birdY, 0, window.innerHeight - birdSize);
+      birdX = clampX; birdY = clampY;
+      targetOffsetX = clamp(targetOffsetX, 0, maxWorldOffset());
     });
 
     // Fallback if bird.png missing
