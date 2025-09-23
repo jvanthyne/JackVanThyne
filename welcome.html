@@ -9,146 +9,70 @@
       --bg: #0a0a0a;          /* very dark background */
       --fg: #eaeaea;          /* light foreground */
       --accent: #8dfcff;      /* subtle cyan focus ring */
-      --hue: 220deg;          /* base hue for accents */          /* base hue for cursor/accents (cube vibe) */
     }
 
     html, body { height: 100%; }
 
     body {
       margin: 0;
-      background: radial-gradient(1200px 900px at 70% 40%, #0f1220 0%, var(--bg) 60%);
+      background: var(--bg);
       color: var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       cursor: none; /* hide default cursor */
-      overflow: hidden; /* keep the planet scene tidy */
+      overflow: hidden; /* keep things tidy */
     }
 
-    /* Layout: left stack of links, right cosmic scene */
-    .page {
-      position: fixed; inset: 0; display: grid; grid-template-columns: 1fr min(40vw, 520px);
-    }
+    /* Single-column layout; text left-aligned */
+    .page { position: fixed; inset: 0; display: block; }
 
     .wrap {
       display: grid; align-content: center; gap: 2.2rem; padding: 8vh 6vw;
-      pointer-events: none; /* disable clicks on container */
+      pointer-events: none; /* disable container clicks */
     }
 
     a.nav {
       display: inline; /* click only on the text */
       text-decoration: none; color: var(--fg);
       font-size: clamp(2.25rem, 7.5vw, 7rem);
-      line-height: 1.05; letter-spacing: 0.01em; position: relative;
-      transition: opacity 200ms ease;
-      will-change: opacity;
-      pointer-events: auto; /* re-enable click on the link itself */
+      line-height: 1.05; letter-spacing: 0.01em;
+      pointer-events: auto; /* links remain clickable */
+      transition: opacity 160ms ease;
     }
     a.nav:hover { opacity: 0.85; text-decoration: underline; }
-    a.nav:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent); width: max-content; }
+    a.nav:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent); }
 
-    .wrap::before { /* vertical guide */
+    /* Subtle left guide */
+    .wrap::before {
       content: ""; position: fixed; top: 0; left: 6vw; bottom: 0; width: 1px;
       background: linear-gradient(transparent, rgba(255,255,255,0.08), transparent);
       pointer-events: none;
     }
 
-    /* Right cosmic scene */
-    .cosmos { position: relative; }
-
-    /* Subtle starfield */
-    .stars, .stars::before, .stars::after {
-      position: absolute; inset: 0; content: ""; pointer-events: none;
-      background-image:
-        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.6) 50%, transparent 51%),
-        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.45) 50%, transparent 51%),
-        radial-gradient(1px 1px at 70% 30%, rgba(255,255,255,.5) 50%, transparent 51%),
-        radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,.35) 50%, transparent 51%),
-        radial-gradient(1px 1px at 55% 50%, rgba(255,255,255,.55) 50%, transparent 51%);
-      opacity: .6;
-      animation: drift 40s linear infinite;
-    }
-    .stars::before { filter: blur(0.6px); opacity: .5; animation-duration: 65s; }
-    .stars::after  { filter: blur(1.2px); opacity: .35; animation-duration: 95s; }
-    @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
-
-    /* Planet */
-    .planet {
-      position: relative; width: min(36vmin, 360px); height: min(36vmin, 360px); border-radius: 50%;
-      background: radial-gradient(60% 60% at 40% 35%, rgba(255,255,255,.06), transparent 70%),
-                  radial-gradient(120% 120% at 50% 50%, #0a0f1a 0%, #06080f 70%, #000 100%);
-      box-shadow: inset -22px -22px 48px rgba(0,0,0,.65);
-    }
-    .planet {
-      position: relative; width: min(36vmin, 360px); height: min(36vmin, 360px); border-radius: 50%;
-      background:
-        radial-gradient(60% 60% at 40% 35%, hsla(var(--hue), 85%, 65%, .18), transparent 70%),
-        radial-gradient(90% 90% at 60% 65%, hsla(calc(var(--hue) + 140deg), 90%, 60%, .14), transparent 70%),
-        radial-gradient(120% 120% at 50% 50%, #0a0f1a 0%, #05070c 65%, #000 100%);
-      box-shadow:
-        0 0 40px rgba(147, 234, 255, .15),
-        inset -30px -30px 60px rgba(0,0,0,.6),
-        inset 18px 18px 40px rgba(255,255,255,.05);
-      animation: spin 120s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Planet ring (faint) */
-    .ring {
-      position: absolute; inset: 0; transform: rotateX(68deg);
-      border-radius: 50%;
-      box-shadow: 0 0 0 1px rgba(170, 220, 255, .06) inset;
-      filter: drop-shadow(0 0 8px rgba(140, 220, 255, .06));
-    }
-
-    /* Bird swarm: tiny boids orbiting the planet */
-    .swarm { position: absolute; inset: 0; display: grid; place-items: center; }
-    .orbit { position: absolute; width: 100%; height: 100%; will-change: transform; animation: orbit linear infinite; }
-    @keyframes orbit { to { transform: rotate(360deg); } }
-
-    .bird {
-      position: absolute; left: 50%; top: 50%; width: 0; height: 0;
-      border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 5px solid #e7faff;
-      opacity: .85;
-      /* transform set in JS to radius around planet */
-    }
-
-    /* generate varied radii/speeds */
-    .o1 { animation-duration: 26s; }   .o2 { animation-duration: 34s; }
-    .o3 { animation-duration: 42s; }   .o4 { animation-duration: 55s; }
-    .o5 { animation-duration: 67s; }   .o6 { animation-duration: 80s; }
-
-    .r1 .bird{ transform: rotate(10deg) translateX(140px) rotate(-10deg); }
-    .r2 .bird{ transform: rotate(70deg) translateX(165px) rotate(-70deg); }
-    .r3 .bird{ transform: rotate(130deg) translateX(190px) rotate(-130deg); }
-    .r4 .bird{ transform: rotate(200deg) translateX(150px) rotate(-200deg); }
-    .r5 .bird{ transform: rotate(260deg) translateX(175px) rotate(-260deg); }
-    .r6 .bird{ transform: rotate(320deg) translateX(205px) rotate(-320deg); }
-
-    /* Custom triangle cursor */
+    /* Triangle cursor — super simple and stable */
     .tri-cursor {
       position: fixed; left: 0; top: 0; width: 18px; height: 18px; pointer-events: none; z-index: 9999;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      mix-blend-mode: difference; background: #fff;
-      outline: 1px solid rgba(0,0,0,.2); /* subtle edge for visibility */
-      will-change: transform;
+      mix-blend-mode: difference; background: #fff; /* inverts whatever is beneath */
+      will-change: transform; /* GPU hint */
     }
-    .cursor-dot { position: fixed; width: 6px; height: 6px; border-radius: 50%; background:#fff; mix-blend-mode:difference; pointer-events:none; z-index: 9998; opacity: 0.9; transition: transform 120ms linear, opacity 300ms ease; }
+    .cursor-dot { position: fixed; width: 6px; height: 6px; border-radius: 50%; background:#fff; mix-blend-mode:difference; pointer-events:none; z-index: 9998; opacity: 0.9; will-change: transform; }
 
-    /* Motion preferences */
     @media (prefers-reduced-motion: reduce) {
-      .stars, .planet, .orbit { animation: none !important; }
+      a.nav { transition: none; }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="wrap" role="navigation" aria-label="Main">
-      <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
-      <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
-      <a class="nav" href="archive.html">ARCHIVE</a>
-      <a class="nav" href="products.html">PRODUCTS</a>
-      <a class="nav" href="works.html">WORKS</a>
+      <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a><br/>
+      <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a><br/>
+      <a class="nav" href="archive.html">ARCHIVE</a><br/>
+      <a class="nav" href="products.html">PRODUCTS</a><br/>
+      <a class="nav" href="works.html">WORKS</a><br/>
       <a class="nav" href="art.html">ART</a>
     </div>
+  </div>
 
     <!-- Cosmic scene on the right -->
     <div class="cosmos">
@@ -174,83 +98,35 @@
   <div class="cursor-dot" aria-hidden="true"></div>
 
   <script>
-    // --- Triangle cursor (smoothed + efficient via rAF) ---
+    // Ultra-stable triangle cursor: no rotation, no hue shifts, no easing
     const tri = document.querySelector('.tri-cursor');
     const dot = document.querySelector('.cursor-dot');
-    let targetX = 0, targetY = 0, x = 0, y = 0, lastX = 0, lastY = 0;
 
-    window.addEventListener('mousemove', (e) => { targetX = e.clientX; targetY = e.clientY; }, { passive: true });
+    let mx = 0, my = 0, needsUpdate = false;
+    window.addEventListener('pointermove', (e) => {
+      mx = e.clientX; my = e.clientY; needsUpdate = true;
+    }, { passive: true });
 
-    function cursorTick(){
-      // ease towards target for stability
-      x += (targetX - x) * 0.35;
-      y += (targetY - y) * 0.35;
-      tri.style.transform = `translate(${x - 9}px, ${y - 6}px)`;
-      dot.style.transform = `translate(${x - 3}px, ${y - 3}px)`;
-      const dx = x - lastX, dy = y - lastY;
-      if (dx || dy){
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-        tri.style.rotate = angle + 'deg';
-        lastX = x; lastY = y;
+    function frame(){
+      if (needsUpdate){
+        tri.style.transform = `translate(${mx - 9}px, ${my - 6}px)`;
+        dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
+        needsUpdate = false;
       }
-      requestAnimationFrame(cursorTick);
+      requestAnimationFrame(frame);
     }
-    requestAnimationFrame(cursorTick);
+    requestAnimationFrame(frame);
 
+    // Hide dot when cursor leaves the window
     window.addEventListener('mouseleave', () => { dot.style.opacity = '0'; });
     window.addEventListener('mouseenter', () => { dot.style.opacity = '0.9'; });
 
-    // Touch support: default cursor on coarse pointers
+    // Touch support: use default cursor on coarse pointers
     if (matchMedia('(pointer: coarse)').matches){
       document.body.style.cursor = 'auto';
       tri.style.display = 'none';
       dot.style.display = 'none';
     }
-
-    // --- Generate many birds concentrated around the planet ---
-    const swarm = document.querySelector('.swarm');
-    const planet = document.querySelector('.planet');
-    const planetWrap = document.querySelector('.planet-wrap');
-
-    function spawnBirds(count = 80){
-      const size = Math.min(planet.offsetWidth, planet.offsetHeight);
-      const baseR = size * 0.58; // near planet rim
-      for (let i = 0; i < count; i++){
-        const orbit = document.createElement('div');
-        orbit.className = 'orbit';
-        const speed = 22 + Math.random() * 65; // 22s–87s
-        orbit.style.animationDuration = speed + 's';
-        const tilt = (Math.random() * 22 - 11); // -11deg..11deg
-        orbit.style.transform = `rotate(${Math.random()*360}deg) rotateX(${tilt}deg)`;
-
-        const bird = document.createElement('div');
-        bird.className = 'bird';
-        const r = baseR + (Math.random() * size * 0.25 - size * 0.12);
-        bird.style.transform = `translate(-50%, -50%) rotate(0deg) translateX(${r}px) rotate(0deg)`;
-        orbit.appendChild(bird);
-        swarm.appendChild(orbit);
-      }
-    }
-
-    // Clear and repopulate for density
-    swarm.innerHTML = '';
-    spawnBirds(140);
-
-    // Planet click -> attempt to close tab
-    function closeTab(){
-      try { window.open('', '_self'); } catch(e){}
-      try { window.close(); } catch(e){}
-      setTimeout(() => { try { window.location.href = 'about:blank'; } catch(e){} }, 120);
-    }
-    planetWrap.addEventListener('click', closeTab);
-
-    // --- Subtle hue shift by mouse X (space vibe) ---
-    window.addEventListener('mousemove', (e) => {
-      const w = window.innerWidth;
-      const pct = Math.min(1, Math.max(0, e.clientX / w));
-      const hue = 200 + pct * 40; // cyan→deep blue
-      document.documentElement.style.setProperty('--hue', hue + 'deg');
-    }, { passive: true });
   </script>
 </body>
 </html>
