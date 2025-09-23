@@ -11,39 +11,43 @@
     }
 
     html, body {
-      height: 100%;
       margin: 0;
+      height: 100%;
+      overflow: hidden;
       background: var(--bg);
       color: var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      overflow: hidden;
-    }
-
-    /* Remove all system cursors */
-    * {
       cursor: none !important;
     }
 
+    /* Large world to fly around */
+    .world {
+      position: absolute;
+      width: 300vw;
+      height: 300vh;
+      background: var(--bg);
+    }
+
     .wrap {
+      position: absolute;
+      top: 20%;
+      left: 20%;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      height: 200vh; /* extra space to allow scroll */
-      width: 200vw;
-      padding-left: 6vw;
-      gap: 1.5rem;
+      gap: 2rem;
     }
 
     a.nav {
       text-decoration: none;
       color: var(--fg);
-      font-size: clamp(5rem, 10vw, 9rem);
+      font-size: clamp(4rem, 8vw, 8rem);
       line-height: 1;
       pointer-events: auto;
     }
 
-    a.nav:hover { color: var(--fg); }
+    a.nav:hover {
+      color: #ff4081;
+    }
 
     /* Triangle cursor */
     #custom-cursor {
@@ -59,66 +63,66 @@
       mix-blend-mode: difference;
     }
 
+    /* Bird */
     .bird {
       position: absolute;
       width: 40px;
       height: 40px;
       z-index: 5000;
+      pointer-events: none;
     }
 
-    #upload {
+    /* Upload input hidden, triggered by key */
+    #birdUpload {
       position: fixed;
       bottom: 10px;
-      right: 10px;
+      left: 10px;
       color: var(--fg);
+      background: #222;
+      padding: 6px;
+      border-radius: 4px;
       font-size: 0.9rem;
-      z-index: 10000;
     }
   </style>
 </head>
 <body>
-  <div class="wrap" role="navigation" aria-label="Main">
-    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
-    <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
-    <a class="nav" href="archive.html">ARCHIVE</a>
-    <a class="nav" href="products.html">PRODUCTS</a>
-    <a class="nav" href="works.html">WORKS</a>
-    <a class="nav" href="art.html">ART</a>
+  <div class="world" id="world">
+    <div class="wrap" role="navigation" aria-label="Main">
+      <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
+      <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
+      <a class="nav" href="archive.html">ARCHIVE</a>
+      <a class="nav" href="products.html">PRODUCTS</a>
+      <a class="nav" href="works.html">WORKS</a>
+      <a class="nav" href="art.html">ART</a>
+    </div>
+    <img class="bird" id="bird" src="" alt="bird" />
   </div>
 
-  <!-- Custom triangle cursor -->
   <div id="custom-cursor"></div>
 
-  <!-- Bird element -->
-  <img class="bird" id="bird" src="" alt="bird" />
-
-  <!-- Upload bird PNG -->
-  <input type="file" id="upload" accept="image/png, image/jpeg" />
+  <input type="file" id="birdUpload" accept="image/*" />
 
   <script>
     const cursor = document.getElementById('custom-cursor');
     const bird = document.getElementById('bird');
-    const upload = document.getElementById('upload');
+    const world = document.getElementById('world');
 
-    // Triangle cursor follow
-    window.addEventListener('mousemove', (e) => {
+    // custom cursor
+    document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
-    }, { passive: true });
+    });
 
-    // Bird starting position
+    // Bird control
     let birdX = window.innerWidth / 2;
     let birdY = window.innerHeight / 2;
-    const step = 40;
+    const step = 25;
 
-    function updateBird() {
-      bird.style.left = birdX + 'px';
-      bird.style.top = birdY + 'px';
-      // Scroll screen so bird stays centered
-      window.scrollTo(birdX - window.innerWidth / 2, birdY - window.innerHeight / 2);
+    function updateView() {
+      bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
+      world.style.transform = `translate(${-birdX + window.innerWidth/2}px, ${-birdY + window.innerHeight/2}px)`;
     }
 
-    // Initial update
-    updateBird();
+    updateView();
 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
@@ -127,24 +131,26 @@
         case 'ArrowLeft': birdX -= step; break;
         case 'ArrowRight': birdX += step; break;
       }
-      updateBird();
+      updateView();
     });
 
-    // Handle bird image upload
+    // Upload custom bird image
+    const upload = document.getElementById('birdUpload');
     upload.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        bird.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          bird.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
-    // Default placeholder (triangle bird if no upload)
+    // Default bird fallback (triangle shape)
     if (!bird.src) {
-      bird.src = "data:image/svg+xml;utf8," + 
-        encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><polygon points="0,40 20,0 40,40" fill="white"/></svg>');
+      bird.style.background = 'white';
+      bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
     }
   </script>
 </body>
