@@ -10,16 +10,17 @@
       --fg: #f3f3f3;
       --edge: rgba(255,255,255,0.08);
       --cube-size: min(72vmin, 680px);
+      --hue: 200deg; /* master hue for subtle color accents */
     }
 
     html, body { height: 100%; }
     body {
       margin: 0;
-      background: radial-gradient(1200px 800px at 60% 40%, #0f0f0f 0%, var(--bg) 60%);
+      background: radial-gradient(1200px 800px at 60% 40%, #0e0e0e 0%, var(--bg) 60%);
       color: var(--fg);
-      overflow: hidden; /* keep it immersive */
+      overflow: hidden; /* immersive */
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      cursor: none; /* we'll draw our own */
+      cursor: none; /* custom cursor */
     }
 
     /* Scene with perspective */
@@ -28,10 +29,11 @@
       inset: 0;
       display: grid;
       place-items: center;
-      perspective: 1400px; /* camera distance */
+      perspective: 1400px;
+      perspective-origin: 50% 50%;
     }
 
-    /* Camera wrapper so we can rotate the whole cube with keys */
+    /* Camera wrapper so we can rotate viewpoint with keys */
     .camera {
       width: var(--cube-size);
       height: var(--cube-size);
@@ -40,7 +42,7 @@
       will-change: transform;
     }
 
-    /* The cube */
+    /* The cube (we render inner faces) */
     .cube {
       position: relative;
       width: 100%;
@@ -53,13 +55,24 @@
       inset: 0;
       background: #000; /* black walls */
       display: grid;
-      place-items: center;
+      place-items: start start; /* LEFT-ALIGNED CONTENT INSIDE CUBE */
+      padding: 6vmin;
       border: 1px solid var(--edge);
-      box-shadow: inset 0 0 120px rgba(255,255,255,0.05);
+      box-shadow: inset 0 0 140px rgba(255,255,255,0.05);
       overflow: hidden;
+      backface-visibility: hidden; /* we only want inner faces */
     }
 
-    /* subtle scanline / noise for texture */
+    /* color tints that shift with --hue for better mood */
+    .wall::before{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(60% 60% at 12% 14%, hsla(var(--hue),88%,58%,0.12), transparent 60%),
+        radial-gradient(60% 60% at 86% 80%, hsla(calc((var(--hue) + 140deg)),88%,58%,0.10), transparent 60%);
+      mix-blend-mode: screen;
+    }
+
+    /* subtle scanlines for texture */
     .wall::after{
       content:"";
       position:absolute; inset:-2px;
@@ -70,36 +83,38 @@
       pointer-events: none;
     }
 
-    /* Position faces */
-    .front  { transform: translateZ(calc(var(--cube-size) / 2)); }
-    .back   { transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2)); }
-    .right  { transform: rotateY(90deg)  translateZ(calc(var(--cube-size) / 2)); }
-    .left   { transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2)); }
-    .top    { transform: rotateX(90deg)  translateZ(calc(var(--cube-size) / 2)); }
-    .bottom { transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2)); }
+    /* Position faces to face INWARD */
+    .front  { transform: translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
+    .back   { transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
+    .right  { transform: rotateY(90deg)  translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
+    .left   { transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
+    .top    { transform: rotateX(90deg)  translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
+    .bottom { transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
 
-    /* Link text on walls */
+    /* Link text on walls (left-aligned) */
     .wall a {
       display: block;
       text-decoration: none;
       color: var(--fg);
-      font-size: clamp(2rem, 7vmin, 5rem);
-      letter-spacing: 0.06em;
+      font-size: clamp(1.8rem, 6.8vmin, 5rem);
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      line-height: 1;
+      line-height: 1.05;
       text-align: left;
-      width: 86%;
-      margin: 0 auto;
-      transform: translateZ(1px); /* avoid z-fighting */
+      width: 88%;
+      transform: translateZ(1px); /* keep above textures */
     }
 
-    .wall a:hover { opacity: 0.75; }
+    .wall a:hover { opacity: 0.8; }
 
-    /* tiny corner hint */
+    /* Bottom-corner script-style hint */
     .hint {
-      position: fixed; left: 14px; bottom: 12px;
-      font-size: 12px; letter-spacing: .08em; opacity: .55;
+      position: fixed; left: 16px; bottom: 14px;
+      font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
+      font-size: 18px; letter-spacing: .02em; opacity: .7;
       user-select: none; pointer-events: none;
+      color: #e9e9e9;
+      text-shadow: 0 0 6px rgba(255,255,255,0.08);
     }
 
     /* Custom triangle cursor */
@@ -108,15 +123,12 @@
       left: 0; top: 0;
       width: 18px; height: 18px;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      background: #fff; /* inverted by mix-blend-mode */
+      background: #fff; /* inverted by blend */
       mix-blend-mode: difference;
       pointer-events: none;
       z-index: 9999;
-      filter: hue-rotate(0deg) saturate(140%);
-      animation: hue 8s linear infinite;
+      filter: hue-rotate(var(--hue)) saturate(130%);
     }
-
-    @keyframes hue { to { filter: hue-rotate(360deg) saturate(140%); } }
 
     .cursor-dot{
       position: fixed; width: 5px; height: 5px; border-radius: 50%;
@@ -125,7 +137,6 @@
 
     @media (prefers-reduced-motion: reduce){
       .camera{ transition:none; }
-      .tri-cursor{ animation:none; }
     }
   </style>
 </head>
@@ -155,7 +166,7 @@
     </div>
   </div>
 
-  <div class="hint">← ↑ → ↓ to look around · click wall text to enter</div>
+  <div class="hint">use arrow keys to move</div>
 
   <!-- Custom cursor elements -->
   <div class="tri-cursor" aria-hidden="true"></div>
@@ -164,19 +175,25 @@
   <script>
     // Keyboard camera control
     const cam = document.getElementById('camera');
-    let rotX = -18; // start in a gentle isometric
+    let rotX = -18; // gentle isometric start
     let rotY = 35;
     const step = 10; // degrees per arrow press
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+    function applyView(){
+      cam.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      const hue = (rotY * 3) % 360; // shift accent as you look around
+      document.documentElement.style.setProperty('--hue', hue + 'deg');
+    }
+    applyView();
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft')  { rotY -= step; }
       if (e.key === 'ArrowRight') { rotY += step; }
       if (e.key === 'ArrowUp')    { rotX -= step; }
       if (e.key === 'ArrowDown')  { rotX += step; }
-      // keep X tilt reasonable so walls stay readable
       rotX = clamp(rotX, -75, 75);
-      cam.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      applyView();
     });
 
     // Triangle cursor follows pointer and rotates to travel direction
@@ -186,7 +203,7 @@
 
     window.addEventListener('mousemove', (e) => {
       const x = e.clientX, y = e.clientY;
-      // position triangle so the tip sits at the pointer
+      // position triangle so tip sits at pointer
       tri.style.transform = `translate(${x - 9}px, ${y - 5}px)`;
       dot.style.transform = `translate(${x - 2.5}px, ${y - 2.5}px)`;
       const dx = x - lastX, dy = y - lastY;
@@ -195,21 +212,12 @@
       lastX = x; lastY = y;
     }, { passive:true });
 
-    // Accessibility: show native cursor on coarse pointers (touch)
+    // Accessibility: native cursor on coarse pointers (touch)
     if (matchMedia('(pointer: coarse)').matches){
       document.body.style.cursor = 'auto';
       tri.style.display = 'none';
       dot.style.display = 'none';
     }
-
-    // Ensure wall links remain clickable even with 3D transforms
-    // (pointer-events are fine by default; this is just a safeguard for Safari quirks)
-    document.querySelectorAll('.wall a').forEach(a => {
-      a.addEventListener('click', (e) => {
-        // allow normal navigation
-      });
-    });
   </script>
 </body>
 </html>
-
