@@ -3,217 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cube Welcome</title>
+  <title>Welcome</title>
   <style>
     :root {
-      --bg: #070707;
-      --fg: #f3f3f3;
-      --edge: rgba(255,255,255,0.08);
-      --cube-size: min(72vmin, 680px);
-      --hue: 200deg; /* master hue for subtle color accents */
+      --bg: #0a0a0a;          /* very dark background */
+      --fg: #eaeaea;          /* light foreground */
+      --accent: #9bff00;      /* used for focus rings */
     }
 
-    html, body { height: 100%; }
+    html, body {
+      height: 100%;
+    }
+
     body {
       margin: 0;
-      background: radial-gradient(1200px 800px at 60% 40%, #0e0e0e 0%, var(--bg) 60%);
+      background: var(--bg);
       color: var(--fg);
-      overflow: hidden; /* immersive */
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      cursor: none; /* custom cursor */
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      cursor: none; /* hide default cursor so our custom one shows */
     }
 
-    /* Scene with perspective */
-    .scene {
-      position: fixed;
-      inset: 0;
+    /* Layout */
+    .wrap {
       display: grid;
-      place-items: center;
-      perspective: 1400px;
-      perspective-origin: 50% 50%;
+      grid-template-columns: 1fr;
+      gap: 2.25rem;
+      padding: 8vh 6vw; /* roomy, all left-aligned */
     }
 
-    /* Camera wrapper so we can rotate viewpoint with keys */
-    .camera {
-      width: var(--cube-size);
-      height: var(--cube-size);
-      transform-style: preserve-3d;
-      transition: transform 380ms cubic-bezier(.22,.61,.36,1);
-      will-change: transform;
-    }
-
-    /* The cube (we render inner faces) */
-    .cube {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-    }
-
-    .wall {
-      position: absolute;
-      inset: 0;
-      background: #000; /* black walls */
-      display: grid;
-      place-items: start start; /* LEFT-ALIGNED CONTENT INSIDE CUBE */
-      padding: 6vmin;
-      border: 1px solid var(--edge);
-      box-shadow: inset 0 0 140px rgba(255,255,255,0.05);
-      overflow: hidden;
-      backface-visibility: hidden; /* we only want inner faces */
-    }
-
-    /* color tints that shift with --hue for better mood */
-    .wall::before{
-      content:""; position:absolute; inset:0; pointer-events:none;
-      background:
-        radial-gradient(60% 60% at 12% 14%, hsla(var(--hue),88%,58%,0.12), transparent 60%),
-        radial-gradient(60% 60% at 86% 80%, hsla(calc((var(--hue) + 140deg)),88%,58%,0.10), transparent 60%);
-      mix-blend-mode: screen;
-    }
-
-    /* subtle scanlines for texture */
-    .wall::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background: repeating-linear-gradient(
-        to bottom, rgba(255,255,255,0.02) 0 1px, transparent 1px 3px
-      );
-      mix-blend-mode: overlay;
-      pointer-events: none;
-    }
-
-    /* Position faces to face INWARD */
-    .front  { transform: translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-    .back   { transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-    .right  { transform: rotateY(90deg)  translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-    .left   { transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-    .top    { transform: rotateX(90deg)  translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-    .bottom { transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2)) rotateY(180deg); }
-
-    /* Link text on walls (left-aligned) */
-    .wall a {
+    /* Links */
+    a.nav {
       display: block;
       text-decoration: none;
       color: var(--fg);
-      font-size: clamp(1.8rem, 6.8vmin, 5rem);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      font-size: clamp(2.25rem, 7.5vw, 7rem); /* huge, responsive */
       line-height: 1.05;
-      text-align: left;
-      width: 88%;
-      transform: translateZ(1px); /* keep above textures */
+      letter-spacing: 0.01em;
+      position: relative;
+      transition: transform 220ms ease;
+      will-change: transform;
     }
 
-    .wall a:hover { opacity: 0.8; }
+    a.nav:hover {
+      transform: translateX(0.35rem);
+    }
 
-    /* Bottom-corner script-style hint */
-    .hint {
-      position: fixed; left: 16px; bottom: 14px;
-      font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
-      font-size: 18px; letter-spacing: .02em; opacity: .7;
-      user-select: none; pointer-events: none;
-      color: #e9e9e9;
-      text-shadow: 0 0 6px rgba(255,255,255,0.08);
+    a.nav:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent);
+      width: max-content;
+    }
+
+    /* Subtle divider bars on first load for a hint of structure */
+    .wrap::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 6vw; bottom: 0; width: 1px;
+      background: linear-gradient(transparent, rgba(255,255,255,0.08), transparent);
+      pointer-events: none;
     }
 
     /* Custom triangle cursor */
     .tri-cursor {
       position: fixed;
       left: 0; top: 0;
-      width: 18px; height: 18px;
+      width: 20px; height: 20px; /* triangle size */
+      pointer-events: none; /* never block clicks */
+      z-index: 9999;
+
+      /* Triangle shape */
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      background: #fff; /* inverted by blend */
+
+      /* Invert whatever is under it */
+      mix-blend-mode: difference; /* core trick */
+      background: white; /* will become inverted via blend */
+
+      /* A gentle hue shimmer for a wild color way feel */
+      filter: hue-rotate(0deg);
+      animation: hue 6s linear infinite;
+      transition: transform 90ms linear;
+    }
+
+    @keyframes hue {
+      0%   { filter: hue-rotate(0deg); }
+      50%  { filter: hue-rotate(180deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    /* Optional: small trailing dot for extra eeriness */
+    .cursor-dot {
+      position: fixed;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff; /* also inverted by difference */
       mix-blend-mode: difference;
       pointer-events: none;
-      z-index: 9999;
-      filter: hue-rotate(var(--hue)) saturate(130%);
+      z-index: 9998;
+      opacity: 0.85;
+      transition: transform 120ms linear, opacity 300ms ease;
     }
 
-    .cursor-dot{
-      position: fixed; width: 5px; height: 5px; border-radius: 50%;
-      background:#fff; mix-blend-mode:difference; pointer-events:none; z-index:9998;
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .camera{ transition:none; }
+    /* Accessibility: if user prefers reduced motion, disable animations */
+    @media (prefers-reduced-motion: reduce) {
+      .tri-cursor { animation: none; }
+      a.nav { transition: none; }
+      .cursor-dot { transition: none; }
     }
   </style>
 </head>
 <body>
-  <div class="scene" aria-label="Isometric cube navigation">
-    <div id="camera" class="camera" style="transform: rotateX(-18deg) rotateY(35deg);">
-      <div class="cube">
-        <section class="wall front">
-          <a href="works.html">WORKS</a>
-        </section>
-        <section class="wall back">
-          <a href="archive.html">ARCHIVE</a>
-        </section>
-        <section class="wall right">
-          <a href="products.html">PRODUCTS</a>
-        </section>
-        <section class="wall left">
-          <a href="vt-design-build.html">VT DESIGN BUILD</a>
-        </section>
-        <section class="wall top">
-          <a href="jack-van-thyne.html">JACK VAN THYNE</a>
-        </section>
-        <section class="wall bottom">
-          <a href="art.html">ART</a>
-        </section>
-      </div>
-    </div>
+  <div class="wrap" role="navigation" aria-label="Main">
+    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
+    <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
+    <a class="nav" href="archive.html">ARCHIVE</a>
+    <a class="nav" href="products.html">PRODUCTS</a>
+    <a class="nav" href="works.html">WORKS</a>
+    <a class="nav" href="art.html">ART</a>
   </div>
-
-  <div class="hint">use arrow keys to move</div>
 
   <!-- Custom cursor elements -->
   <div class="tri-cursor" aria-hidden="true"></div>
   <div class="cursor-dot" aria-hidden="true"></div>
 
   <script>
-    // Keyboard camera control
-    const cam = document.getElementById('camera');
-    let rotX = -18; // gentle isometric start
-    let rotY = 35;
-    const step = 10; // degrees per arrow press
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-    function applyView(){
-      cam.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      const hue = (rotY * 3) % 360; // shift accent as you look around
-      document.documentElement.style.setProperty('--hue', hue + 'deg');
-    }
-    applyView();
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft')  { rotY -= step; }
-      if (e.key === 'ArrowRight') { rotY += step; }
-      if (e.key === 'ArrowUp')    { rotX -= step; }
-      if (e.key === 'ArrowDown')  { rotX += step; }
-      rotX = clamp(rotX, -75, 75);
-      applyView();
-    });
-
-    // Triangle cursor follows pointer and rotates to travel direction
+    // Follow the mouse with the triangle + dot
     const tri = document.querySelector('.tri-cursor');
     const dot = document.querySelector('.cursor-dot');
+
     let lastX = 0, lastY = 0;
 
     window.addEventListener('mousemove', (e) => {
-      const x = e.clientX, y = e.clientY;
-      // position triangle so tip sits at pointer
-      tri.style.transform = `translate(${x - 9}px, ${y - 5}px)`;
-      dot.style.transform = `translate(${x - 2.5}px, ${y - 2.5}px)`;
-      const dx = x - lastX, dy = y - lastY;
-      const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+      const x = e.clientX;
+      const y = e.clientY;
+
+      // Move triangle so its tip points to the cursor location.
+      // Because our triangle's tip is at 50% 0%, offset Y by half height.
+      tri.style.transform = `translate(${x - 10}px, ${y - 6}px)`; // fine-tuned offsets
+
+      // Small trailing dot right at the pointer for precision
+      dot.style.transform = `translate(${x - 3}px, ${y - 3}px)`;
+
+      // Rotate triangle based on movement direction for a sharp feel
+      const dx = x - lastX;
+      const dy = y - lastY;
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90; // +90 so tip faces movement
       tri.style.rotate = angle + 'deg';
       lastX = x; lastY = y;
-    }, { passive:true });
+    }, { passive: true });
 
-    // Accessibility: native cursor on coarse pointers (touch)
-    if (matchMedia('(pointer: coarse)').matches){
+    // If mouse leaves window, dim the cursor
+    window.addEventListener('mouseleave', () => {
+      dot.style.opacity = '0';
+    });
+    window.addEventListener('mouseenter', () => {
+      dot.style.opacity = '0.85';
+    });
+
+    // Touch support: show default cursor for touch-only devices
+    const isCoarse = matchMedia('(pointer: coarse)').matches;
+    if (isCoarse) {
       document.body.style.cursor = 'auto';
       tri.style.display = 'none';
       dot.style.display = 'none';
