@@ -9,7 +9,7 @@
       --bg: #0a0a0a;          /* very dark background */
       --fg: #eaeaea;          /* light foreground */
       --accent: #8dfcff;      /* subtle cyan focus ring */
-      --hue: 210deg;          /* base hue for cursor/accents (cube vibe) */
+      --hue: 220deg;          /* base hue for accents */          /* base hue for cursor/accents (cube vibe) */
     }
 
     html, body { height: 100%; }
@@ -30,16 +30,19 @@
 
     .wrap {
       display: grid; align-content: center; gap: 2.2rem; padding: 8vh 6vw;
+      pointer-events: none; /* disable clicks on container */
     }
 
     a.nav {
-      display: block; text-decoration: none; color: var(--fg);
-      font-size: clamp(2.25rem, 7.5vw, 7rem); /* huge, responsive */
+      display: inline; /* click only on the text */
+      text-decoration: none; color: var(--fg);
+      font-size: clamp(2.25rem, 7.5vw, 7rem);
       line-height: 1.05; letter-spacing: 0.01em; position: relative;
-      transition: transform 220ms ease, opacity 220ms ease;
-      will-change: transform;
+      transition: opacity 200ms ease;
+      will-change: opacity;
+      pointer-events: auto; /* re-enable click on the link itself */
     }
-    a.nav:hover { transform: translateX(0.35rem); opacity: 0.9; }
+    a.nav:hover { opacity: 0.85; text-decoration: underline; }
     a.nav:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent); width: max-content; }
 
     .wrap::before { /* vertical guide */
@@ -68,7 +71,12 @@
     @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
 
     /* Planet */
-    .planet-wrap { position: absolute; inset: 0; display: grid; place-items: center; }
+    .planet {
+      position: relative; width: min(36vmin, 360px); height: min(36vmin, 360px); border-radius: 50%;
+      background: radial-gradient(60% 60% at 40% 35%, rgba(255,255,255,.06), transparent 70%),
+                  radial-gradient(120% 120% at 50% 50%, #0a0f1a 0%, #06080f 70%, #000 100%);
+      box-shadow: inset -22px -22px 48px rgba(0,0,0,.65);
+    }
     .planet {
       position: relative; width: min(36vmin, 360px); height: min(36vmin, 360px); border-radius: 50%;
       background:
@@ -85,23 +93,22 @@
 
     /* Planet ring (faint) */
     .ring {
-      position: absolute; inset: 0; transform: rotateX(65deg);
+      position: absolute; inset: 0; transform: rotateX(68deg);
       border-radius: 50%;
-      box-shadow: 0 0 0 1px rgba(180, 235, 255, .08) inset;
-      filter: drop-shadow(0 0 12px rgba(140, 220, 255, .08));
+      box-shadow: 0 0 0 1px rgba(170, 220, 255, .06) inset;
+      filter: drop-shadow(0 0 8px rgba(140, 220, 255, .06));
     }
 
     /* Bird swarm: tiny boids orbiting the planet */
     .swarm { position: absolute; inset: 0; display: grid; place-items: center; }
-    .orbit { position: absolute; width: 100%; height: 100%; animation: orbit linear infinite; }
+    .orbit { position: absolute; width: 100%; height: 100%; will-change: transform; animation: orbit linear infinite; }
     @keyframes orbit { to { transform: rotate(360deg); } }
 
-    .bird { /* tiny chevron/triangle */
+    .bird {
       position: absolute; left: 50%; top: 50%; width: 0; height: 0;
       border-left: 3px solid transparent; border-right: 3px solid transparent; border-bottom: 5px solid #e7faff;
-      transform-origin: -140px 0; /* sets orbit radius */
-      filter: drop-shadow(0 0 2px rgba(200,255,255,.35));
       opacity: .85;
+      /* transform set in JS to radius around planet */
     }
 
     /* generate varied radii/speeds */
@@ -118,11 +125,11 @@
 
     /* Custom triangle cursor */
     .tri-cursor {
-      position: fixed; left: 0; top: 0; width: 20px; height: 20px; pointer-events: none; z-index: 9999;
+      position: fixed; left: 0; top: 0; width: 18px; height: 18px; pointer-events: none; z-index: 9999;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      mix-blend-mode: difference; background: white;
-      filter: hue-rotate(var(--hue)) saturate(130%);
-      transition: transform 90ms linear;
+      mix-blend-mode: difference; background: #fff;
+      outline: 1px solid rgba(0,0,0,.2); /* subtle edge for visibility */
+      will-change: transform;
     }
     .cursor-dot { position: fixed; width: 6px; height: 6px; border-radius: 50%; background:#fff; mix-blend-mode:difference; pointer-events:none; z-index: 9998; opacity: 0.9; transition: transform 120ms linear, opacity 300ms ease; }
 
@@ -167,37 +174,83 @@
   <div class="cursor-dot" aria-hidden="true"></div>
 
   <script>
-    // Triangle cursor behavior (directional rotate + hue like the cube version)
+    // --- Triangle cursor (smoothed + efficient via rAF) ---
     const tri = document.querySelector('.tri-cursor');
     const dot = document.querySelector('.cursor-dot');
-    let lastX = 0, lastY = 0;
+    let targetX = 0, targetY = 0, x = 0, y = 0, lastX = 0, lastY = 0;
 
-    window.addEventListener('mousemove', (e) => {
-      const x = e.clientX, y = e.clientY;
-      tri.style.transform = `translate(${x - 10}px, ${y - 6}px)`;
+    window.addEventListener('mousemove', (e) => { targetX = e.clientX; targetY = e.clientY; }, { passive: true });
+
+    function cursorTick(){
+      // ease towards target for stability
+      x += (targetX - x) * 0.35;
+      y += (targetY - y) * 0.35;
+      tri.style.transform = `translate(${x - 9}px, ${y - 6}px)`;
       dot.style.transform = `translate(${x - 3}px, ${y - 3}px)`;
       const dx = x - lastX, dy = y - lastY;
-      const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-      tri.style.rotate = angle + 'deg';
-      lastX = x; lastY = y;
-
-      // Update hue softly based on horizontal position (spacey but not rainbowy)
-      const w = window.innerWidth;
-      const pct = Math.min(1, Math.max(0, x / w));
-      const hue = 200 + pct * 60; // 200°–260° (cyan→indigo)
-      document.documentElement.style.setProperty('--hue', hue + 'deg');
-    }, { passive: true });
+      if (dx || dy){
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        tri.style.rotate = angle + 'deg';
+        lastX = x; lastY = y;
+      }
+      requestAnimationFrame(cursorTick);
+    }
+    requestAnimationFrame(cursorTick);
 
     window.addEventListener('mouseleave', () => { dot.style.opacity = '0'; });
     window.addEventListener('mouseenter', () => { dot.style.opacity = '0.9'; });
 
-    // Touch support: show default cursor for touch-only devices
-    const isCoarse = matchMedia('(pointer: coarse)').matches;
-    if (isCoarse) {
+    // Touch support: default cursor on coarse pointers
+    if (matchMedia('(pointer: coarse)').matches){
       document.body.style.cursor = 'auto';
       tri.style.display = 'none';
       dot.style.display = 'none';
     }
+
+    // --- Generate many birds concentrated around the planet ---
+    const swarm = document.querySelector('.swarm');
+    const planet = document.querySelector('.planet');
+    const planetWrap = document.querySelector('.planet-wrap');
+
+    function spawnBirds(count = 80){
+      const size = Math.min(planet.offsetWidth, planet.offsetHeight);
+      const baseR = size * 0.58; // near planet rim
+      for (let i = 0; i < count; i++){
+        const orbit = document.createElement('div');
+        orbit.className = 'orbit';
+        const speed = 22 + Math.random() * 65; // 22s–87s
+        orbit.style.animationDuration = speed + 's';
+        const tilt = (Math.random() * 22 - 11); // -11deg..11deg
+        orbit.style.transform = `rotate(${Math.random()*360}deg) rotateX(${tilt}deg)`;
+
+        const bird = document.createElement('div');
+        bird.className = 'bird';
+        const r = baseR + (Math.random() * size * 0.25 - size * 0.12);
+        bird.style.transform = `translate(-50%, -50%) rotate(0deg) translateX(${r}px) rotate(0deg)`;
+        orbit.appendChild(bird);
+        swarm.appendChild(orbit);
+      }
+    }
+
+    // Clear and repopulate for density
+    swarm.innerHTML = '';
+    spawnBirds(140);
+
+    // Planet click -> attempt to close tab
+    function closeTab(){
+      try { window.open('', '_self'); } catch(e){}
+      try { window.close(); } catch(e){}
+      setTimeout(() => { try { window.location.href = 'about:blank'; } catch(e){} }, 120);
+    }
+    planetWrap.addEventListener('click', closeTab);
+
+    // --- Subtle hue shift by mouse X (space vibe) ---
+    window.addEventListener('mousemove', (e) => {
+      const w = window.innerWidth;
+      const pct = Math.min(1, Math.max(0, e.clientX / w));
+      const hue = 200 + pct * 40; // cyan→deep blue
+      document.documentElement.style.setProperty('--hue', hue + 'deg');
+    }, { passive: true });
   </script>
 </body>
 </html>
