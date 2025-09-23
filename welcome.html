@@ -6,126 +6,117 @@
   <title>Welcome</title>
   <style>
     :root {
-      --bg: #0a0a0a;          /* very dark background */
-      --fg: #eaeaea;          /* light foreground */
-      --accent: #8dfcff;      /* subtle cyan focus ring */
+      --bg: #0a0a0a;
+      --fg: #eaeaea;
     }
 
-    html, body { height: 100%; }
-
-    body {
+    html, body {
+      height: 100%;
       margin: 0;
       background: var(--bg);
       color: var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      cursor: none; /* hide default cursor */
-      overflow: hidden; /* keep things tidy */
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      cursor: none !important;
+      overflow: hidden;
     }
 
-    /* Single-column layout; text left-aligned */
-    .page { position: fixed; inset: 0; display: block; }
-
     .wrap {
-      display: grid; align-content: center; gap: 2.2rem; padding: 8vh 6vw;
-      pointer-events: none; /* disable container clicks */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100%;
+      padding-left: 6vw;
+      gap: 1.5rem;
     }
 
     a.nav {
-      display: inline; /* click only on the text */
-      text-decoration: none; color: var(--fg);
-      font-size: clamp(2.25rem, 7.5vw, 7rem);
-      line-height: 1.05; letter-spacing: 0.01em;
-      pointer-events: auto; /* links remain clickable */
-      transition: opacity 160ms ease;
+      text-decoration: none;
+      color: var(--fg);
+      font-size: clamp(5rem, 10vw, 9rem);
+      line-height: 1;
+      pointer-events: auto;
     }
-    a.nav:hover { opacity: 0.85; text-decoration: underline; }
-    a.nav:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent); }
 
-    /* Subtle left guide */
-    .wrap::before {
-      content: ""; position: fixed; top: 0; left: 6vw; bottom: 0; width: 1px;
-      background: linear-gradient(transparent, rgba(255,255,255,0.08), transparent);
+    a.nav:hover { color: var(--fg); }
+
+    /* Triangle cursor */
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 32px;
       pointer-events: none;
-    }
-
-    /* Triangle cursor — super simple and stable */
-    .tri-cursor {
-      position: fixed; left: 0; top: 0; width: 18px; height: 18px; pointer-events: none; z-index: 9999;
+      z-index: 9999;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      mix-blend-mode: difference; background: #fff; /* inverts whatever is beneath */
-      will-change: transform; /* GPU hint */
+      background: white;
+      mix-blend-mode: difference;
     }
-    .cursor-dot { position: fixed; width: 6px; height: 6px; border-radius: 50%; background:#fff; mix-blend-mode:difference; pointer-events:none; z-index: 9998; opacity: 0.9; will-change: transform; }
 
-    @media (prefers-reduced-motion: reduce) {
-      a.nav { transition: none; }
+    .bird {
+      position: fixed;
+      bottom: 50%;
+      left: 50%;
+      width: 30px;
+      height: 20px;
+      background: var(--fg);
+      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+      opacity: 0.85;
+      z-index: 5000;
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <div class="wrap" role="navigation" aria-label="Main">
-      <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a><br/>
-      <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a><br/>
-      <a class="nav" href="archive.html">ARCHIVE</a><br/>
-      <a class="nav" href="products.html">PRODUCTS</a><br/>
-      <a class="nav" href="works.html">WORKS</a><br/>
-      <a class="nav" href="art.html">ART</a>
-    </div>
+  <div class="wrap" role="navigation" aria-label="Main">
+    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
+    <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
+    <a class="nav" href="archive.html">ARCHIVE</a>
+    <a class="nav" href="products.html">PRODUCTS</a>
+    <a class="nav" href="works.html">WORKS</a>
+    <a class="nav" href="art.html">ART</a>
   </div>
 
-    <!-- Cosmic scene on the right -->
-    <div class="cosmos">
-      <div class="stars"></div>
-      <div class="planet-wrap">
-        <div class="planet">
-          <div class="ring"></div>
-          <div class="swarm">
-            <div class="orbit o1 r1"><div class="bird"></div></div>
-            <div class="orbit o2 r2"><div class="bird"></div></div>
-            <div class="orbit o3 r3"><div class="bird"></div></div>
-            <div class="orbit o4 r4"><div class="bird"></div></div>
-            <div class="orbit o5 r5"><div class="bird"></div></div>
-            <div class="orbit o6 r6"><div class="bird"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Custom cursor elements -->
-  <div class="tri-cursor" aria-hidden="true"></div>
-  <div class="cursor-dot" aria-hidden="true"></div>
+  <div id="custom-cursor"></div>
+  <div class="bird" id="bird"></div>
 
   <script>
-    // Ultra-stable triangle cursor: no rotation, no hue shifts, no easing
-    const tri = document.querySelector('.tri-cursor');
-    const dot = document.querySelector('.cursor-dot');
+    const cursor = document.getElementById('custom-cursor');
+    const bird = document.getElementById('bird');
 
-    let mx = 0, my = 0, needsUpdate = false;
-    window.addEventListener('pointermove', (e) => {
-      mx = e.clientX; my = e.clientY; needsUpdate = true;
+    // Hide native cursor completely
+    document.body.style.cursor = 'none';
+
+    window.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     }, { passive: true });
 
-    function frame(){
-      if (needsUpdate){
-        tri.style.transform = `translate(${mx - 9}px, ${my - 6}px)`;
-        dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
-        needsUpdate = false;
-      }
-      requestAnimationFrame(frame);
+    // Bird movement
+    let birdX = window.innerWidth / 2;
+    let birdY = window.innerHeight / 2;
+    const step = 20;
+
+    function updateBird() {
+      bird.style.transform = `translate(${birdX - 15}px, ${birdY - 10}px)`;
     }
-    requestAnimationFrame(frame);
 
-    // Hide dot when cursor leaves the window
-    window.addEventListener('mouseleave', () => { dot.style.opacity = '0'; });
-    window.addEventListener('mouseenter', () => { dot.style.opacity = '0.9'; });
+    updateBird();
 
-    // Touch support: use default cursor on coarse pointers
-    if (matchMedia('(pointer: coarse)').matches){
+    window.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp': birdY -= step; break;
+        case 'ArrowDown': birdY += step; break;
+        case 'ArrowLeft': birdX -= step; break;
+        case 'ArrowRight': birdX += step; break;
+      }
+      updateBird();
+    });
+
+    // Touch fallback
+    if (matchMedia('(pointer: coarse)').matches) {
+      cursor.style.display = 'none';
+      bird.style.display = 'none';
       document.body.style.cursor = 'auto';
-      tri.style.display = 'none';
-      dot.style.display = 'none';
     }
   </script>
 </body>
