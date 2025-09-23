@@ -13,10 +13,10 @@
     html, body {
       margin: 0;
       height: 100%;
-      overflow: hidden;
       background: var(--bg);
       color: var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      overflow: hidden;
     }
 
     /* Hide system cursor everywhere */
@@ -24,22 +24,16 @@
       cursor: none !important;
     }
 
-    /* Large world to fly around */
-    .world {
-      position: absolute;
-      width: 300vw;
-      height: 300vh;
-      background: var(--bg);
-    }
-
+    /* Navigation always fixed in top-left */
     .wrap {
-      position: absolute;
+      position: fixed;
       top: 2vh;
       left: 2vw;
       display: flex;
       flex-direction: column;
       gap: 1rem;
       align-items: flex-start;
+      z-index: 1000;
     }
 
     a.nav {
@@ -51,7 +45,7 @@
     }
 
     a.nav:hover {
-      color: var(--fg); /* stays the same */
+      color: var(--fg); /* stays same */
     }
 
     /* Triangle cursor */
@@ -70,59 +64,55 @@
 
     /* Bird */
     .bird {
-      position: absolute;
+      position: fixed;
       width: 40px;
       height: 40px;
-      z-index: 5000;
+      z-index: 500;
       pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="world" id="world">
-    <div class="wrap" role="navigation" aria-label="Main">
-      <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
-      <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
-      <a class="nav" href="archive.html">ARCHIVE</a>
-      <a class="nav" href="products.html">PRODUCTS</a>
-      <a class="nav" href="works.html">WORKS</a>
-      <a class="nav" href="art.html">ART</a>
-    </div>
-    <img class="bird" id="bird" src="bird.png" alt="bird" />
+  <div class="wrap" role="navigation" aria-label="Main">
+    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
+    <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
+    <a class="nav" href="archive.html">ARCHIVE</a>
+    <a class="nav" href="products.html">PRODUCTS</a>
+    <a class="nav" href="works.html">WORKS</a>
+    <a class="nav" href="art.html">ART</a>
   </div>
 
+  <img class="bird" id="bird" src="bird.png" alt="bird" />
   <div id="custom-cursor"></div>
 
   <script>
     const cursor = document.getElementById('custom-cursor');
     const bird = document.getElementById('bird');
-    const world = document.getElementById('world');
 
     // custom cursor
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     });
 
-    // Bird control
+    // Bird movement
     let birdX = window.innerWidth / 2;
     let birdY = window.innerHeight / 2;
     const step = 25;
 
-    function updateView() {
+    function updateBird() {
       bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-      world.style.transform = `translate(${-birdX + window.innerWidth/2}px, ${-birdY + window.innerHeight/2}px)`;
     }
 
-    updateView();
+    updateBird();
 
     window.addEventListener('keydown', (e) => {
       switch (e.key) {
-        case 'ArrowUp': birdY -= step; break;
-        case 'ArrowDown': birdY += step; break;
-        case 'ArrowLeft': birdX -= step; break;
-        case 'ArrowRight': birdX += step; break;
+        case 'ArrowUp': birdY = Math.max(0, birdY - step); break;
+        case 'ArrowDown': birdY = Math.min(window.innerHeight - 40, birdY + step); break;
+        case 'ArrowLeft': birdX = Math.max(0, birdX - step); break;
+        case 'ArrowRight': birdX = Math.min(window.innerWidth - 40, birdX + step); break;
       }
-      updateView();
+      updateBird();
     });
 
     // Fallback if bird.png is missing
