@@ -3,90 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome</title>
+  <title>Hidden Page (Simple Yellow Circle)</title>
   <style>
-    :root {
-      --bg: #0a0a0a;
-      --fg: #eaeaea;
-    }
+    :root { --bg:#0a0a0a; --fg:#eaeaea; }
+    html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
+    /* Hide system cursor everywhere */
+    * { cursor:none !important; }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      cursor: none !important;
-      overflow: hidden;
-    }
-
-    .wrap {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      height: 100%;
-      padding-left: 6vw;
-      gap: 1.5rem;
-      transition: transform 0.6s ease;
-    }
-
-    a.nav {
-      text-decoration: none;
-      color: var(--fg);
-      font-size: clamp(5rem, 10vw, 9rem);
-      line-height: 1;
-      pointer-events: auto;
-    }
-
-    a.nav:hover { color: var(--fg); }
+    /* Fixed nav in top-left (does NOT move) */
+    .wrap { position:fixed; top:2vh; left:2vw; display:flex; flex-direction:column; gap:1rem; z-index:1000; }
+    a.nav { text-decoration:none; color:var(--fg); font-size:clamp(4rem,8vw,8rem); line-height:1; }
+    a.nav:hover { color:var(--fg); }
 
     /* Triangle cursor */
-    #custom-cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 32px;
-      height: 32px;
-      pointer-events: none;
-      z-index: 9999;
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      background: white;
-      mix-blend-mode: difference;
-    }
+    #custom-cursor { position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999; clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference; }
 
-    .bird {
-      position: fixed;
-      bottom: 50%;
-      left: 50%;
-      width: 30px;
-      height: 20px;
-      background: var(--fg);
-      clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
-      opacity: 0.85;
-      z-index: 5000;
-    }
+    /* WORLD: 2 screens wide; we move this with translateX */
+    .world { position:absolute; top:0; left:0; width:200vw; height:100vh; display:flex; will-change:transform; }
+    .main-area { width:100vw; height:100vh; }
 
-    .hidden-page {
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #000;
-      position: relative;
-      overflow: hidden;
-    }
+    .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background:#000; }
+    /* Simple yellow circle (no gradients, no spin) */
+    .sun { width:220px; height:220px; border-radius:50%; background: #ffd400; cursor:pointer; }
 
-    .sun {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: yellow;
-    }
+    /* Bird */
+    #bird { position:fixed; width:40px; height:40px; z-index:500; pointer-events:none; }
   </style>
 </head>
 <body>
-  <div class="wrap" role="navigation" aria-label="Main" id="mainWrap">
+  <!-- Fixed navigation -->
+  <div class="wrap" role="navigation" aria-label="Main">
     <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
     <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
     <a class="nav" href="archive.html">ARCHIVE</a>
@@ -95,72 +41,94 @@
     <a class="nav" href="art.html">ART</a>
   </div>
 
-  <div id="custom-cursor"></div>
-  <div class="bird" id="bird"></div>
-
-  <div class="hidden-page" id="hiddenPage" style="display:none;">
-    <div class="sun"></div>
+  <!-- World with hidden page to the right -->
+  <div class="world" id="world">
+    <div class="main-area"></div>
+    <div class="hidden-page">
+      <div class="sun" id="sun" title="Click to close"></div>
+    </div>
   </div>
+
+  <!-- Bird & custom cursor -->
+  <img id="bird" src="bird.png" alt="bird" />
+  <div id="custom-cursor"></div>
 
   <script>
     const cursor = document.getElementById('custom-cursor');
     const bird = document.getElementById('bird');
-    const wrap = document.getElementById('mainWrap');
-    const hiddenPage = document.getElementById('hiddenPage');
+    const world = document.getElementById('world');
+    const sun = document.getElementById('sun');
 
-    document.body.style.cursor = 'none';
-
-    window.addEventListener('mousemove', (e) => {
+    // Cursor follow
+    document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
-    }, { passive: true });
+    });
 
-    let birdX = window.innerWidth / 2;
-    let birdY = window.innerHeight / 2;
-    const step = 20;
+    // Movement state
+    let birdX = Math.round(window.innerWidth * 0.6);
+    let birdY = Math.round(window.innerHeight * 0.5);
+    const step = 26; // px per key press frame
+    const birdSize = 40;
 
-    function updateBird() {
-      bird.style.transform = `translate(${birdX - 15}px, ${birdY - 10}px)`;
-    }
+    // World sliding when pushing right edge
+    let offsetX = 0; // how far world is slid left; 0..maxOffset
+    const maxOffset = () => Math.max(0, world.scrollWidth - window.innerWidth);
 
-    updateBird();
+    // Pressed keys map for smooth hold-to-move
+    const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
+    addEventListener('keydown', (e) => { if (e.key in keys) { keys[e.key] = true; e.preventDefault(); } }, {passive:false});
+    addEventListener('keyup',   (e) => { if (e.key in keys) keys[e.key] = false; });
 
-    let showingHidden = false;
+    function clamp(v,min,max){ return v<min?min:v>max?max:v; }
 
-    window.addEventListener('keydown', (e) => {
-      switch (e.key) {
-        case 'ArrowUp': birdY -= step; break;
-        case 'ArrowDown': birdY += step; break;
-        case 'ArrowLeft':
-          birdX -= step;
-          if (birdX < 0 && showingHidden) {
-            hiddenPage.style.display = 'none';
-            wrap.style.transform = 'translateX(0)';
-            showingHidden = false;
-          }
-          break;
-        case 'ArrowRight':
-          birdX += step;
-          if (birdX > window.innerWidth && !showingHidden) {
-            hiddenPage.style.display = 'grid';
-            wrap.style.transform = 'translateX(-100vw)';
-            showingHidden = true;
-          }
-          break;
+    function tick(){
+      let moved = false;
+      // Horizontal
+      if (keys.ArrowLeft){
+        if (offsetX > 0) { offsetX = Math.max(0, offsetX - step); moved = true; }
+        else if (birdX > 0) { birdX = Math.max(0, birdX - step); moved = true; }
       }
-      updateBird();
-    });
+      if (keys.ArrowRight){
+        const atRightEdge = birdX >= (window.innerWidth - birdSize);
+        if (!atRightEdge) { birdX = Math.min(window.innerWidth - birdSize, birdX + step); moved = true; }
+        else if (offsetX < maxOffset()) { offsetX = Math.min(maxOffset(), offsetX + step); moved = true; }
+      }
+      // Vertical (bird only; world doesn't slide vertically)
+      if (keys.ArrowUp){ birdY = Math.max(0, birdY - step); moved = true; }
+      if (keys.ArrowDown){ birdY = Math.min(window.innerHeight - birdSize, birdY + step); moved = true; }
 
-    hiddenPage.addEventListener('click', () => {
-      hiddenPage.style.display = 'none';
-      wrap.style.transform = 'translateX(0)';
-      showingHidden = false;
-    });
-
-    if (matchMedia('(pointer: coarse)').matches) {
-      cursor.style.display = 'none';
-      bird.style.display = 'none';
-      document.body.style.cursor = 'auto';
+      if (moved){
+        bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
+        world.style.transform = `translateX(${-offsetX}px)`;
+      }
+      requestAnimationFrame(tick);
     }
+
+    // Init positions
+    bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
+    world.style.transform = `translateX(0)`;
+    requestAnimationFrame(tick);
+
+    // Click the sun to snap back to main screen
+    sun.addEventListener('click', () => {
+      offsetX = 0; world.style.transform = `translateX(0)`;
+    });
+
+    // Handle resize: keep bird in bounds, recompute maxOffset
+    addEventListener('resize', () => {
+      birdX = clamp(birdX, 0, window.innerWidth - birdSize);
+      birdY = clamp(birdY, 0, window.innerHeight - birdSize);
+      offsetX = clamp(offsetX, 0, maxOffset());
+      bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
+      world.style.transform = `translateX(${-offsetX}px)`;
+    });
+
+    // Fallback if bird.png missing
+    bird.onerror = () => {
+      bird.style.background = 'white';
+      bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
+      bird.removeAttribute('src');
+    };
   </script>
 </body>
 </html>
