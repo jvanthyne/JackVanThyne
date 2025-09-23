@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome</title>
+  <title>Hidden Earth</title>
   <style>
     :root {
       --bg: #0a0a0a;
@@ -19,12 +19,10 @@
       overflow: hidden;
     }
 
-    /* Hide system cursor everywhere */
     * {
       cursor: none !important;
     }
 
-    /* Navigation fixed in top-left */
     .wrap {
       position: fixed;
       top: 2vh;
@@ -41,14 +39,12 @@
       color: var(--fg);
       font-size: clamp(4rem, 8vw, 8rem);
       line-height: 1;
-      pointer-events: auto;
     }
 
     a.nav:hover {
-      color: var(--fg); /* no change */
+      color: var(--fg);
     }
 
-    /* Triangle cursor */
     #custom-cursor {
       position: fixed;
       top: 0;
@@ -62,7 +58,6 @@
       mix-blend-mode: difference;
     }
 
-    /* Bird */
     .bird {
       position: fixed;
       width: 40px;
@@ -70,9 +65,56 @@
       z-index: 500;
       pointer-events: none;
     }
+
+    /* World container wider than screen */
+    .world {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200vw; /* 2x screen width */
+      height: 100vh;
+      display: flex;
+    }
+
+    .main-area {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .hidden-page {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #001020, #000);
+    }
+
+    /* Spinning earth */
+    .earth {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #3af, #027);
+      box-shadow: inset -20px 0 40px rgba(0,0,0,0.5);
+      animation: spin 6s linear infinite;
+      cursor: pointer;
+    }
+
+    @keyframes spin {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
   </style>
 </head>
 <body>
+  <div class="world" id="world">
+    <div class="main-area"></div>
+    <div class="hidden-page">
+      <div class="earth" id="earth"></div>
+    </div>
+  </div>
+
   <div class="wrap" role="navigation" aria-label="Main">
     <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
     <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
@@ -88,20 +130,26 @@
   <script>
     const cursor = document.getElementById('custom-cursor');
     const bird = document.getElementById('bird');
+    const world = document.getElementById('world');
+    const earth = document.getElementById('earth');
+
+    let offsetX = 0; // world offset
+    let birdX = window.innerWidth / 2;
+    let birdY = window.innerHeight / 2;
+    const step = 25;
+    const birdSize = 40;
 
     // custom cursor follows mouse
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     });
 
-    // Bird movement
-    let birdX = window.innerWidth / 2;
-    let birdY = window.innerHeight / 2;
-    const step = 25;
-    const birdSize = 40;
-
     function updateBird() {
       bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
+    }
+
+    function updateWorld() {
+      world.style.transform = `translateX(${-offsetX}px)`;
     }
 
     updateBird();
@@ -115,13 +163,28 @@
           birdY = Math.min(window.innerHeight - birdSize, birdY + step);
           break;
         case 'ArrowLeft':
-          birdX = Math.max(0, birdX - step);
+          if (birdX > 0) {
+            birdX -= step;
+          } else if (offsetX > 0) {
+            offsetX = Math.max(0, offsetX - step);
+          }
           break;
         case 'ArrowRight':
-          birdX = Math.min(window.innerWidth - birdSize, birdX + step);
+          if (birdX < window.innerWidth - birdSize) {
+            birdX += step;
+          } else if (offsetX < window.innerWidth) {
+            offsetX = Math.min(window.innerWidth, offsetX + step);
+          }
           break;
       }
       updateBird();
+      updateWorld();
+    });
+
+    // Reset when clicking earth
+    earth.addEventListener('click', () => {
+      offsetX = 0;
+      updateWorld();
     });
 
     // Fallback if bird.png is missing
