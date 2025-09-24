@@ -3,128 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hidden Page (Simple Yellow Circle)</title>
-  <!-- Favicon: simple yellow circle -->
+  <title>ABOUT ME — 2004–NOW</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
   <style>
-    :root { --bg:#0a0a0a; --fg:#eaeaea; }
-    html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
-    /* Hide system cursor everywhere */
+    :root { --bg:#0a0a0a; --fg:#eaeaea; --fs: 32px; --lh: 1.1; }
+
+    html, body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; text-transform: uppercase; }
+
     * { cursor:none !important; }
 
-    /* Fixed nav in top-left (does NOT move) */
-    .wrap { position:fixed; top:2vh; left:2vw; display:flex; flex-direction:column; gap:1rem; z-index:1000; }
-    a.nav { text-decoration:none; color:var(--fg); font-size:clamp(4rem,8vw,8rem); line-height:1; }
-    a.nav:hover { color:var(--fg); }
+    #custom-cursor {
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      background: #fff; mix-blend-mode: difference;
+    }
 
-    /* Triangle cursor */
-    #custom-cursor { position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999; clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference; }
+    .page { position: relative; min-height: 100vh; width: 100%; box-sizing: border-box; padding: 6vw; display:flex; align-items:center; }
 
-    /* WORLD: 2 screens wide; we move this with translateX */
-    .world { position:absolute; top:0; left:0; width:200vw; height:100vh; display:flex; will-change:transform; }
-    .main-area { width:100vw; height:100vh; }
+    .content { 
+      width:100%; 
+      max-width:none; 
+      font-size: var(--fs); 
+      line-height: var(--lh); 
+      letter-spacing: 0.01em; 
+      text-align: justify; 
+      text-align-last: justify; 
+    }
 
-    .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background:#000; }
-    /* Simple yellow circle */
-    .sun { width:220px; height:220px; border-radius:50%; background: #ffd400; cursor:pointer; }
-
-    /* Bird */
-    #bird { position:fixed; width:40px; height:40px; z-index:500; pointer-events:none; }
+    .back { position: fixed; top: 2vh; left: 2vw; z-index: 1000; text-decoration: none; color: var(--fg); font-size: 14px; opacity:.9; }
+    .back:hover { color: var(--fg); }
   </style>
 </head>
 <body>
-  <!-- Fixed navigation -->
-  <div class="wrap" role="navigation" aria-label="Main">
-    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
-    <a class="nav" href="vt-design-build.html">VT DESIGN BUILD</a>
-    <a class="nav" href="index.html">ARCHIVE</a>
-    <a class="nav" href="products.html">PRODUCTS</a>
-    <a class="nav" href="works.html">WORKS</a>
-    <a class="nav" href="art.html">ART</a>
-  </div>
+  <a class="back" href="index.html" aria-label="Back to Home">← HOME</a>
 
-  <!-- World with hidden page to the right -->
-  <div class="world" id="world">
-    <div class="main-area"></div>
-    <div class="hidden-page">
-      <div class="sun" id="sun" title="Click to close"></div>
+  <main class="page">
+    <div class="content" id="content">
+ABOUT ME — 2004–NOW INTRODUCTION I’M JACK VAN THYNE, A 21-YEAR-OLD DESIGN STUDENT, ARTIST, AND BUILDER. I STUDY LANDSCAPE ARCHITECTURE AND SUSTAINABLE DESIGN AT UC BERKELEY, WITH A FOCUS ON FURNITURE DESIGN AND HANDS-ON BUILDING. MEDIUM AND MATERIALS WOOD IS MY FAVORITE MEDIUM BECAUSE OF ITS NATURAL, TACTILE QUALITIES. IT CARRIES A DEEP HUMAN CONNECTION — YOU CAN SEE WHERE IT COMES FROM, FEEL ITS GRAIN, AND SENSE ITS HISTORY. I ALSO WORK WITH METAL, LIGHT, WATERCOLOR, FILM, AND MUSIC, EACH OFFERING A UNIQUE ROLE IN MY CREATIVE PROCESS. ARTISTIC PHILOSOPHY THE GOAL OF MY WORK IS TO CURATE FEELING THROUGH DESIGN — CREATING ART, SPACES, AND OBJECTS THAT SHIFT PERSPECTIVES AND RESHAPE HOW WE EXPERIENCE THE WORLD. I AIM TO BRING FRESH VIEWS TO THE FAMILIAR, SPARKING MOMENTS OF EMOTIONAL RESONANCE AND DEEPER ENGAGEMENT. I STRIVE TO DESIGN PROJECTS THAT ARE BUILT TO LAST WHILE ALSO CONSIDERING THEIR AFTERLIFE — HOW A PIECE CAN EVOLVE, BE REUSED, OR FIND NEW PURPOSE. SUSTAINABILITY SUSTAINABILITY IS CENTRAL TO MY DESIGN PROCESS. FOR ME, IT’S ABOUT BUILDING A THOUGHTFUL RELATIONSHIP WITH THE WORLD AROUND US — ENSURING THAT SUSTAINABLE PRACTICES GUIDE EACH DECISION, FROM MATERIAL CHOICES TO CONSTRUCTION METHODS, SO THAT EVERY PROJECT RESPECTS BOTH PEOPLE AND PLACE.
     </div>
-  </div>
+  </main>
 
-  <!-- Bird & custom cursor -->
-  <img id="bird" src="bird.png" alt="bird" />
-  <div id="custom-cursor"></div>
+  <div id="custom-cursor" aria-hidden="true"></div>
 
   <script>
     const cursor = document.getElementById('custom-cursor');
-    const bird = document.getElementById('bird');
-    const world = document.getElementById('world');
-    const sun = document.getElementById('sun');
-
-    // Cursor follow
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
-    });
+    }, { passive: true });
 
-    // Movement state
-    let birdX = Math.round(window.innerWidth * 0.6);
-    let birdY = Math.round(window.innerHeight * 0.5);
-    const step = 26; // px per key press frame
-    const birdSize = 40;
+    const root = document.documentElement;
+    const page = document.querySelector('.page');
+    const content = document.getElementById('content');
 
-    // World sliding when pushing right edge
-    let offsetX = 0; // how far world is slid left; 0..maxOffset
-    const maxOffset = () => Math.max(0, world.scrollWidth - window.innerWidth);
+    function fitContent(){
+      const cs = getComputedStyle(page);
+      const padTop = parseFloat(cs.paddingTop)||0, padBottom = parseFloat(cs.paddingBottom)||0;
+      const available = window.innerHeight - padTop - padBottom;
 
-    // Pressed keys map for smooth hold-to-move
-    const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
-    addEventListener('keydown', (e) => { if (e.key in keys) { keys[e.key] = true; e.preventDefault(); } }, {passive:false});
-    addEventListener('keyup',   (e) => { if (e.key in keys) keys[e.key] = false; });
-
-    function clamp(v,min,max){ return v<min?min:v>max?max:v; }
-
-    function tick(){
-      let moved = false;
-      if (keys.ArrowLeft){
-        if (offsetX > 0) { offsetX = Math.max(0, offsetX - step); moved = true; }
-        else if (birdX > 0) { birdX = Math.max(0, birdX - step); moved = true; }
+      let lo = 18, hi = 120;
+      for(let i=0;i<20;i++){
+        const mid = (lo + hi) / 2;
+        root.style.setProperty('--fs', mid + 'px');
+        const h = content.scrollHeight;
+        if (h > available) hi = mid; else lo = mid;
       }
-      if (keys.ArrowRight){
-        const atRightEdge = birdX >= (window.innerWidth - birdSize);
-        if (!atRightEdge) { birdX = Math.min(window.innerWidth - birdSize, birdX + step); moved = true; }
-        else if (offsetX < maxOffset()) { offsetX = Math.min(maxOffset(), offsetX + step); moved = true; }
-      }
-      if (keys.ArrowUp){ birdY = Math.max(0, birdY - step); moved = true; }
-      if (keys.ArrowDown){ birdY = Math.min(window.innerHeight - birdSize, birdY + step); moved = true; }
-
-      if (moved){
-        bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-        world.style.transform = `translateX(${-offsetX}px)`;
-      }
-      requestAnimationFrame(tick);
+      root.style.setProperty('--fs', lo + 'px');
     }
 
-    bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-    world.style.transform = `translateX(0)`;
-    requestAnimationFrame(tick);
-
-    sun.addEventListener('click', () => {
-      offsetX = 0; world.style.transform = `translateX(0)`;
-    });
-
-    addEventListener('resize', () => {
-      birdX = clamp(birdX, 0, window.innerWidth - birdSize);
-      birdY = clamp(birdY, 0, window.innerHeight - birdSize);
-      offsetX = clamp(offsetX, 0, maxOffset());
-      bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-      world.style.transform = `translateX(${-offsetX}px)`;
-    });
-
-    bird.onerror = () => {
-      bird.style.background = 'white';
-      bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
-      bird.removeAttribute('src');
-    };
+    addEventListener('load', fitContent);
+    addEventListener('resize', () => { clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
   </script>
 </body>
 </html>
