@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hidden Page (Simple Yellow Circle)</title>
+  <!-- Favicon: simple yellow circle -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
   <style>
     :root { --bg:#0a0a0a; --fg:#eaeaea; }
     html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
@@ -23,7 +25,7 @@
     .main-area { width:100vw; height:100vh; }
 
     .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background:#000; }
-    /* Simple yellow circle (no gradients, no spin) */
+    /* Simple yellow circle */
     .sun { width:220px; height:220px; border-radius:50%; background: #ffd400; cursor:pointer; }
 
     /* Bird */
@@ -83,7 +85,6 @@
 
     function tick(){
       let moved = false;
-      // Horizontal
       if (keys.ArrowLeft){
         if (offsetX > 0) { offsetX = Math.max(0, offsetX - step); moved = true; }
         else if (birdX > 0) { birdX = Math.max(0, birdX - step); moved = true; }
@@ -93,7 +94,6 @@
         if (!atRightEdge) { birdX = Math.min(window.innerWidth - birdSize, birdX + step); moved = true; }
         else if (offsetX < maxOffset()) { offsetX = Math.min(maxOffset(), offsetX + step); moved = true; }
       }
-      // Vertical (bird only; world doesn't slide vertically)
       if (keys.ArrowUp){ birdY = Math.max(0, birdY - step); moved = true; }
       if (keys.ArrowDown){ birdY = Math.min(window.innerHeight - birdSize, birdY + step); moved = true; }
 
@@ -104,17 +104,14 @@
       requestAnimationFrame(tick);
     }
 
-    // Init positions
     bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
     world.style.transform = `translateX(0)`;
     requestAnimationFrame(tick);
 
-    // Click the sun to snap back to main screen
     sun.addEventListener('click', () => {
       offsetX = 0; world.style.transform = `translateX(0)`;
     });
 
-    // Handle resize: keep bird in bounds, recompute maxOffset
     addEventListener('resize', () => {
       birdX = clamp(birdX, 0, window.innerWidth - birdSize);
       birdY = clamp(birdY, 0, window.innerHeight - birdSize);
@@ -123,7 +120,6 @@
       world.style.transform = `translateX(${-offsetX}px)`;
     });
 
-    // Fallback if bird.png missing
     bird.onerror = () => {
       bird.style.background = 'white';
       bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
