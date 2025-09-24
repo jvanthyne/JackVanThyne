@@ -6,40 +6,59 @@
   <title>ABOUT ME — 2004–NOW</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
   <style>
-    :root { --bg:#0a0a0a; --fg:#eaeaea; --fs: 36px; --lh: 1.25; }
+    :root { --bg:#0a0a0a; --fg:#eaeaea; --fs: 36px; --lh: 1.05; }
 
-    html, body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    html, body {
+      height:100%; margin:0;
+      background:var(--bg); color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      text-transform: uppercase;
+    }
 
     * { cursor:none !important; }
 
+    /* Custom cursor */
     #custom-cursor {
-      position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+      pointer-events: none; z-index: 9999;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       background: #fff; mix-blend-mode: difference;
     }
 
-    .page { position: relative; min-height: 100vh; width: 100%; box-sizing: border-box; padding: 6vw; display:flex; align-items:center; }
-
-    .content { 
-      width:100%; 
-      max-width:none; 
-      font-size: var(--fs); 
-      line-height: var(--lh); 
-      letter-spacing: 0.01em; 
-      text-align: justify; 
-      text-align-last: justify; 
+    /* Page wrapper without any padding */
+    .page {
+      position: relative; min-height: 100vh; width: 100%;
+      display:flex; align-items:center;
+      box-sizing:border-box;
+      padding:0; margin:0;
     }
 
-    .back { position: fixed; top: 2vh; left: 2vw; z-index: 1000; text-decoration: none; color: var(--fg); font-size: 14px; opacity:.9; }
-    .back:hover { color: var(--fg); }
+    .content { 
+      width:100%;
+      font-size: var(--fs); line-height: var(--lh);
+      letter-spacing: 0.01em;
+      text-align: justify; text-align-last: justify;
+      margin:0; padding:0;
+    }
+
+    /* Back button as inverted triangle */
+    .back {
+      position: fixed; top: 2vh; left: 2vw;
+      width: 28px; height: 28px;
+      clip-path: polygon(100% 0, 0 50%, 100% 100%);
+      background: #fff;
+      mix-blend-mode: difference;
+      z-index: 1000;
+    }
+    .back:hover { opacity: 0.7; }
   </style>
 </head>
 <body>
-  <a class="back" href="index.html" aria-label="Back to Home">← Home</a>
+  <a class="back" href="index.html" aria-label="Back to Home"></a>
 
   <main class="page">
     <div class="content" id="content">
-ABOUT ME — 2004–NOW Introduction I’m Jack Van Thyne, a 21-year-old design student, artist, and builder. I study landscape architecture and sustainable design at UC Berkeley, with a focus on furniture design and hands-on building. Medium and Materials Wood is my favorite medium because of its natural, tactile qualities. It carries a deep human connection — you can see where it comes from, feel its grain, and sense its history. I also work with metal, light, watercolor, film, and music, each offering a unique role in my creative process. Artistic Philosophy The goal of my work is to curate feeling through design — creating art, spaces, and objects that shift perspectives and reshape how we experience the world. I aim to bring fresh views to the familiar, sparking moments of emotional resonance and deeper engagement. I strive to design projects that are built to last while also considering their afterlife — how a piece can evolve, be reused, or find new purpose. Sustainability Sustainability is central to my design process. For me, it’s about building a thoughtful relationship with the world around us — ensuring that sustainable practices guide each decision, from material choices to construction methods, so that every project respects both people and place.
+ABOUT ME — 2004–NOW INTRODUCTION I’M JACK VAN THYNE, A 21-YEAR-OLD DESIGN STUDENT, ARTIST, AND BUILDER. I STUDY LANDSCAPE ARCHITECTURE AND SUSTAINABLE DESIGN AT UC BERKELEY, WITH A FOCUS ON FURNITURE DESIGN AND HANDS-ON BUILDING. MEDIUM AND MATERIALS WOOD IS MY FAVORITE MEDIUM BECAUSE OF ITS NATURAL, TACTILE QUALITIES. IT CARRIES A DEEP HUMAN CONNECTION — YOU CAN SEE WHERE IT COMES FROM, FEEL ITS GRAIN, AND SENSE ITS HISTORY. I ALSO WORK WITH METAL, LIGHT, WATERCOLOR, FILM, AND MUSIC, EACH OFFERING A UNIQUE ROLE IN MY CREATIVE PROCESS. ARTISTIC PHILOSOPHY THE GOAL OF MY WORK IS TO CURATE FEELING THROUGH DESIGN — CREATING ART, SPACES, AND OBJECTS THAT SHIFT PERSPECTIVES AND RESHAPE HOW WE EXPERIENCE THE WORLD. I AIM TO BRING FRESH VIEWS TO THE FAMILIAR, SPARKING MOMENTS OF EMOTIONAL RESONANCE AND DEEPER ENGAGEMENT. I STRIVE TO DESIGN PROJECTS THAT ARE BUILT TO LAST WHILE ALSO CONSIDERING THEIR AFTERLIFE — HOW A PIECE CAN EVOLVE, BE REUSED, OR FIND NEW PURPOSE. SUSTAINABILITY SUSTAINABILITY IS CENTRAL TO MY DESIGN PROCESS. FOR ME, IT’S ABOUT BUILDING A THOUGHTFUL RELATIONSHIP WITH THE WORLD AROUND US — ENSURING THAT SUSTAINABLE PRACTICES GUIDE EACH DECISION, FROM MATERIAL CHOICES TO CONSTRUCTION METHODS, SO THAT EVERY PROJECT RESPECTS BOTH PEOPLE AND PLACE.
     </div>
   </main>
 
@@ -56,11 +75,8 @@ ABOUT ME — 2004–NOW Introduction I’m Jack Van Thyne, a 21-year-old design 
     const content = document.getElementById('content');
 
     function fitContent(){
-      const cs = getComputedStyle(page);
-      const padTop = parseFloat(cs.paddingTop)||0, padBottom = parseFloat(cs.paddingBottom)||0;
-      const available = window.innerHeight - padTop - padBottom;
-
-      let lo = 20, hi = 150;
+      const available = window.innerHeight;
+      let lo = 20, hi = 140;
       for(let i=0;i<20;i++){
         const mid = (lo + hi) / 2;
         root.style.setProperty('--fs', mid + 'px');
