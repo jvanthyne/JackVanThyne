@@ -1,119 +1,164 @@
-<header>
-  <!-- Removed the JACK VAN THYNE button and blue refresh button -->
-  <div style="position: fixed; bottom: 0; width: 100%; text-align: center; font-family: Times New Roman; font-size: 16px;">-Jack Van Thyne-</div>
-</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portfolio Scatter</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    main {
+      height: 100%;
+    }
+    /* Base sizing; JS also sets dimensions/position inline for robustness */
+    #portfolio {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .project {
+      position: absolute;           /* random placement uses left/top */
+      width: 130px;                 /* matches projectSize below */
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .project img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* Footer name */
+    header .signature {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 16px;
+      z-index: 10;
+      pointer-events: none;         /* don’t block clicks on items beneath */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Removed the JACK VAN THYNE button and blue refresh button -->
+    <div class="signature">-Jack Van Thyne-</div>
+  </header>
 
-<main>
-  <div class="portfolio" id="portfolio"></div>
-</main>
+  <main>
+    <div class="portfolio" id="portfolio"></div>
+  </main>
 
-<style>
-  #portfolio {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-  }
+  <script>
+    const projects = [
+      { number: "001", bw: "project001_bw.png", color: "images/project001_color.png" },
+      { number: "002", bw: "project002_bw.png", color: "images/project002_color.png" },
+      { number: "003", bw: "project003_bw.png", color: "images/project003_color.png" },
+      { number: "004", bw: "project004_bw.png", color: "images/project004_color.png" },
+      { number: "005", bw: "project005_bw.png", color: "images/project005_color.png" },
+      { number: "006", bw: "project006_bw.png", color: "images/project006_color.png" },
+      { number: "007", bw: "project007_bw.png", color: "images/project007_color.png" },
+      { number: "008", bw: "project008_bw.png", color: "images/project008_color.png" },
+      { number: "009", bw: "project009_bw.png", color: "images/project009_color.png" },
+      { number: "010", bw: "project010_bw.png", color: "images/project010_color.png" },
+      { number: "011", bw: "project011_bw.png", color: "images/project011_color.png" },
+      { number: "012", bw: "project012_bw.png", color: "images/project012_color.png" },
+      { number: "013", bw: "project013_bw.png", color: "images/project013_color.png" },
+      { number: "014", bw: "project014_bw.png", color: "images/project014_color.png" },
+      { number: "015", bw: "project015_bw.png", color: "images/project015_color.png" },
+      { number: "016", bw: "project016_bw.png", color: "images/project016_color.png" },
+      { number: "017", bw: "project017_bw.png", color: "images/project017_color.png" },
+      { number: "018", bw: "project018_bw.png", color: "images/project018_color.png" },
+      { number: "019", bw: "project019_bw.png", color: "images/project019_color.png" },
+      { number: "020", bw: "project020_bw.png", color: "images/project020_color.png" },
+      { number: "021", bw: "project021_bw.png", color: "images/project021_color.png" },
+      { number: "022", bw: "project022_bw.png", color: "images/project022_color.png" },
+      { number: "023", bw: "project023_bw.png", color: "images/project023_color.png" },
+      { number: "024", bw: "project024_bw.png", color: "images/project024_color.png" },
+    ];
 
-  .project {
-    position: absolute;
-    width: 130px; /* matches projectSize in JS */
-    height: auto;
-    cursor: pointer;
-    text-align: center;
-  }
-</style>
+    function positionProjects() {
+      const portfolio = document.getElementById("portfolio");
+      // Clear any previous layout (useful on resize)
+      portfolio.innerHTML = "";
 
-<script>
-  const projects = [
-    { number: "001", bw: "project001_bw.png", color: "images/project001_color.png" },
-    { number: "002", bw: "project002_bw.png", color: "images/project002_color.png" },
-    { number: "003", bw: "project003_bw.png", color: "images/project003_color.png" },
-    { number: "004", bw: "project004_bw.png", color: "images/project004_color.png" },
-    { number: "005", bw: "project005_bw.png", color: "images/project005_color.png" },
-    { number: "006", bw: "project006_bw.png", color: "images/project006_color.png" },
-    { number: "007", bw: "project007_bw.png", color: "images/project007_color.png" },
-    { number: "008", bw: "project008_bw.png", color: "images/project008_color.png" },
-    { number: "009", bw: "project009_bw.png", color: "images/project009_color.png" },
-    { number: "010", bw: "project010_bw.png", color: "images/project010_color.png" },
-    { number: "011", bw: "project011_bw.png", color: "images/project011_color.png" },
-    { number: "012", bw: "project012_bw.png", color: "images/project012_color.png" },
-    { number: "013", bw: "project013_bw.png", color: "images/project013_color.png" },
-    { number: "014", bw: "project014_bw.png", color: "images/project014_color.png" },
-    { number: "015", bw: "project015_bw.png", color: "images/project015_color.png" },
-    { number: "016", bw: "project016_bw.png", color: "images/project016_color.png" },
-    { number: "017", bw: "project017_bw.png", color: "images/project017_color.png" },
-    { number: "018", bw: "project018_bw.png", color: "images/project018_color.png" },
-    { number: "019", bw: "project019_bw.png", color: "images/project019_color.png" },
-    { number: "020", bw: "project020_bw.png", color: "images/project020_color.png" },
-    { number: "021", bw: "project021_bw.png", color: "images/project021_color.png" },
-    { number: "022", bw: "project022_bw.png", color: "images/project022_color.png" },
-    { number: "023", bw: "project023_bw.png", color: "images/project023_color.png" },
-    { number: "024", bw: "project024_bw.png", color: "images/project024_color.png" },
-  ];
+      // Ensure container has positioning context (also set inline to beat overrides)
+      portfolio.style.position = "relative";
+      portfolio.style.width = "100vw";
+      portfolio.style.height = "100vh";
 
-  function positionProjects() {
-    const portfolio = document.getElementById("portfolio");
-    const projectSize = 130;
-    const spacing = 30;
-    const nameAreaHeight = 120;
-    const placedProjects = [];
+      const projectSize = 130;
+      const spacing = 30;
+      const nameAreaHeight = 120; // leave space above the fixed footer
+      const placed = [];
 
-    projects.forEach(project => {
-      let overlap, attempts = 0;
-      let xPos, yPos;
+      const boundsWidth = portfolio.clientWidth;
+      const boundsHeight = portfolio.clientHeight;
 
-      do {
-        overlap = false;
-        attempts++;
+      projects.forEach((project) => {
+        let overlap, attempts = 0, xPos = 0, yPos = 0;
 
-        xPos = Math.random() * (window.innerWidth - projectSize - spacing);
-        yPos = Math.random() * (window.innerHeight - projectSize - spacing - nameAreaHeight);
+        do {
+          overlap = false;
+          attempts++;
 
-        for (let i = 0; i < placedProjects.length; i++) {
-          const placed = placedProjects[i];
-          if (
-            xPos < placed.x + projectSize + spacing &&
-            xPos + projectSize + spacing > placed.x &&
-            yPos < placed.y + projectSize + spacing &&
-            yPos + projectSize + spacing > placed.y
-          ) {
-            overlap = true;
-            break;
+          xPos = Math.random() * Math.max(1, (boundsWidth - projectSize - spacing));
+          yPos = Math.random() * Math.max(1, (boundsHeight - projectSize - spacing - nameAreaHeight));
+
+          for (const p of placed) {
+            const collide =
+              xPos < p.x + projectSize + spacing &&
+              xPos + projectSize + spacing > p.x &&
+              yPos < p.y + projectSize + spacing &&
+              yPos + projectSize + spacing > p.y;
+            if (collide) { overlap = true; break; }
           }
-        }
-      } while (overlap && attempts < 50);
+        } while (overlap && attempts < 100);
 
-      if (!overlap) {
-        placedProjects.push({ x: xPos, y: yPos });
+        const card = document.createElement("div");
+        card.className = "project";
+        // Force inline absolute positioning to override any external CSS
+        card.style.position = "absolute";
+        card.style.left = `${xPos}px`;
+        card.style.top = `${yPos}px`;
+        card.style.width = `${projectSize}px`;
 
-        const projectDiv = document.createElement("div");
-        projectDiv.className = "project";
-        projectDiv.style.left = `${xPos}px`;
-        projectDiv.style.top = `${yPos}px`;
-
-        projectDiv.innerHTML = `
-          <img src="${project.bw}" alt="Project ${project.number}" class="bw-image">
+        card.innerHTML = `
+          <img src="${project.bw}" alt="Project ${project.number}" class="bw-image" />
           <p>PROJECT ${project.number}</p>
         `;
 
-        const projectImage = projectDiv.querySelector(".bw-image");
-        projectDiv.addEventListener("mouseenter", () => {
-          projectImage.style.filter = \`brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(\${Math.random() * 360}deg)\`;
+        const img = card.querySelector(".bw-image");
+        card.addEventListener("mouseenter", () => {
+          img.style.filter = \`brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(\${Math.random() * 360}deg)\`;
         });
-        projectDiv.addEventListener("mouseleave", () => {
-          projectImage.style.filter = "none";
+        card.addEventListener("mouseleave", () => {
+          img.style.filter = "none";
         });
 
-        projectDiv.onclick = () => {
-          const formattedNumber = project.number.padStart(3, '0');
-          window.location.href = \`project_\${formattedNumber}.html\`;
-        };
+        card.addEventListener("click", () => {
+          const formatted = project.number.padStart(3, "0");
+          window.location.href = \`project_\${formatted}.html\`;
+        });
 
-        portfolio.appendChild(projectDiv);
-      }
-    });
-  }
+        portfolio.appendChild(card);
+        placed.push({ x: xPos, y: yPos });
+      });
+    }
 
+    // Debounce helper for resize
+    function debounce(fn, wait = 200) {
+      let t; 
+      return () => { clearTimeout(t); t = setTimeout(fn, wait); };
+    }
 
-  window.onload = positionProjects;
-</script>
+    window.addEventListener("load", positionProjects);
+    window.addEventListener("resize", debounce(positionProjects, 200));
+  </script>
+</body>
+</html>
