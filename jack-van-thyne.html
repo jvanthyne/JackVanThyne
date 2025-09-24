@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ABOUT ME — 2004–NOW</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
+  <style>
+    :root { --bg:#0a0a0a; --fg:#eaeaea; --fs: 24px; --lh: 1.18; --sp: 0.5; }
+
+    html, body { height:100%; margin:0; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+
+    * { cursor:none !important; }
+
+    #custom-cursor {
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      background: #fff; mix-blend-mode: difference;
+    }
+
+    .page { position: relative; min-height: 100vh; width: 100%; box-sizing: border-box; padding: 6vw; display:flex; align-items:center; }
+
+    .content { width:100%; max-width:none; font-size: var(--fs); line-height: var(--lh); letter-spacing: 0.01em; }
+    .content * { font-size: inherit; line-height: inherit; font-weight: 400; margin: calc(var(--fs) * var(--sp)) 0; }
+
+    .back { position: fixed; top: 2vh; left: 2vw; z-index: 1000; text-decoration: none; color: var(--fg); font-size: 14px; opacity:.9; }
+    .back:hover { color: var(--fg); }
+  </style>
+</head>
+<body>
+  <a class="back" href="index.html" aria-label="Back to Home">← Home</a>
+
+  <main class="page">
+    <div class="content" id="content">
+      <div>ABOUT ME — 2004–NOW</div>
+
+      <div>Introduction</div>
+      <div>I’m Jack Van Thyne, a 21-year-old design student, artist, and builder. I study landscape architecture and sustainable design at UC Berkeley, with a focus on furniture design and hands-on building.</div>
+
+      <div>Medium and Materials</div>
+      <div>Wood is my favorite medium because of its natural, tactile qualities. It carries a deep human connection — you can see where it comes from, feel its grain, and sense its history. I also work with metal, light, watercolor, film, and music, each offering a unique role in my creative process.</div>
+
+      <div>Artistic Philosophy</div>
+      <div>The goal of my work is to curate feeling through design — creating art, spaces, and objects that shift perspectives and reshape how we experience the world. I aim to bring fresh views to the familiar, sparking moments of emotional resonance and deeper engagement. I strive to design projects that are built to last while also considering their afterlife — how a piece can evolve, be reused, or find new purpose.</div>
+
+      <div>Sustainability</div>
+      <div>Sustainability is central to my design process. For me, it’s about building a thoughtful relationship with the world around us — ensuring that sustainable practices guide each decision, from material choices to construction methods, so that every project respects both people and place.</div>
+    </div>
+  </main>
+
+  <div id="custom-cursor" aria-hidden="true"></div>
+
+  <script>
+    const cursor = document.getElementById('custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+    }, { passive: true });
+
+    const root = document.documentElement;
+    const page = document.querySelector('.page');
+    const content = document.getElementById('content');
+
+    function fitContent(){
+      const cs = getComputedStyle(page);
+      const padTop = parseFloat(cs.paddingTop)||0, padBottom = parseFloat(cs.paddingBottom)||0;
+      const available = window.innerHeight - padTop - padBottom;
+
+      let lo = 10, hi = 80;
+      for(let i=0;i<18;i++){
+        const mid = (lo + hi) / 2;
+        root.style.setProperty('--fs', mid + 'px');
+        const h = content.scrollHeight;
+        if (h > available) hi = mid; else lo = mid;
+      }
+      root.style.setProperty('--fs', lo + 'px');
+      const sp = Math.max(0.35, Math.min(0.8, (lo/48)));
+      root.style.setProperty('--sp', sp.toString());
+    }
+
+    addEventListener('load', fitContent);
+    addEventListener('resize', () => { clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
+  </script>
+</body>
+</html>
 
