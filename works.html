@@ -1,116 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><^> WORKS</title>
-  <style>
-    :root { --bg: #0a0a0a; --fg: #eaeaea; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><^> WORKS</title>
+<style>
+  :root { --bg: #0a0a0a; --fg: #eaeaea; }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      cursor: none; /* Hide default cursor */
-    }
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    cursor: none;
+    overflow: hidden;
+  }
 
-    /* Custom inverted triangle cursor */
-    .cursor {
-      position: fixed;
-      pointer-events: none;
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 15px solid var(--fg);
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-    }
+  /* Transparent triangle cursor */
+  #custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    z-index: 9999;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #fff;
+    mix-blend-mode: difference;
+  }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(1.5in, 1fr));
-      gap: 6px;
-      padding: 6px;
-      justify-items: center;
-    }
- 
-    .item {
-      position: relative;
-      width: 1.5in;
-      height: 1.5in;
-      overflow: hidden;
-    }
+  .item {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
 
-    .item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none; /* hide by default */
-      transition: opacity 0.3s ease;
-    }
+  .item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
 
-    .item:hover img {
-      display: block; /* show on hover */
-    }
+  .item img.logo {
+    opacity: 0;
+  }
 
-    .title {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      color: var(--fg);
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
+  .item:hover img.main {
+    opacity: 0;
+    transform: scale(1.05);
+  }
 
-    .item:hover .title {
-      opacity: 1;
-    }
-  </style>
+  .item:hover img.logo {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+</style>
 </head>
 <body>
-  <div class="cursor" id="cursor"></div>
-  <main class="grid" id="grid"></main>
+<div id="custom-cursor"></div>
 
-  <script>
-    // Move custom cursor
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
+<script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+});
 
-    const files = [
-      "project001_image2.jpg","project001_image3.jpg","project001_image4.jpg","project001_image5.jpg","project001_image6.jpg"
-      // truncated for brevity; use your full array here
-    ];
+// All project images
+const mainImages = [
+"project001_image1.jpg","project001_image2.jpg","project001_image3.jpg","project001_image4.jpg","project001_image5.jpg","project001_image6.jpg","project001_image7.jpg","project001_image8.jpg","project001_image9.jpg","project001_image10.jpg","project001_image11.jpg","project001_image12.jpg","project001_image13.jpg",
+"project002_image1.jpg","project002_image2.jpg","project002_image3.jpg","project002_image4.jpg","project002_image5.jpg","project002_image6.jpg","project002_image7.jpg","project002_image8.jpg","project002_image9.jpg","project002_image10.jpg",
+"project003_image1.jpg","project003_image2.jpg","project003_image3.jpg","project003_image4.jpg","project003_image5.jpg","project003_image6.jpg","project003_image7.jpg","project003_image8.jpg","project003_image9.jpg","project003_image10.jpg",
+"project004_image1.jpg","project004_image2.jpg","project004_image3.jpg","project004_image4.jpg","project004_image5.jpg",
+"project005_image1.jpg","project005_image2.jpg","project005_image3.jpg","project005_image4.jpg","project005_image5.jpg","project005_image6.jpg","project005_image7.jpg","project005_image8.jpg","project005_image9.jpg",
+"project006_image1.jpg","project006_image2.jpg","project006_image3.jpg","project006_image4.jpg","project006_image5.jpg","project006_image6.jpg",
+"project007_image1.jpg","project007_image2.jpg","project007_image3.jpg",
+"project008_image1.jpg","project008_image2.jpg","project008_image3.jpg","project008_image4.jpg","project008_image5.jpg","project008_image6.jpg","project008_image7.jpg","project008_image8.jpg","project008_image9.jpg","project008_image10.jpg","project008_image11.jpg","project008_image12.jpg",
+"project009_image1.jpg","project009_image2.jpg","project009_image3.jpg",
+"project010_image1.jpg","project010_image2.jpg","project010_image3.jpg","project010_image4.jpg",
+"project011_image1.jpg","project011_image2.jpg","project011_image3.jpg","project011_image4.jpg",
+"project012_image1.jpg","project012_image2.jpg","project012_image3.jpg","project012_image4.jpg","project012_image5.jpg","project012_image6.jpg",
+"project013_image1.jpg","project013_image2.jpg","project013_image3.jpg","project013_image4.jpg","project013_image5.jpg","project013_image6.jpg","project013_image7.jpg",
+"project014_image1.jpg","project014_image2.jpg","project014_image3.jpg","project014_image4.jpg","project014_image5.jpg","project014_image6.jpg","project014_image7.jpg","project014_image8.jpg","project014_image9.jpg","project014_image10.jpg","project014_image11.jpg","project014_image12.jpg","project014_image13.jpg","project014_image14.jpg",
+"project015_image1.jpg","project015_image2.jpg","project015_image3.jpg","project015_image4.jpg","project015_image5.jpg","project015_image6.jpg",
+"project016_image1.jpg","project016_image2.jpg","project016_image3.jpg","project016_image4.jpg","project016_image5.jpg","project016_image6.jpg","project016_image7.jpg","project016_image8.jpg","project016_image9.jpg","project016_image10.jpg","project016_image11.jpg","project016_image12.jpg","project016_image13.jpg","project016_image14.jpg","project016_image15.jpg","project016_image16.jpg","project016_image17.jpg","project016_image18.jpg",
+"project017_image1.jpg","project017_image2.jpg","project017_image3.jpg","project017_image4.jpg","project017_image5.jpg",
+"project018_image1.jpg","project018_image2.jpg","project018_image3.jpg","project018_image4.jpg",
+"project019_image1.jpg","project019_image2.jpg","project019_image3.jpg","project019_image4.jpg","project019_image5.jpg","project019_image6.jpg","project019_image7.jpg","project019_image8.jpg","project019_image9.jpg","project019_image10.jpg","project019_image11.jpg","project019_image12.jpg","project019_image13.jpg","project019_image14.jpg","project019_image15.jpg","project019_image16.jpg","project019_image17.jpg","project019_image18.jpg","project019_image19.jpg","project019_image20.jpg","project019_image21.jpg","project019_image22.jpg",
+"project020_image1.jpg","project020_image2.jpg","project020_image3.jpg","project020_image4.jpg","project020_image5.jpg",
+"project021_image1.jpg","project021_image2.jpg","project021_image3.jpg","project021_image4.jpg",
+"project022_image1.jpg","project022_image2.jpg","project022_image3.jpg","project022_image4.jpg","project022_image5.jpg","project022_image6.jpg","project022_image7.jpg","project022_image8.jpg","project022_image9.jpg","project022_image10.jpg",
+"project024_image1.jpg","project024_image2.jpg","project024_image3.jpg","project024_image4.jpg"
+];
 
-    const grid = document.getElementById('grid');
+// Logos for each project
+const logos = {
+  "project001": "project001_bw.png",
+  "project002": "project002_bw.png",
+  "project003": "project003_bw.png",
+  "project004": "project004_bw.png",
+  "project005": "project005_bw.png",
+  "project006": "project006_bw.png",
+  "project007": "project007_bw.png",
+  "project008": "project008_bw.png",
+  "project009": "project009_bw.png",
+  "project010": "project010_bw.png",
+  "project011": "project011_bw.png",
+  "project012": "project012_bw.png",
+  "project013": "project013_bw.png",
+  "project014": "project014_bw.png",
+  "project015": "project015_bw.png",
+  "project016": "project016_bw.png",
+  "project017": "project017_bw.png",
+  "project018": "project018_bw.png",
+  "project019": "project019_bw.png",
+  "project020": "project020_bw.png",
+  "project021": "project021_bw.png",
+  "project022": "project022_bw.png",
+  "project023": "project023_bw.png",
+  "project024": "project024_bw.png"
+};
 
-    files.forEach(file => {
-      const item = document.createElement('div');
-      item.className = 'item';
+// Generate and place items
+mainImages.forEach(imgFile => {
+  const item = document.createElement('div');
+  item.className = 'item';
 
-      const img = document.createElement('img');
-      img.src = "images/" + file;
-      img.alt = file;
+  const mainImg = document.createElement('img');
+  mainImg.src = "images/" + imgFile;
+  mainImg.alt = imgFile;
+  mainImg.className = 'main';
 
-      const title = document.createElement('div');
-      title.className = 'title';
-      title.textContent = file.split("_")[0].toUpperCase(); // e.g. PROJECT001
+  const projectName = imgFile.split("_")[0];
+  const logoImg = document.createElement('img');
+  logoImg.src = "images/" + logos[projectName];
+  logoImg.alt = projectName + "_logo";
+  logoImg.className = 'logo';
 
-      item.appendChild(img);
-      item.appendChild(title);
-      grid.appendChild(item);
-    });
-  </script>
+  item.appendChild(mainImg);
+  item.appendChild(logoImg);
+
+  // Random position
+  const x = Math.random() * (window.innerWidth - 200);
+  const y = Math.random() * (window.innerHeight - 200);
+  item.style.left = x + 'px';
+  item.style.top = y + 'px';
+
+  document.body.appendChild(item);
+});
+</script>
 </body>
 </html>
