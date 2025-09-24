@@ -8,7 +8,7 @@
     html, body {
       height: 100%;
       margin: 0;
-    } 
+    }
     main {
       height: 100%;
     }
@@ -46,7 +46,6 @@
 </head>
 <body>
   <header>
-    <!-- Removed the JACK VAN THYNE button and blue refresh button -->
     <div class="signature">-Jack Van Thyne-</div>
   </header>
 
@@ -56,45 +55,39 @@
 
   <script>
     const projects = [
-      { number: "001", bw: "project001_bw.png", color: "images/project001_color.png" },
-      { number: "002", bw: "project002_bw.png", color: "images/project002_color.png" },
-      { number: "003", bw: "project003_bw.png", color: "images/project003_color.png" },
-      { number: "004", bw: "project004_bw.png", color: "images/project004_color.png" },
-      { number: "005", bw: "project005_bw.png", color: "images/project005_color.png" },
-      { number: "006", bw: "project006_bw.png", color: "images/project006_color.png" },
-      { number: "007", bw: "project007_bw.png", color: "images/project007_color.png" },
-      { number: "008", bw: "project008_bw.png", color: "images/project008_color.png" },
-      { number: "009", bw: "project009_bw.png", color: "images/project009_color.png" },
-      { number: "010", bw: "project010_bw.png", color: "images/project010_color.png" },
-      { number: "011", bw: "project011_bw.png", color: "images/project011_color.png" },
-      { number: "012", bw: "project012_bw.png", color: "images/project012_color.png" },
-      { number: "013", bw: "project013_bw.png", color: "images/project013_color.png" },
-      { number: "014", bw: "project014_bw.png", color: "images/project014_color.png" },
-      { number: "015", bw: "project015_bw.png", color: "images/project015_color.png" },
-      { number: "016", bw: "project016_bw.png", color: "images/project016_color.png" },
-      { number: "017", bw: "project017_bw.png", color: "images/project017_color.png" },
-      { number: "018", bw: "project018_bw.png", color: "images/project018_color.png" },
-      { number: "019", bw: "project019_bw.png", color: "images/project019_color.png" },
-      { number: "020", bw: "project020_bw.png", color: "images/project020_color.png" },
-      { number: "021", bw: "project021_bw.png", color: "images/project021_color.png" },
-      { number: "022", bw: "project022_bw.png", color: "images/project022_color.png" },
-      { number: "023", bw: "project023_bw.png", color: "images/project023_color.png" },
-      { number: "024", bw: "project024_bw.png", color: "images/project024_color.png" },
+      { number: "001", bw: "project001_bw.png", color: "project001_color.png" },
+      { number: "002", bw: "project002_bw.png", color: "project002_color.png" },
+      { number: "003", bw: "project003_bw.png", color: "project003_color.png" },
+      { number: "004", bw: "project004_bw.png", color: "project004_color.png" },
+      { number: "005", bw: "project005_bw.png", color: "project005_color.png" },
+      { number: "006", bw: "project006_bw.png", color: "project006_color.png" },
+      { number: "007", bw: "project007_bw.png", color: "project007_color.png" },
+      { number: "008", bw: "project008_bw.png", color: "project008_color.png" },
+      { number: "009", bw: "project009_bw.png", color: "project009_color.png" },
+      { number: "010", bw: "project010_bw.png", color: "project010_color.png" },
+      { number: "011", bw: "project011_bw.png", color: "project011_color.png" },
+      { number: "012", bw: "project012_bw.png", color: "project012_color.png" },
+      { number: "013", bw: "project013_bw.png", color: "project013_color.png" },
+      { number: "014", bw: "project014_bw.png", color: "project014_color.png" },
+      { number: "015", bw: "project015_bw.png", color: "project015_color.png" },
+      { number: "016", bw: "project016_bw.png", color: "project016_color.png" },
+      { number: "017", bw: "project017_bw.png", color: "project017_color.png" },
+      { number: "018", bw: "project018_bw.png", color: "project018_color.png" },
+      { number: "019", bw: "project019_bw.png", color: "project019_color.png" },
+      { number: "020", bw: "project020_bw.png", color: "project020_color.png" },
+      { number: "021", bw: "project021_bw.png", color: "project021_color.png" },
+      { number: "022", bw: "project022_bw.png", color: "project022_color.png" },
+      { number: "023", bw: "project023_bw.png", color: "project023_color.png" },
+      { number: "024", bw: "project024_bw.png", color: "project024_color.png" },
     ];
 
     function positionProjects() {
       const portfolio = document.getElementById("portfolio");
-      // Clear any previous layout (useful on resize)
-      portfolio.innerHTML = "";
-
-      // Ensure container has positioning context (also set inline to beat overrides)
-      portfolio.style.position = "relative";
-      portfolio.style.width = "100vw";
-      portfolio.style.height = "100vh";
+      portfolio.innerHTML = "";  // clear previous layout
 
       const projectSize = 130;
       const spacing = 30;
-      const nameAreaHeight = 120; // leave space above the fixed footer
+      const nameAreaHeight = 120; // leave space for footer
       const placed = [];
 
       const boundsWidth = portfolio.clientWidth;
@@ -122,7 +115,6 @@
 
         const card = document.createElement("div");
         card.className = "project";
-        // Force inline absolute positioning to override any external CSS
         card.style.position = "absolute";
         card.style.left = `${xPos}px`;
         card.style.top = `${yPos}px`;
@@ -135,7 +127,7 @@
 
         const img = card.querySelector(".bw-image");
         card.addEventListener("mouseenter", () => {
-          img.style.filter = \`brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(\${Math.random() * 360}deg)\`;
+          img.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random() * 360}deg)`;
         });
         card.addEventListener("mouseleave", () => {
           img.style.filter = "none";
@@ -143,7 +135,7 @@
 
         card.addEventListener("click", () => {
           const formatted = project.number.padStart(3, "0");
-          window.location.href = \`project_\${formatted}.html\`;
+          window.location.href = `project_${formatted}.html`;
         });
 
         portfolio.appendChild(card);
@@ -151,7 +143,6 @@
       });
     }
 
-    // Debounce helper for resize
     function debounce(fn, wait = 200) {
       let t; 
       return () => { clearTimeout(t); t = setTimeout(fn, wait); };
@@ -162,4 +153,3 @@
   </script>
 </body>
 </html>
-
