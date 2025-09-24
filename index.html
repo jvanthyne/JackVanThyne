@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hidden Page (Simple Yellow Circle)</title>
+  <title><^> fly to the sun</title>
   <!-- Favicon: simple yellow circle -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
   <style>
@@ -47,7 +47,7 @@
   <div class="world" id="world">
     <div class="main-area"></div>
     <div class="hidden-page">
-      <div class="sun" id="sun" title="Click to close"></div>
+      <div class="sun" id="sun" title="Click to fly"></div>
     </div>
   </div>
 
@@ -108,8 +108,9 @@
     world.style.transform = `translateX(0)`;
     requestAnimationFrame(tick);
 
+    // Clicking the sun → YouTube
     sun.addEventListener('click', () => {
-      offsetX = 0; world.style.transform = `translateX(0)`;
+      window.open("https://www.youtube.com/watch?v=hWi82rb9htU", "_blank");
     });
 
     addEventListener('resize', () => {
