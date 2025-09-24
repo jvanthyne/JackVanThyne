@@ -12,16 +12,14 @@
     main {
       height: 100%;
     }
-    /* Base sizing; JS also sets dimensions/position inline for robustness */
     #portfolio {
       position: relative;
       width: 100vw;
       height: 100vh;
     }
     .project {
-      position: absolute;           /* random placement uses left/top */
-      width: 130px;                 /* matches projectSize below */
-      text-align: center;
+      position: absolute;
+      width: 130px;  /* all projects same size */
       cursor: pointer;
       user-select: none;
     }
@@ -30,7 +28,6 @@
       height: auto;
       display: block;
     }
-    /* Footer name */
     header .signature {
       position: fixed;
       bottom: 0;
@@ -40,7 +37,7 @@
       font-family: "Times New Roman", Times, serif;
       font-size: 16px;
       z-index: 10;
-      pointer-events: none;         /* don’t block clicks on items beneath */
+      pointer-events: none;
     }
   </style>
 </head>
@@ -83,53 +80,50 @@
 
     function positionProjects() {
       const portfolio = document.getElementById("portfolio");
-      portfolio.innerHTML = "";  // clear previous layout
+      portfolio.innerHTML = "";  
 
       const projectSize = 130;
       const spacing = 30;
-      const nameAreaHeight = 120; // leave space for footer
+      const nameAreaHeight = 120; 
       const placed = [];
 
       const boundsWidth = portfolio.clientWidth;
       const boundsHeight = portfolio.clientHeight;
 
-      projects.forEach((project) => {
+      projects.forEach(project => {
         let overlap, attempts = 0, xPos = 0, yPos = 0;
 
         do {
           overlap = false;
           attempts++;
-
           xPos = Math.random() * Math.max(1, (boundsWidth - projectSize - spacing));
           yPos = Math.random() * Math.max(1, (boundsHeight - projectSize - spacing - nameAreaHeight));
 
           for (const p of placed) {
-            const collide =
+            if (
               xPos < p.x + projectSize + spacing &&
               xPos + projectSize + spacing > p.x &&
               yPos < p.y + projectSize + spacing &&
-              yPos + projectSize + spacing > p.y;
-            if (collide) { overlap = true; break; }
+              yPos + projectSize + spacing > p.y
+            ) { overlap = true; break; }
           }
         } while (overlap && attempts < 100);
 
         const card = document.createElement("div");
         card.className = "project";
-        card.style.position = "absolute";
         card.style.left = `${xPos}px`;
         card.style.top = `${yPos}px`;
         card.style.width = `${projectSize}px`;
 
-        card.innerHTML = `
-          <img src="${project.bw}" alt="Project ${project.number}" class="bw-image" />
-          <p>PROJECT ${project.number}</p>
-        `;
+        // Only show the icon, remove project name
+        card.innerHTML = `<img src="${project.bw}" alt="Project ${project.number}" class="bw-image" />`;
 
-        const img = card.querySelector(".bw-image");
         card.addEventListener("mouseenter", () => {
-          img.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random() * 360}deg)`;
+          const img = card.querySelector(".bw-image");
+          img.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random()*360}deg)`;
         });
         card.addEventListener("mouseleave", () => {
+          const img = card.querySelector(".bw-image");
           img.style.filter = "none";
         });
 
