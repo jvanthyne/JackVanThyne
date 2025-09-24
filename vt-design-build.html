@@ -1,116 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VT Design Build</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VT DESIGN BUILD</title>
+  <!-- Favicon: simple yellow circle -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
   <style>
-    /* Color scheme inspired by your welcome page */
-    :root {
-      --primary-bg: #f5f5f5;
-      --secondary-bg: #e0e0e0;
-      --text-color: #333;
-      --accent-color: #6abf69;
+    :root { 
+      --bg:#0a0a0a; 
+      --fg:#eaeaea; 
+      --fs:36px; 
+      --lh:1.1; 
     }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: var(--primary-bg);
-      color: var(--text-color);
+    html, body {
+      margin:0; padding:0; height:100%; width:100%;
+      background:var(--bg); color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      text-transform: uppercase; overflow:hidden;
     }
 
-    header {
-      background-color: var(--secondary-bg);
+    * { cursor:none !important; }
+
+    /* Custom cursor */
+    #custom-cursor {
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+      pointer-events: none; z-index: 9999;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      background: #fff; mix-blend-mode: difference;
+    }
+
+    .page { 
+      position: relative; min-height:100vh; width:100%; 
+      display:flex; flex-wrap: wrap; 
+      justify-content: center; align-items: center;
+      padding:2rem; box-sizing:border-box;
+      gap:3rem;
+    }
+
+    .text-block {
+      background: rgba(255,255,255,0.05);
       padding: 2rem;
-      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      max-width: 400px;
+      font-size: var(--fs);
+      line-height: var(--lh);
+      text-align: justify;
+      text-align-last: left;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-
-    section {
-      padding: 4rem 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .project {
-      background-color: #fff;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .project img {
-      width: 100%;
-      border-radius: 8px;
-    }
-
-    footer {
-      background-color: var(--secondary-bg);
-      text-align: center;
-      padding: 2rem;
-      margin-top: 2rem;
-    }
-
-    footer a {
-      color: var(--accent-color);
-      text-decoration: none;
-      font-weight: bold;
-    }
+    .highlight { color: #ffd400; }
   </style>
 </head>
 <body>
-
-  <header>
-    <h1>VT Design Build</h1>
-    <p>Crafting Thoughtful Landscapes with Purpose</p>
-  </header>
-
-  <section>
-    <h2>Our Philosophy</h2>
-    <p>At VT Design Build, we design spaces that are functional, ecological, and meaningful. Our approach blends sustainability, material integrity, and contextual sensitivity.</p>
-  </section>
-
-  <section>
-    <h2>Featured Projects</h2>
-    <div class="projects">
-      <div class="project">
-        <img src="project1.jpg" alt="Echo Park Community Garden">
-        <h3>Echo Park Community Garden</h3>
-        <p>Revitalizing urban spaces into thriving community gardens that foster ecological awareness.</p>
-      </div>
-      <div class="project">
-        <img src="project2.jpg" alt="Sonoma Retreat">
-        <h3>Sonoma Retreat</h3>
-        <p>A serene retreat blending seamlessly with the natural landscape.</p>
-      </div>
-      <div class="project">
-        <img src="project3.jpg" alt="Marinship Studios">
-        <h3>Marinship Studios</h3>
-        <p>Collaborative workspace surrounded by nature, designed to inspire creativity.</p>
-      </div>
+  <main class="page">
+    <div class="text-block">
+      <span class="highlight">VT DESIGN BUILD</span><br>
+      We craft landscapes and environments that are functional, sustainable, and deeply connected to their context.
     </div>
-  </section>
+    <div class="text-block">
+      <span class="highlight">OUR PHILOSOPHY</span><br>
+      Every project starts with understanding the land and the people who inhabit it. We combine ecological sensitivity with strong design principles.
+    </div>
+    <div class="text-block">
+      <span class="highlight">MATERIAL INTEGRITY</span><br>
+      We prioritize locally sourced and sustainable materials, building spaces that last while respecting the environment.
+    </div>
+    <div class="text-block">
+      <span class="highlight">FEATURED PROJECTS</span><br>
+      Echo Park Community Garden, Sonoma Retreat, Marinship Studios — each designed to engage the community and nature harmoniously.
+    </div>
+    <div class="text-block">
+      <span class="highlight">OUR PROCESS</span><br>
+      Collaborative, hands-on, and iterative. From site analysis to concept design to implementation and stewardship, every step matters.
+    </div>
+    <div class="text-block">
+      <span class="highlight">CONNECT</span><br>
+      Interested in working together? <a href="mailto:info@vtdesignbuild.com" style="color:#ffd400;">Email us</a> to begin.
+    </div>
+  </main>
 
-  <section>
-    <h2>Connect with Us</h2>
-    <p>Interested in collaborating? <a href="mailto:info@vtdesignbuild.com">Email us</a> to start your project.</p>
-  </section>
+  <div id="custom-cursor" aria-hidden="true"></div>
 
-  <footer>
-    &copy; 2025 VT Design Build
-  </footer>
+  <script>
+    const cursor = document.getElementById('custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+    }, { passive:true });
 
+    // Optional: dynamically adjust font-size to fit screen height
+    const root = document.documentElement;
+    const contentBlocks = document.querySelectorAll('.text-block');
+
+    function fitContent(){
+      const available = window.innerHeight / 2;
+      let lo=20, hi=80;
+      for(let i=0;i<15;i++){
+        let mid = (lo+hi)/2;
+        contentBlocks.forEach(block=>block.style.fontSize = mid+'px');
+        let maxHeight = Math.max(...Array.from(contentBlocks).map(b=>b.scrollHeight));
+        if(maxHeight>available) hi=mid; else lo=mid;
+      }
+    }
+
+    window.addEventListener('load', fitContent);
+    window.addEventListener('resize', ()=>{ clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
+  </script>
 </body>
 </html>
-
