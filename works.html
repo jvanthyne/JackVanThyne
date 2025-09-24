@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WORKS</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
+  <style>
+    :root { --bg:#0a0a0a; --fg:#eaeaea; }
+    html, body {
+      margin:0; height:100%; background:var(--bg); color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(1.5in, 1fr));
+      gap:8px;
+      padding:8px;
+    }
+
+    .item {
+      position:relative;
+      overflow:hidden;
+      aspect-ratio:1/1; /* keeps them square */
+    }
+
+    .item img {
+      width:100%; height:100%; object-fit:cover;
+      display:block;
+    }
+
+    .overlay {
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1rem;
+      opacity:0;
+      transition:opacity 0.3s;
+      text-align:center;
+      padding:0.5em;
+    }
+
+    .item:hover .overlay { opacity:1; }
+  </style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    // Load all images from the 'images' folder
+    // List of image file names (replace with actual files in your /images folder)
+    const images = [
+      {file:"project1.jpg", title:"PROJECT 1"},
+      {file:"project2.jpg", title:"PROJECT 2"},
+      {file:"project3.jpg", title:"PROJECT 3"},
+      // keep adding as needed
+    ];
+
+    const grid = document.getElementById("grid");
+
+    images.forEach(img => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <img src="images/${img.file}" alt="${img.title}">
+        <div class="overlay">${img.title}</div>
+      `;
+      grid.appendChild(div);
+    });
+  </script>
+</body>
+</html>
