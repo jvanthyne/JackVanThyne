@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VT Design Build</title>
+  <style>
+    /* Color scheme inspired by your welcome page */
+    :root {
+      --primary-bg: #f5f5f5;
+      --secondary-bg: #e0e0e0;
+      --text-color: #333;
+      --accent-color: #6abf69;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--text-color);
+    }
+
+    header {
+      background-color: var(--secondary-bg);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    section {
+      padding: 4rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .project {
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .project img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    footer {
+      background-color: var(--secondary-bg);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>VT Design Build</h1>
+    <p>Crafting Thoughtful Landscapes with Purpose</p>
+  </header>
+
+  <section>
+    <h2>Our Philosophy</h2>
+    <p>At VT Design Build, we design spaces that are functional, ecological, and meaningful. Our approach blends sustainability, material integrity, and contextual sensitivity.</p>
+  </section>
+
+  <section>
+    <h2>Featured Projects</h2>
+    <div class="projects">
+      <div class="project">
+        <img src="project1.jpg" alt="Echo Park Community Garden">
+        <h3>Echo Park Community Garden</h3>
+        <p>Revitalizing urban spaces into thriving community gardens that foster ecological awareness.</p>
+      </div>
+      <div class="project">
+        <img src="project2.jpg" alt="Sonoma Retreat">
+        <h3>Sonoma Retreat</h3>
+        <p>A serene retreat blending seamlessly with the natural landscape.</p>
+      </div>
+      <div class="project">
+        <img src="project3.jpg" alt="Marinship Studios">
+        <h3>Marinship Studios</h3>
+        <p>Collaborative workspace surrounded by nature, designed to inspire creativity.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Connect with Us</h2>
+    <p>Interested in collaborating? <a href="mailto:info@vtdesignbuild.com">Email us</a> to start your project.</p>
+  </section>
+
+  <footer>
+    &copy; 2025 VT Design Build
+  </footer>
+
+</body>
+</html>
 
