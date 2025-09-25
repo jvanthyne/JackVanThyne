@@ -10,6 +10,7 @@
     --fg: #eaeaea;
     --accent: purple;
     --hover-border: 2px solid #fff;
+    --frame-size: 150px;
   }
 
   html, body {
@@ -28,13 +29,13 @@
     display: flex;
   }
 
-  /* Product list */
+  /* Left product grid */
   .product-list {
     width: 30%;
     padding: 1rem;
     box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
     overflow-y: auto;
     height: 100vh;
@@ -42,25 +43,33 @@
   }
 
   .product-item {
-    text-align: center;
+    width: var(--frame-size);
+    height: var(--frame-size);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    transition: border 0.2s ease;
-    padding: 0.2rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    transition: border 0.2s ease, transform 0.2s ease;
+    text-align: center;
   }
 
   .product-item img {
-    width: 100%;
-    max-width: 150px;
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
     border-radius: 6px;
-    display: block;
-    margin: 0 auto;
   }
 
   .product-item-title {
-    margin-top: 0.5rem;
+    font-size: 14px;
+    margin-top: 0.3rem;
+    color: var(--fg);
   }
 
-  .product-item:hover img {
+  .product-item.selected {
     border: var(--hover-border);
   }
 
@@ -162,7 +171,7 @@
 </div>
 
 <div class="product-display">
-  <img class="large-image" id="largeImage" src="" alt="Hover a product" style="display:none;">
+  <img class="large-image" id="largeImage" src="" alt="Hover a product">
   <div class="description" id="description"><span>Hover over a product to see details.</span></div>
   <div class="controls" id="controls" style="display:none;">
     <label for="quantity">Quantity:</label>
@@ -187,32 +196,27 @@ const quantitySelect = document.getElementById('quantity');
 const addButton = document.getElementById('addToWheelbarrow');
 const wheelbarrow = document.getElementById('wheelbarrow');
 
-let currentProduct = null;
+let selectedProduct = null;
 
+// Select product and keep selection until another is selected
 items.forEach(item => {
   item.addEventListener('mouseenter', () => {
-    const imgSrc = item.dataset.image;
-    const descText = item.dataset.description;
-    currentProduct = item;
+    if(selectedProduct) selectedProduct.classList.remove('selected');
+    item.classList.add('selected');
+    selectedProduct = item;
 
-    largeImage.src = imgSrc;
+    largeImage.src = item.dataset.image;
     largeImage.style.display = 'block';
-    description.textContent = descText;
+    description.textContent = item.dataset.description;
     controls.style.display = 'flex';
-  });
-
-  item.addEventListener('mouseleave', () => {
-    largeImage.style.display = 'none';
-    description.innerHTML = '<span>Hover over a product to see details.</span>';
-    controls.style.display = 'none';
-    currentProduct = null;
   });
 });
 
+// Add to wheelbarrow
 addButton.addEventListener('click', () => {
-  if(currentProduct) {
+  if(selectedProduct) {
     const img = document.createElement('img');
-    img.src = currentProduct.dataset.image;
+    img.src = selectedProduct.dataset.image;
     wheelbarrow.appendChild(img);
   }
 });
