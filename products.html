@@ -1,283 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VT DESIGN BUILD — Interactive Gallery</title>
-<style>
-  :root {
-    --bg: #0a0a0a;
-    --fg: #eaeaea;
-    --accent: purple;
-    --hover-border: 2px solid #fff;
-    --frame-size: 150px;
-    --button-color: #ff69b4; /* pink */
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Van Thyne Digital Gallery</title>
+  <style>
+    :root {
+      --bg:#fff;
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    text-transform: uppercase;
-    overflow: hidden;
-  }
+      /* Tweak these to match perspective of your window shape */
+      --video-rotate-deg: 0;   /* e.g.  -5, 8 */
+      --video-skew-x-deg: 0;   /* e.g.   8, -6 */
+      --video-skew-y-deg: 0;   /* e.g.  -3,  4 */
+      --video-scale:     1;    /* uniform scale inside bbox */
+      --video-offset-x:  0;    /* px offset within bbox after skew/rot */
+      --video-offset-y:  0;
+    }
 
-  body {
-    display: flex;
-  }
+    html, body {
+      margin:0; height:100%; background:var(--bg); overflow:hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
 
-  /* Sidebar */
-  .sidebar {
-    width: 120px;
-    padding: 1rem;
-    border-right: 1px solid rgba(255,255,255,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    box-sizing: border-box;
-  }
+    /* Hide system cursor; use triangle that inverts beneath it */
+    * { cursor:none !important; }
+    #custom-cursor {
+      position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
+      clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference;
+      transform: translate(-100px, -100px);
+    }
 
-  .category {
-    cursor: pointer;
-    color: var(--fg);
-    text-align: center;
-    transition: color 0.2s ease;
-  }
+    /* Layer stack */
+    .stage { position:relative; width:100vw; height:100vh; }
+    .art-background, .art-door { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .art-background { z-index:1; }
 
-  .category:hover, .category.selected {
-    color: var(--accent);
-  }
+    /* Video drawn to this canvas, then masked by art_window.png's black region */
+    #windowCanvas {
+      position:absolute; inset:0; width:100%; height:100%;
+      z-index:2; pointer-events:none; /* drawing only */
+    }
 
-  /* Product list */
-  .product-list {
-    width: 250px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow-y: auto;
-    height: 100vh;
-    border-right: 1px solid rgba(255,255,255,0.1);
-    box-sizing: border-box;
-  }
+    .art-door {
+      z-index:3; pointer-events:none; /* custom hit-testing below */
+      transition: filter 0.18s ease;
+    }
+    /* Invert door ONLY when hovering opaque pixels */
+    .art-door.hovering { filter: invert(1); }
 
-  .product-item {
-    width: var(--frame-size);
-    height: var(--frame-size);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    text-align: center;
-    transition: border 0.2s ease;
-  }
+    /* Black flash overlay for transition */
+    .flash {
+      position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:999;
+      transition: opacity 0.25s ease;
+    }
 
-  .product-item img {
-    width: 80%;
-    height: 80%;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-
-  .product-item-title {
-    font-size: 14px;
-    margin-top: 0.3rem;
-    color: var(--fg);
-  }
-
-  .product-item.selected {
-    border: var(--hover-border);
-  }
-
-  /* Right display */
-  .product-display {
-    flex: 1;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
-  .large-image {
-    max-width: 60%;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
-
-  .description {
-    font-size: 20px;
-    line-height: 1.4;
-    margin-bottom: 1rem;
-    text-align: left;
-    width: 60%;
-  }
-
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  select, button {
-    padding: 0.5rem 1rem;
-    font-size: 16px;
-    cursor: pointer;
-    text-transform: uppercase;
-  }
-
-  button {
-    background: var(--button-color);
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    transition: background 0.2s ease;
-  }
-
-  button:hover {
-    background: #fff;
-    color: var(--button-color);
-  }
-
-  /* Wheelbarrow/truck */
-  .truck {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    width: 120px;
-    min-height: 100px;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    padding: 0.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    background: rgba(255,255,255,0.05);
-  }
-
-  .truck img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-</style>
+    /* Hidden assets (not displayed directly) */
+    #windowMask, #windowVideo { display:none; }
+  </style>
 </head>
 <body>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <div class="category selected" data-cat="all">All</div>
-  <div class="category" data-cat="lighting">Lighting</div>
-  <div class="category" data-cat="furniture">Furniture</div>
-  <div class="category" data-cat="structures">Structures</div>
-  <div class="category" data-cat="art">Art</div>
-</div>
-
-<!-- Scrollable product list -->
-<div class="product-list" id="productList"></div>
-
-<!-- Right display -->
-<div class="product-display">
-  <img class="large-image" id="largeImage" src="" alt="Select a product">
-  <div class="description" id="description"><span>Hover over a product to see details.</span></div>
-  <div class="controls" id="controls" style="display:none;">
-    <label for="quantity">Quantity:</label>
-    <select id="quantity">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-    </select>
-    <button id="addToTruck">Add to Truck</button>
+  <div class="stage" id="stage">
+    <img src="art_background.png" class="art-background" alt="">
+    <!-- Canvas where the video is rendered & masked -->
+    <canvas id="windowCanvas" width="1920" height="1080"></canvas>
+    <!-- Door on top -->
+    <img src="art_door.png" id="doorImg" class="art-door" alt="">
   </div>
-</div>
 
-<!-- Truck -->
-<div class="truck" id="truck"></div>
+  <!-- Mask source: art_window.png (black area = window) -->
+  <img id="windowMask" src="art_window.png" alt="">
+  <!-- Video source for the window -->
+  <video id="windowVideo" src="art_window.mp4" autoplay muted loop playsinline></video>
 
-<script>
-const categories = document.querySelectorAll('.category');
-const productList = document.getElementById('productList');
-const largeImage = document.getElementById('largeImage');
-const description = document.getElementById('description');
-const controls = document.getElementById('controls');
-const addButton = document.getElementById('addToTruck');
-const truck = document.getElementById('truck');
+  <div id="flash" class="flash"></div>
+  <div id="custom-cursor"></div>
 
-const products = [];
-
-// Generate mock products (10 per category)
-const catNames = ["lighting","furniture","structures","art"];
-catNames.forEach(cat => {
-  for(let i=1;i<=10;i++){
-    products.push({
-      title: `${cat.charAt(0).toUpperCase()+cat.slice(1)} ${i}`,
-      category: cat,
-      image: `https://via.placeholder.com/300?text=${cat}+${i}`,
-      description: `Description for ${cat} ${i}.`
+  <script>
+    // ---------- Custom cursor ----------
+    const cursor   = document.getElementById('custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
     });
-  }
-});
 
-// 'All' is all products
-function renderProducts(category="all"){
-  productList.innerHTML = "";
-  let filtered = category==="all"? products : products.filter(p=>p.category===category);
-  filtered.forEach(prod=>{
-    const div = document.createElement('div');
-    div.classList.add('product-item');
-    div.dataset.title = prod.title;
-    div.dataset.image = prod.image;
-    div.dataset.description = prod.description;
-    div.innerHTML = `<img src="${prod.image}" alt="${prod.title}"><div class="product-item-title">${prod.title}</div>`;
-    productList.appendChild(div);
-  });
-}
+    // ---------- Elements ----------
+    const doorImg   = document.getElementById('doorImg');
+    const flash     = document.getElementById('flash');
+    const winCanvas = document.getElementById('windowCanvas');
+    const winCtx    = winCanvas.getContext('2d');
+    const maskImg   = document.getElementById('windowMask');
+    const video     = document.getElementById('windowVideo');
 
-// Initial render
-renderProducts("all");
+    // ---------- Door pixel-precise hover (ignore transparent) ----------
+    const doorHitCanvas = document.createElement('canvas');
+    const doorHitCtx = doorHitCanvas.getContext('2d', { willReadFrequently:true });
+    const doorBitmap = new Image(); doorBitmap.src = doorImg.src;
+    let doorReady = false;
 
-// Category click
-categories.forEach(cat=>{
-  cat.addEventListener('click', ()=>{
-    categories.forEach(c=>c.classList.remove('selected'));
-    cat.classList.add('selected');
-    renderProducts(cat.dataset.cat);
-  });
-});
+    doorBitmap.onload = () => {
+      doorHitCanvas.width = doorBitmap.naturalWidth;
+      doorHitCanvas.height = doorBitmap.naturalHeight;
+      doorHitCtx.clearRect(0,0,doorHitCanvas.width,doorHitCanvas.height);
+      doorHitCtx.drawImage(doorBitmap, 0, 0);
+      doorReady = true;
+    };
 
-// Hover/select product
-let selectedProduct = null;
-productList.addEventListener('mouseover', e=>{
-  let target = e.target.closest('.product-item');
-  if(target){
-    if(selectedProduct) selectedProduct.classList.remove('selected');
-    target.classList.add('selected');
-    selectedProduct = target;
-    largeImage.src = target.dataset.image;
-    description.textContent = target.dataset.description;
-    controls.style.display = "flex";
-  }
-});
+    function testDoorHover(clientX, clientY){
+      if (!doorReady) { doorImg.classList.remove('hovering'); return; }
+      const rect = doorImg.getBoundingClientRect();
+      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+        doorImg.classList.remove('hovering'); return;
+      }
+      const xNorm = (clientX - rect.left) / rect.width;
+      const yNorm = (clientY - rect.top)  / rect.height;
+      const px = Math.floor(xNorm * doorHitCanvas.width);
+      const py = Math.floor(yNorm * doorHitCanvas.height);
+      if (px < 0 || py < 0 || px >= doorHitCanvas.width || py >= doorHitCanvas.height) {
+        doorImg.classList.remove('hovering'); return;
+      }
+      const alpha = doorHitCtx.getImageData(px, py, 1, 1).data[3];
+      if (alpha > 20) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+    }
+    document.addEventListener('mousemove', (e)=>testDoorHover(e.clientX, e.clientY));
 
-// Add to truck
-addButton.addEventListener('click', ()=>{
-  if(selectedProduct){
-    const img = document.createElement('img');
-    img.src = selectedProduct.dataset.image;
-    truck.appendChild(img);
-  }
-});
-</script>
+    document.addEventListener('click', (e) => {
+      const rect = doorImg.getBoundingClientRect();
+      const inside = (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom);
+      if (inside && doorImg.classList.contains('hovering')) {
+        flash.style.opacity = 1;
+        setTimeout(()=>{ window.location.href = 'art-room001.html'; }, 250);
+      }
+    });
 
+    // ---------- Video masking ----------
+    // Build a binary mask from art_window.png where black pixels (near 0,0,0) become opaque.
+    // Then: draw the video scaled to the mask’s black region bounding box, apply optional skew/rotation,
+    // and finally composite with the mask so only the window shape shows.
+    const maskCanvas = document.createElement('canvas');
+    const maskCtx = maskCanvas.getContext('2d', { willReadFrequently:true });
+    let maskReady = false;
+    let maskBbox = null; // bounding box of black region (in mask image pixels)
+
+    maskImg.onload = () => {
+      maskCanvas.width = maskImg.naturalWidth;
+      maskCanvas.height = maskImg.naturalHeight;
+      maskCtx.clearRect(0,0,maskCanvas.width,maskCanvas.height);
+      maskCtx.drawImage(maskImg, 0, 0);
+
+      const imgData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      const d = imgData.data;
+      let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+      for (let y=0; y<maskCanvas.height; y++){
+        for (let x=0; x<maskCanvas.width; x++){
+          const i = (y*maskCanvas.width + x) * 4;
+          const r = d[i], g = d[i+1], b = d[i+2], a = d[i+3];
+          const isBlack = (a > 10) && (r < 30 && g < 30 && b < 30);
+          if (isBlack) {
+            // White pixel in the mask means "keep" when compositing
+            d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255;
+            if (x<minX) minX=x; if (y<minY) minY=y;
+            if (x>maxX) maxX=x; if (y>maxY) maxY=y;
+          } else {
+            d[i+3] = 0; // transparent elsewhere
+          }
+        }
+      }
+      maskCtx.putImageData(imgData, 0, 0);
+      if (minX !== Infinity) maskBbox = { x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1 };
+      maskReady = true;
+      requestAnimationFrame(render);
+    };
+
+    function fitCanvasDisplay(canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.round(rect.width  * dpr);
+      const h = Math.round(rect.height * dpr);
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w; canvas.height = h; return true;
+      }
+      return false;
+    }
+    function degToRad(d){ return d * Math.PI / 180; }
+
+    function render(){
+      fitCanvasDisplay(winCanvas);
+      winCtx.clearRect(0,0,winCanvas.width, winCanvas.height);
+
+      if (!maskReady || !maskBbox || video.readyState < 2) {
+        requestAnimationFrame(render); return;
+      }
+
+      const rect = doorImg.getBoundingClientRect(); // same scaling as other layers
+      const dpr = window.devicePixelRatio || 1;
+      const canvasW = rect.width * dpr;
+      const canvasH = rect.height * dpr;
+
+      // Map mask coordinates to canvas coordinates
+      const scaleX = canvasW / maskCanvas.width;
+      const scaleY = canvasH / maskCanvas.height;
+
+      const dstX = maskBbox.x * scaleX;
+      const dstY = maskBbox.y * scaleY;
+      const dstW = maskBbox.w * scaleX;
+      const dstH = maskBbox.h * scaleY;
+
+      // CSS-like controls
+      const skewX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-skew-x-deg')) || 0;
+      const skewY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-skew-y-deg')) || 0;
+      const rotate = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-rotate-deg')) || 0;
+      const scaleU = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-scale')) || 1;
+      const offX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-offset-x')) || 0;
+      const offY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-offset-y')) || 0;
+
+      // Draw the video into the bbox with skew/rotate/scale and optional offsets
+      winCtx.save();
+      winCtx.translate(dstX + offX, dstY + offY);
+      // scale to bbox
+      const sx = (dstW / video.videoWidth) * scaleU;
+      const sy = (dstH / video.videoHeight) * scaleU;
+
+      // Build transform: translate center → rotate → skew → scale
+      // Move origin to top-left (already), apply skew, rotate, then scale
+      const tanX = Math.tan(degToRad(skewX));
+      const tanY = Math.tan(degToRad(skewY));
+      // Apply transforms in order: rotate around bbox center
+      winCtx.translate(dstW/2, dstH/2);
+      winCtx.rotate(degToRad(rotate));
+      winCtx.transform(1, tanY, tanX, 1, 0, 0);  // skew
+      winCtx.scale(sx, sy);
+      winCtx.translate(-video.videoWidth/2, -video.videoHeight/2);
+
+      // Draw video
+      winCtx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+      winCtx.restore();
+
+      // Apply mask so only the window shape is visible
+      winCtx.save();
+      winCtx.globalCompositeOperation = 'destination-in';
+      winCtx.drawImage(
+        maskCanvas,
+        0, 0, maskCanvas.width, maskCanvas.height,
+        0, 0, canvasW, canvasH
+      );
+      winCtx.restore();
+
+      requestAnimationFrame(render);
+    }
+
+    // Reset state when coming back via bfcache
+    function resetState(){
+      const prev = flash.style.transition;
+      flash.style.transition = 'none'; flash.style.opacity = 0;
+      requestAnimationFrame(()=>{ flash.style.transition = prev || 'opacity 0.25s ease'; });
+      doorImg.classList.remove('hovering');
+    }
+    window.addEventListener('pageshow', resetState);
+
+    window.addEventListener('resize', ()=>{
+      // Force hover re-eval mid screen
+      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
+      document.dispatchEvent(evt);
+    });
+
+    // Ensure autoplay if blocked until first interaction
+    if (video.paused) {
+      const unlock = () => { video.play().catch(()=>{}); window.removeEventListener('pointerdown', unlock); };
+      window.addEventListener('pointerdown', unlock);
+    }
+
+    // Keep hover test responsive
+    document.addEventListener('mousemove', (e)=> testDoorHover(e.clientX, e.clientY));
+    function testDoorHover(x,y){ /* already wired above; no-op hook */ }
+  </script>
 </body>
 </html>
