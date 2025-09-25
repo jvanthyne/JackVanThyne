@@ -1,62 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Room 001</title>
-    <style>
-        /* Ensure the page takes full height */
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Room 001</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: #000;
+    }
 
-        /* Container for the scrollable background */
-        #background-container {
-            position: relative;
-            width: 200vw; /* double-wide */
-            height: 100vh;
-            background-image: url('art_room001_background.png');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: left center;
-            transition: transform 0.2s ease;
-        }
+    * { cursor: none !important; }
+    #custom-cursor {
+      position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      background: #fff; mix-blend-mode: difference;
+      transform: translate(-100px, -100px);
+    }
 
-        /* Optional: content overlay */
-        #content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 10;
-            pointer-events: none; /* allows background scrolling without interference */
-        }
-    </style>
+    /* Scrollable double-wide background */
+    #background-container {
+      position: absolute;
+      width: 200vw; /* double-wide */
+      height: 100vh;
+      background-image: url('art_room001_background.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: left center;
+      transition: transform 0.2s ease;
+      z-index: 1;
+    }
+
+    /* Door overlay */
+    #doorImg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none; /* hit-testing via JS */
+      z-index: 2;
+      transition: filter 0.18s ease;
+    }
+
+    #doorImg.hovering { filter: invert(1); }
+
+    /* Black flash transition */
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+      transition: opacity 0.25s ease;
+    }
+  </style>
 </head>
 <body>
-    <div id="background-container"></div>
-    <div id="content">
-        <!-- Add any overlay text or elements here -->
-    </div>
+  <div id="background-container"></div>
+  <img src="art_room001_door.png" id="doorImg" alt="Door">
+  <div id="flash"></div>
+  <div id="custom-cursor"></div>
 
-    <script>
-        const container = document.getElementById('background-container');
-        let scrollX = 0;
+  <script>
+    // ---------------- Cursor ----------------
+    const cursor = document.getElementById('custom-cursor');
+    const moveCursor = (x, y) => {
+      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+    };
+    document.addEventListener('mousemove', e => moveCursor(e.clientX, e.clientY));
+    document.addEventListener('touchmove', e => {
+      const t = e.touches[0]; if (!t) return;
+      moveCursor(t.clientX, t.clientY);
+    });
 
-        document.addEventListener('keydown', (e) => {
-            if(e.key === 'ArrowRight') {
-                scrollX = Math.min(scrollX + 50, window.innerWidth); // adjust max as needed
-            } else if(e.key === 'ArrowLeft') {
-                scrollX = Math.max(scrollX - 50, 0);
-            }
-            container.style.transform = `translateX(-${scrollX}px)`;
-        });
-    </script>
+    // ---------------- Scrollable background ----------------
+    const container = document.getElementById('background-container');
+    let scrollX = 0;
+    const maxScroll = window.innerWidth; // limit to one screen width (since 200vw)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') scrollX = Math.min(scrollX + 50, maxScroll);
+      else if (e.key === 'ArrowLeft') scrollX = Math.max(scrollX - 50, 0);
+      container.style.transform = `translateX(-${scrollX}px)`;
+    });
+
+    // ---------------- Door hover ----------------
+    const doorImg = document.getElementById('doorImg');
+    const doorCanvas = document.createElement('canvas');
+    const doorCtx = doorCanvas.getContext('2d', { willReadFrequently: true });
+    let doorReady = false;
+
+    function prepareDoorHitmap() {
+      const w = doorImg.naturalWidth || doorImg.width;
+      const h = doorImg.naturalHeight || doorImg.height;
+      if (!w || !h) return;
+      doorCanvas.width = w; doorCanvas.height = h;
+      const bmp = new Image();
+      bmp.crossOrigin = doorImg.crossOrigin || '';
+      bmp.src = doorImg.currentSrc || doorImg.src;
+      bmp.onload = () => { doorCtx.drawImage(bmp, 0, 0); doorReady = true; };
+      if (bmp.complete && bmp.naturalWidth) { doorCtx.drawImage(bmp, 0, 0); doorReady = true; }
+    }
+    if (doorImg.complete && doorImg.naturalWidth) prepareDoorHitmap();
+    else doorImg.addEventListener('load', prepareDoorHitmap, { once: true });
+
+    function testDoorHover(clientX, clientY) {
+      if (!doorReady) { doorImg.classList.remove('hovering'); return; }
+      const rect = doorImg.getBoundingClientRect();
+      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+        doorImg.classList.remove('hovering'); return;
+      }
+      const xNorm = (clientX - rect.left) / rect.width;
+      const yNorm = (clientY - rect.top) / rect.height;
+      const px = Math.floor(xNorm * doorCanvas.width);
+      const py = Math.floor(yNorm * doorCanvas.height);
+      const alpha = doorCtx.getImageData(px, py, 1, 1).data[3];
+      if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+    }
+
+    document.addEventListener('mousemove', e => testDoorHover(e.clientX, e.clientY));
+    document.addEventListener('touchmove', e => {
+      const t = e.touches[0]; if (!t) return;
+      testDoorHover(t.clientX, t.clientY);
+    });
+
+    function tryEnter(clientX, clientY){
+      if (!doorReady) return;
+      const rect = doorImg.getBoundingClientRect();
+      const inside = clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+      if (inside && doorImg.classList.contains('hovering')) {
+        document.getElementById('flash').style.opacity = 1;
+        setTimeout(()=>{ window.location.href = 'next-room.html'; }, 250);
+      }
+    }
+    document.addEventListener('click', e => tryEnter(e.clientX, e.clientY));
+    document.addEventListener('touchend', e => { const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY); });
+
+  </script>
 </body>
 </html>
-
