@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Art Room 001</title>
+  <title>&lt; &gt; room 001</title>
   <style>
     html, body {
       margin: 0;
@@ -11,11 +11,12 @@
       overflow: hidden;
       height: 100%;
       width: 100%;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background: #000;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
     * { cursor: none !important; }
+
     #custom-cursor {
       position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
@@ -26,11 +27,13 @@
     /* Scrollable double-wide background */
     #background-container {
       position: absolute;
-      width: 200vw; /* double-wide */
+      top: 0;
+      left: 0;
+      width: 200%; /* double-wide in percentage */
       height: 100vh;
       background-image: url('art_room001_background.png');
-      background-size: cover;
       background-repeat: no-repeat;
+      background-size: 200% 100%; /* stretch to double width, full height */
       background-position: left center;
       transition: transform 0.2s ease;
       z-index: 1;
@@ -44,14 +47,14 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      pointer-events: none; /* hit-testing via JS */
+      pointer-events: none;
       z-index: 2;
       transition: filter 0.18s ease;
     }
 
     #doorImg.hovering { filter: invert(1); }
 
-    /* Black flash transition */
+    /* Black flash */
     #flash {
       position: fixed;
       inset: 0;
@@ -84,7 +87,7 @@
     // ---------------- Scrollable background ----------------
     const container = document.getElementById('background-container');
     let scrollX = 0;
-    const maxScroll = window.innerWidth; // limit to one screen width (since 200vw)
+    const maxScroll = window.innerWidth; // scroll limit
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowRight') scrollX = Math.min(scrollX + 50, maxScroll);
       else if (e.key === 'ArrowLeft') scrollX = Math.max(scrollX - 50, 0);
@@ -142,7 +145,6 @@
     }
     document.addEventListener('click', e => tryEnter(e.clientX, e.clientY));
     document.addEventListener('touchend', e => { const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY); });
-
   </script>
 </body>
 </html>
