@@ -4,7 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DOVETAIL CHAIR — 2023</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='green'/></svg>">
+<!-- Favicon: open white circle -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='white' stroke-width='10'/></svg>">
 <style>
 :root { 
   --bg:#0a0a0a; 
@@ -50,14 +51,32 @@ a:hover {
   mix-blend-mode: difference;
 }
 
+/* Floating back arrow (triangle) */
+.back-arrow {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 0; 
+  height: 0; 
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 18px solid var(--fg);
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.back-arrow:hover {
+  transform: scale(1.2);
+  border-bottom-color: var(--link-hover);
+}
+
 .page {
   position: relative; 
   min-height: 100vh; 
   width: 100%;
-  display:flex; 
-  justify-content: center;
   box-sizing:border-box;
-  padding: 20px 10%;
+  padding: 40px 10%;
   margin:0;
 }
 
@@ -72,21 +91,37 @@ a:hover {
   padding:0;
 }
 
+/* Title and description styling (same size) */
+.content h1, .content p {
+  font-size: var(--fs);
+  margin: 0 0 20px 0;
+}
+
+/* Title-description separator */
+.separator {
+  display: block;
+  margin: 0 0 20px 0;
+}
+
 /* Image styling */
 .content img {
   display: block;
   width: 100%;
   max-width: 800px;
-  margin: 40px auto; /* space between images */
+  margin: 40px auto;
   border-radius: 5px;
 }
 </style>
 </head>
 <body>
 
+<!-- Back arrow triangle -->
+<div class="back-arrow" onclick="location.href='archive.html'"></div>
+
 <main class="page">
-  <div class="content" id="content">
+  <div class="content">
     <h1>DOVETAIL CHAIR</h1>
+    <span class="separator">--</span>
     <p>2023 – During a semester in Denmark studying furniture design, I built this project using a single sheet of plywood. The piece was designed to pack flat, used no glue, and featured hand-cut dovetail joints.</p>
     
     <img src="images/project001_image1.jpg" alt="Dovetail Chair Image 1">
@@ -105,31 +140,5 @@ a:hover {
 
 <div id="custom-cursor" aria-hidden="true"></div>
 
-<script>
-const cursor = document.getElementById('custom-cursor');
-document.addEventListener('mousemove', (e) => {
-  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
-}, { passive: true });
-
-const root = document.documentElement;
-const content = document.getElementById('content');
-
-function fitContent(){
-  const available = window.innerHeight;
-  let lo = 20, hi = 140;
-  for(let i=0;i<20;i++){
-    const mid = (lo + hi) / 2;
-    root.style.setProperty('--fs', mid + 'px');
-    const h = content.scrollHeight;
-    if (h > available) hi = mid; else lo = mid;
-  }
-  root.style.setProperty('--fs', lo + 'px');
-}
-
-addEventListener('load', fitContent);
-addEventListener('resize', () => { clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
-</script>
-
 </body>
 </html>
-
