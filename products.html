@@ -11,6 +11,7 @@
     --accent: purple;
     --hover-border: 2px solid #fff;
     --frame-size: 150px;
+    --button-color: #ff69b4; /* pink */
   }
 
   html, body {
@@ -29,17 +30,39 @@
     display: flex;
   }
 
-  /* Left product grid */
-  .product-list {
-    width: 30%;
+  /* Sidebar */
+  .sidebar {
+    width: 120px;
     padding: 1rem;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     box-sizing: border-box;
-    display: grid;
-    grid-template-columns: 1fr;
+  }
+
+  .category {
+    cursor: pointer;
+    color: var(--fg);
+    text-align: center;
+    transition: color 0.2s ease;
+  }
+
+  .category:hover, .category.selected {
+    color: var(--accent);
+  }
+
+  /* Product list */
+  .product-list {
+    width: 250px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
     overflow-y: auto;
     height: 100vh;
     border-right: 1px solid rgba(255,255,255,0.1);
+    box-sizing: border-box;
   }
 
   .product-item {
@@ -52,8 +75,8 @@
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
-    transition: border 0.2s ease, transform 0.2s ease;
     text-align: center;
+    transition: border 0.2s ease;
   }
 
   .product-item img {
@@ -75,9 +98,8 @@
 
   /* Right display */
   .product-display {
-    width: 70%;
+    flex: 1;
     padding: 2rem;
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -113,7 +135,7 @@
   }
 
   button {
-    background: var(--accent);
+    background: var(--button-color);
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -122,15 +144,15 @@
 
   button:hover {
     background: #fff;
-    color: var(--accent);
+    color: var(--button-color);
   }
 
-  /* Wheelbarrow */
-  .wheelbarrow {
+  /* Wheelbarrow/truck */
+  .truck {
     position: fixed;
     bottom: 1rem;
     right: 1rem;
-    width: 100px;
+    width: 120px;
     min-height: 100px;
     border: 2px solid var(--accent);
     border-radius: 8px;
@@ -141,7 +163,7 @@
     background: rgba(255,255,255,0.05);
   }
 
-  .wheelbarrow img {
+  .truck img {
     width: 40px;
     height: 40px;
     object-fit: cover;
@@ -151,27 +173,21 @@
 </head>
 <body>
 
-<div class="product-list">
-  <div class="product-item" data-title="Floating Sauna" data-description="A serene floating sauna on the water." data-image="images/project_014.jpg">
-    <img src="images/project_014_thumb.jpg" alt="Floating Sauna">
-    <div class="product-item-title">Floating Sauna</div>
-  </div>
-  <div class="product-item" data-title="Mobile Sauna" data-description="A mobile sauna designed for transport anywhere." data-image="images/project_019.jpg">
-    <img src="images/project_019_thumb.jpg" alt="Mobile Sauna">
-    <div class="product-item-title">Mobile Sauna</div>
-  </div>
-  <div class="product-item" data-title="Circle Stage" data-description="A stage installation for events and performances." data-image="images/project_021.jpg">
-    <img src="images/project_021_thumb.jpg" alt="Circle Stage">
-    <div class="product-item-title">Circle Stage</div>
-  </div>
-  <div class="product-item" data-title="Time Machine" data-description="Interactive time machine installation." data-image="images/project_024.jpg">
-    <img src="images/project_024_thumb.jpg" alt="Time Machine">
-    <div class="product-item-title">Time Machine</div>
-  </div>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="category selected" data-cat="all">All</div>
+  <div class="category" data-cat="lighting">Lighting</div>
+  <div class="category" data-cat="furniture">Furniture</div>
+  <div class="category" data-cat="structures">Structures</div>
+  <div class="category" data-cat="art">Art</div>
 </div>
 
+<!-- Scrollable product list -->
+<div class="product-list" id="productList"></div>
+
+<!-- Right display -->
 <div class="product-display">
-  <img class="large-image" id="largeImage" src="" alt="Hover a product">
+  <img class="large-image" id="largeImage" src="" alt="Select a product">
   <div class="description" id="description"><span>Hover over a product to see details.</span></div>
   <div class="controls" id="controls" style="display:none;">
     <label for="quantity">Quantity:</label>
@@ -181,43 +197,84 @@
       <option value="3">3</option>
       <option value="4">4</option>
     </select>
-    <button id="addToWheelbarrow">Add to Wheelbarrow</button>
+    <button id="addToTruck">Add to Truck</button>
   </div>
 </div>
 
-<div class="wheelbarrow" id="wheelbarrow"></div>
+<!-- Truck -->
+<div class="truck" id="truck"></div>
 
 <script>
-const items = document.querySelectorAll('.product-item');
+const categories = document.querySelectorAll('.category');
+const productList = document.getElementById('productList');
 const largeImage = document.getElementById('largeImage');
 const description = document.getElementById('description');
 const controls = document.getElementById('controls');
-const quantitySelect = document.getElementById('quantity');
-const addButton = document.getElementById('addToWheelbarrow');
-const wheelbarrow = document.getElementById('wheelbarrow');
+const addButton = document.getElementById('addToTruck');
+const truck = document.getElementById('truck');
 
-let selectedProduct = null;
+const products = [];
 
-// Select product and keep selection until another is selected
-items.forEach(item => {
-  item.addEventListener('mouseenter', () => {
-    if(selectedProduct) selectedProduct.classList.remove('selected');
-    item.classList.add('selected');
-    selectedProduct = item;
+// Generate mock products (10 per category)
+const catNames = ["lighting","furniture","structures","art"];
+catNames.forEach(cat => {
+  for(let i=1;i<=10;i++){
+    products.push({
+      title: `${cat.charAt(0).toUpperCase()+cat.slice(1)} ${i}`,
+      category: cat,
+      image: `https://via.placeholder.com/300?text=${cat}+${i}`,
+      description: `Description for ${cat} ${i}.`
+    });
+  }
+});
 
-    largeImage.src = item.dataset.image;
-    largeImage.style.display = 'block';
-    description.textContent = item.dataset.description;
-    controls.style.display = 'flex';
+// 'All' is all products
+function renderProducts(category="all"){
+  productList.innerHTML = "";
+  let filtered = category==="all"? products : products.filter(p=>p.category===category);
+  filtered.forEach(prod=>{
+    const div = document.createElement('div');
+    div.classList.add('product-item');
+    div.dataset.title = prod.title;
+    div.dataset.image = prod.image;
+    div.dataset.description = prod.description;
+    div.innerHTML = `<img src="${prod.image}" alt="${prod.title}"><div class="product-item-title">${prod.title}</div>`;
+    productList.appendChild(div);
+  });
+}
+
+// Initial render
+renderProducts("all");
+
+// Category click
+categories.forEach(cat=>{
+  cat.addEventListener('click', ()=>{
+    categories.forEach(c=>c.classList.remove('selected'));
+    cat.classList.add('selected');
+    renderProducts(cat.dataset.cat);
   });
 });
 
-// Add to wheelbarrow
-addButton.addEventListener('click', () => {
-  if(selectedProduct) {
+// Hover/select product
+let selectedProduct = null;
+productList.addEventListener('mouseover', e=>{
+  let target = e.target.closest('.product-item');
+  if(target){
+    if(selectedProduct) selectedProduct.classList.remove('selected');
+    target.classList.add('selected');
+    selectedProduct = target;
+    largeImage.src = target.dataset.image;
+    description.textContent = target.dataset.description;
+    controls.style.display = "flex";
+  }
+});
+
+// Add to truck
+addButton.addEventListener('click', ()=>{
+  if(selectedProduct){
     const img = document.createElement('img');
     img.src = selectedProduct.dataset.image;
-    wheelbarrow.appendChild(img);
+    truck.appendChild(img);
   }
 });
 </script>
