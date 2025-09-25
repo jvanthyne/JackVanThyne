@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Van Thyne Digital Gallery</title>
+  <title>digital gallery</title>
+  <!-- Favicon: simple orange circle -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23ff7a00'/></svg>">
   <style>
     :root {
       --bg:#fff;
 
-      /* Adjust to fit video perspective inside the window */
-      --video-rotate-deg: 0;   /* e.g.  -5, 8  */
-      --video-skew-x-deg: 0;   /* e.g.   8, -6 */
-      --video-skew-y-deg: 0;   /* e.g.  -3,  4 */
-      --video-scale:     1;    /* uniform scale inside bbox */
-      --video-offset-x:  0;    /* px offset within bbox after skew/rot */
+      /* Video fit controls */
+      --video-rotate-deg: 0;
+      --video-skew-x-deg: 0;
+      --video-skew-y-deg: 0;
+      --video-scale:     1;
+      --video-offset-x:  0;
       --video-offset-y:  0;
 
-      /* Frame thickness in CSS pixels (around the window shape) */
-      --frame-px: 1;
+      /* Frame thickness (in CSS px) — increased */
+      --frame-px: 3;
     }
 
     html, body {
@@ -25,13 +27,13 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Hide system cursor; custom triangle that inverts what’s behind it */
+    /* Hide system cursor; triangle cursor that inverts what’s behind it */
     * { cursor:none !important; }
     #custom-cursor {
       position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
       clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
       background:#fff; mix-blend-mode:difference;
-      transform: translate(-100px, -100px); /* offscreen until first move */
+      transform: translate(-100px, -100px);
     }
 
     /* Layer stack */
@@ -39,27 +41,26 @@
     .art-background, .art-door { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
     .art-background { z-index:1; }
 
-    /* Canvas where the video is rendered & masked by art_window.png’s black area */
+    /* Canvas where the video is drawn & masked by art_window.png */
     #windowCanvas {
       position:absolute; inset:0; width:100%; height:100%;
       z-index:2; pointer-events:none;
     }
 
-    /* Top: the door; pixel-precise hover via offscreen canvas */
+    /* Door on top; pixel-precise hover via offscreen canvas (JS) */
     .art-door {
-      z-index:3; pointer-events:none; /* we do hit-testing in JS */
+      z-index:3; pointer-events:none;
       transition: filter 0.18s ease;
     }
-    /* On hover (opaque pixels only): invert door, no scale */
-    .art-door.hovering { filter: invert(1); }
+    .art-door.hovering { filter: invert(1); } /* invert on hover (no scale) */
 
-    /* Black flash overlay for transition */
+    /* Black flash for transition */
     .flash {
       position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:999;
       transition: opacity 0.25s ease;
     }
 
-    /* Hidden assets (used by JS) */
+    /* Hidden assets for JS */
     #windowMask, #windowVideo { display:none; }
   </style>
 </head>
@@ -70,17 +71,16 @@
     <img src="art_door.png" id="doorImg" class="art-door" alt="">
   </div>
 
-  <!-- Mask source: art_window.png (BLACK AREA = window/visible video) -->
+  <!-- Mask (BLACK AREA = window that shows the video) -->
   <img id="windowMask" src="art_window.png" alt="">
-
-  <!-- Video source that will be skewed/scaled and clipped by the mask -->
+  <!-- Video source (autoplay + loop) -->
   <video id="windowVideo" src="art_window.mp4" autoplay muted loop playsinline></video>
 
   <div id="flash" class="flash"></div>
   <div id="custom-cursor"></div>
 
   <script>
-    // ---------------- Custom cursor ----------------
+    /* ===== Custom cursor ===== */
     const cursor = document.getElementById('custom-cursor');
     const moveCursor = (x, y) => {
       cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
@@ -88,14 +88,14 @@
     document.addEventListener('mousemove', (e) => {
       moveCursor(e.clientX, e.clientY);
       testDoorHover(e.clientX, e.clientY);
-    }, { passive: true });
+    }, { passive:true });
     document.addEventListener('touchmove', (e) => {
       const t = e.touches[0]; if (!t) return;
       moveCursor(t.clientX, t.clientY);
       testDoorHover(t.clientX, t.clientY);
-    }, { passive: true });
+    }, { passive:true });
 
-    // ---------------- Elements ----------------
+    /* ===== Elements ===== */
     const doorImg   = document.getElementById('doorImg');
     const flash     = document.getElementById('flash');
     const winCanvas = document.getElementById('windowCanvas');
@@ -103,18 +103,17 @@
     const maskImg   = document.getElementById('windowMask');
     const video     = document.getElementById('windowVideo');
 
-    // Ensure video loops & autoplays robustly
+    /* Ensure video autoplays & loops */
     video.loop = true;
     const tryPlay = () => video.play().catch(()=>{});
     window.addEventListener('pageshow', tryPlay);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
-    // Mobile fallback: play on first user gesture if blocked
     if (video.paused) {
       const unlock = () => { tryPlay(); window.removeEventListener('pointerdown', unlock); };
       window.addEventListener('pointerdown', unlock);
     }
 
-    // ---------------- Pixel-precise hover for door ----------------
+    /* ===== DOOR: pixel-precise hover ===== */
     const doorHitCanvas = document.createElement('canvas');
     const doorHitCtx = doorHitCanvas.getContext('2d', { willReadFrequently:true });
     let doorReady = false;
@@ -152,7 +151,7 @@
       if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
     }
 
-    // Click/tap → only when over opaque door pixels
+    /* Click/tap only when over opaque door pixels */
     function tryEnter(clientX, clientY){
       if (!doorReady) return;
       const rect = doorImg.getBoundingClientRect();
@@ -163,17 +162,18 @@
       }
     }
     document.addEventListener('click', (e) => tryEnter(e.clientX, e.clientY));
-    document.addEventListener('touchend', (e) => { const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY); });
+    document.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY);
+    });
 
-    // ---------------- Video masking to art_window.png black region ----------------
+    /* ===== VIDEO: mask to art_window.png black region + thicker black frame ===== */
     const maskCanvas = document.createElement('canvas');
     const maskCtx = maskCanvas.getContext('2d', { willReadFrequently:true });
-    // Prebuilt black-tinted mask for drawing a thin frame
     const maskBlackCanvas = document.createElement('canvas');
     const maskBlackCtx = maskBlackCanvas.getContext('2d', { willReadFrequently:true });
 
     let maskReady = false;
-    let maskBbox  = null; // bounding box of the black region (in mask image px)
+    let maskBbox  = null; // bbox of black region in mask (mask px)
 
     function buildMask() {
       const w = maskImg.naturalWidth || maskImg.width;
@@ -183,9 +183,9 @@
       maskCanvas.width = w;      maskCanvas.height = h;
       maskBlackCanvas.width = w; maskBlackCanvas.height = h;
 
-      // 1) Build white mask (window only, elsewhere transparent), and find bbox
       maskCtx.clearRect(0,0,w,h);
       maskCtx.drawImage(maskImg, 0, 0);
+
       const imgData = maskCtx.getImageData(0, 0, w, h);
       const d = imgData.data;
       let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
@@ -196,18 +196,18 @@
           const r = d[i], g = d[i+1], b = d[i+2], a = d[i+3];
           const isBlack = (a > 10) && (r < 30 && g < 30 && b < 30);
           if (isBlack) {
-            d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255; // white keep
+            d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255; // white = keep
             if (x<minX) minX=x; if (y<minY) minY=y;
             if (x>maxX) maxX=x; if (y>maxY) maxY=y;
           } else {
-            d[i+3] = 0; // transparent elsewhere
+            d[i+3] = 0;
           }
         }
       }
       maskCtx.putImageData(imgData, 0, 0);
       if (minX !== Infinity) maskBbox = { x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1 };
 
-      // 2) Build black-tinted version of the mask for the frame
+      // Black-tinted version (for frame)
       maskBlackCtx.clearRect(0,0,w,h);
       maskBlackCtx.drawImage(maskCanvas, 0, 0);
       maskBlackCtx.globalCompositeOperation = 'source-in';
@@ -218,7 +218,6 @@
       maskReady = true;
       requestAnimationFrame(render);
     }
-
     if (maskImg.complete && maskImg.naturalWidth) buildMask();
     else maskImg.addEventListener('load', buildMask, { once:true });
 
@@ -242,8 +241,7 @@
         requestAnimationFrame(render); return;
       }
 
-      // Use the door’s rect as the consistent viewport scale reference
-      const rect = doorImg.getBoundingClientRect();
+      const rect = doorImg.getBoundingClientRect(); // consistent viewport scale
       const dpr = window.devicePixelRatio || 1;
       const canvasW = rect.width  * dpr;
       const canvasH = rect.height * dpr;
@@ -265,7 +263,7 @@
       const offX   = parseFloat(cs.getPropertyValue('--video-offset-x')) || 0;
       const offY   = parseFloat(cs.getPropertyValue('--video-offset-y')) || 0;
 
-      // ---- Draw the video inside the window bbox with skew/rotate/scale/offset
+      /* Draw the video into the window bbox with skew/rotate/scale/offset */
       winCtx.save();
       winCtx.translate(dstX + offX, dstY + offY);
       const sx = (dstW / video.videoWidth) * scaleU;
@@ -278,7 +276,7 @@
       winCtx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
       winCtx.restore();
 
-      // ---- Apply the mask so only the black shape shows the video
+      /* Clip to the exact window shape (mask) */
       winCtx.save();
       winCtx.globalCompositeOperation = 'destination-in';
       winCtx.drawImage(
@@ -288,19 +286,18 @@
       );
       winCtx.restore();
 
-      // ---- Draw a thin black frame around the window shape (behind the video)
-      // We approximate an outline by drawing the black-tinted mask slightly offset
-      // in 8 directions at 1 CSS px (scaled by DPR), and put it behind existing content.
-      const framePx = Math.max(1, Math.floor((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--frame-px')) || 1) * dpr));
+      /* Thicker black frame around the shape (behind the video) */
+      const framePxCSS = parseFloat(cs.getPropertyValue('--frame-px')) || 3;
+      const framePx = Math.max(1, Math.floor(framePxCSS * dpr));
       winCtx.save();
       winCtx.globalCompositeOperation = 'destination-over';
-      for (let dx = -1; dx <= 1; dx++) {
-        for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -framePx; dx <= framePx; dx += framePx) {
+        for (let dy = -framePx; dy <= framePx; dy += framePx) {
           if (dx === 0 && dy === 0) continue;
           winCtx.drawImage(
             maskBlackCanvas,
             0, 0, maskBlackCanvas.width, maskBlackCanvas.height,
-            dx * framePx, dy * framePx, canvasW, canvasH
+            dx, dy, canvasW, canvasH
           );
         }
       }
@@ -309,24 +306,8 @@
       requestAnimationFrame(render);
     }
 
-    // Reset visual state when returning via bfcache
+    /* Reset visual state when returning via bfcache */
     function resetState(){
       const prev = flash.style.transition;
       flash.style.transition = 'none'; flash.style.opacity = 0;
-      requestAnimationFrame(()=>{ flash.style.transition = prev || 'opacity 0.25s ease'; });
-      doorImg.classList.remove('hovering');
-      // Nudge cursor to recompute hover state
-      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-      document.dispatchEvent(evt);
-    }
-    window.addEventListener('pageshow', resetState);
-
-    // Keep hover mapping correct after resize
-    window.addEventListener('resize', () => {
-      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-      document.dispatchEvent(evt);
-    });
-
-  </script>
-</body>
-</html>
+      requestAnimationFrame(()=>{ flash.style.transition
