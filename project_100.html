@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DOVETAIL CHAIR — 2023</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='green'/></svg>">
+<style>
+:root { 
+  --bg:#0a0a0a; 
+  --fg:#eaeaea; 
+  --link-hover:#008000; 
+  --fs: 36px; 
+  --lh: 1.05; 
+}
+
+html, body {
+  height:100%; 
+  margin:0;
+  background:var(--bg); 
+  color:var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  text-transform: uppercase;
+  overflow-y: auto;
+}
+
+* { cursor:none !important; }
+
+a {
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+/* Custom cursor */
+#custom-cursor {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 32px; 
+  height: 32px;
+  pointer-events: none; 
+  z-index: 9999;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: #fff; 
+  mix-blend-mode: difference;
+}
+
+.page {
+  position: relative; 
+  min-height: 100vh; 
+  width: 100%;
+  display:flex; 
+  justify-content: center;
+  box-sizing:border-box;
+  padding: 20px 10%;
+  margin:0;
+}
+
+.content { 
+  width:100%;
+  font-size: var(--fs); 
+  line-height: var(--lh);
+  letter-spacing: 0.01em;
+  text-align: justify; 
+  text-align-last: justify;
+  margin:0; 
+  padding:0;
+}
+
+/* Image styling */
+.content img {
+  display: block;
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto; /* space between images */
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+  <div class="content" id="content">
+    <h1>DOVETAIL CHAIR</h1>
+    <p>2023 – During a semester in Denmark studying furniture design, I built this project using a single sheet of plywood. The piece was designed to pack flat, used no glue, and featured hand-cut dovetail joints.</p>
+    
+    <img src="images/project001_image1.jpg" alt="Dovetail Chair Image 1">
+    <img src="images/project001_image2.jpg" alt="Dovetail Chair Image 2">
+    <img src="images/project001_image3.jpg" alt="Dovetail Chair Image 3">
+    <img src="images/project001_image4.jpg" alt="Dovetail Chair Image 4">
+    <img src="images/project001_image5.jpg" alt="Dovetail Chair Image 5">
+
+    <p>The process of creating the chair emphasized precision, patience, and respect for material. Every cut and fold was deliberate, reflecting the interplay between function, form, and the unique properties of the plywood. The resulting piece not only folds flat for transport but also maintains structural integrity and visual elegance.</p>
+    
+    <img src="images/project001_image6.jpg" alt="Dovetail Chair Image 6">
+    <img src="images/project001_image8.jpg" alt="Dovetail Chair Image 8">
+    <img src="images/project001_image9.jpg" alt="Dovetail Chair Image 9">
+  </div>
+</main>
+
+<div id="custom-cursor" aria-hidden="true"></div>
+
+<script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+}, { passive: true });
+
+const root = document.documentElement;
+const content = document.getElementById('content');
+
+function fitContent(){
+  const available = window.innerHeight;
+  let lo = 20, hi = 140;
+  for(let i=0;i<20;i++){
+    const mid = (lo + hi) / 2;
+    root.style.setProperty('--fs', mid + 'px');
+    const h = content.scrollHeight;
+    if (h > available) hi = mid; else lo = mid;
+  }
+  root.style.setProperty('--fs', lo + 'px');
+}
+
+addEventListener('load', fitContent);
+addEventListener('resize', () => { clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
+</script>
+
+</body>
+</html>
 
