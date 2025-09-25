@@ -11,24 +11,29 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Hide system cursor; custom triangle inverts content */
+    /* Hide system cursor; custom triangle inverts content beneath it */
     * { cursor:none !important; }
     #custom-cursor {
       position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
-      clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference;
+      clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
+      background:#fff; mix-blend-mode:difference;
+      transform: translate(-100px, -100px); /* start offscreen until first move */
     }
 
+    /* Fullscreen layer stack */
     .stage { position:relative; width:100vw; height:100vh; }
     .art-background, .art-door {
       position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
     }
     .art-background { z-index:1; }
-    .art-door { z-index:2; pointer-events:none; /* we handle hit-testing in JS */ 
-                transition: transform 0.2s ease, filter 0.2s ease; }
+    .art-door {
+      z-index:2; pointer-events:none; /* we do pixel-precise hit testing in JS */
+      transition: filter 0.18s ease;
+    }
+    /* No scale on hover—just invert to go black ↔ white */
+    .art-door.hovering { filter: invert(1); }
 
-    /* Only applied when cursor is over opaque pixels of the door */
-    .art-door.hovering { transform: scale(1.01); filter: invert(1); }
-
+    /* Black flash overlay for page transition */
     .flash {
       position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:999;
       transition: opacity 0.25s ease;
@@ -45,17 +50,17 @@
   <div id="custom-cursor"></div>
 
   <script>
-    const cursor = document.getElementById('custom-cursor');
-    const doorImg = document.getElementById('doorImg');
-    const flash = document.getElementById('flash');
+    const cursor   = document.getElementById('custom-cursor');
+    const doorImg  = document.getElementById('doorImg');
+    const flash    = document.getElementById('flash');
 
-    // Custom triangle cursor movement
+    // --- Custom triangle cursor movement ---
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
       hoverTest(e.clientX, e.clientY);
     });
 
-    // Offscreen canvas for pixel-precise hit-testing on art_door.png
+    // --- Offscreen canvas for pixel-precise hover hit testing (ignores transparent pixels) ---
     const hitCanvas = document.createElement('canvas');
     const hitCtx = hitCanvas.getContext('2d', { willReadFrequently: true });
     const doorBitmap = new Image();
@@ -73,11 +78,12 @@
     function hoverTest(clientX, clientY){
       if (!doorReady) return;
       const rect = doorImg.getBoundingClientRect();
+      // If cursor not over the image bounds → not hovering
       if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
         doorImg.classList.remove('hovering');
         return;
       }
-      // Map screen coords → image pixel coords
+      // Map screen coords to source pixel coords
       const xNorm = (clientX - rect.left) / rect.width;
       const yNorm = (clientY - rect.top)  / rect.height;
       const px = Math.floor(xNorm * hitCanvas.width);
@@ -90,13 +96,13 @@
       if (alpha > 20) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
     }
 
-    // Click only when currently hovering on opaque pixels
+    // --- Click only when hovering over opaque pixels ---
     document.addEventListener('click', (e) => {
       if (!doorReady) return;
       const rect = doorImg.getBoundingClientRect();
       const inside = (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom);
-      const hovering = doorImg.classList.contains('hovering');
-      if (inside && hovering) {
+      const isHoveringOpaque = doorImg.classList.contains('hovering');
+      if (inside && isHoveringOpaque) {
         flash.style.opacity = 1; // black flash
         setTimeout(() => {
           window.location.href = 'art-room001.html';
@@ -104,9 +110,26 @@
       }
     });
 
-    // Recompute hover state on resize/scroll to prevent stale rect
+    // --- Reset state on back/forward navigation (handles bfcache) ---
+    function resetState() {
+      // Ensure flash is hidden and no hover state
+      const prevTransition = flash.style.transition;
+      flash.style.transition = 'none';
+      flash.style.opacity = 0;
+      // force reflow, then restore transition
+      requestAnimationFrame(() => { flash.style.transition = prevTransition || 'opacity 0.25s ease'; });
+      doorImg.classList.remove('hovering');
+    }
+
+    // pageshow fires on normal load and on BFCache restore
+    window.addEventListener('pageshow', (evt) => {
+      // Always reset (including when persisted via bfcache)
+      resetState();
+    });
+
+    // On resize, re-evaluate hover mapping to keep alignment correct
     window.addEventListener('resize', () => {
-      // A tiny mousemove nudge to re-evaluate
+      // Trigger a synthetic mousemove to recompute hover class based on new rect
       const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
       document.dispatchEvent(evt);
     });
