@@ -22,6 +22,14 @@
 
   * { cursor: none !important; } /* enforce hiding everywhere */
 
+  /* Wrapper to scale everything */
+  #wrapper {
+    transform: scale(0.5);
+    transform-origin: top left;
+    width: 200%;  /* counteract scaling */
+    height: 200%;
+  }
+
   /* Triangle custom cursor */
   #custom-cursor {
     position: fixed; top: 0; left: 0; width: 32px; height: 32px;
@@ -69,15 +77,17 @@
 </style>
 </head>
 <body>
-<header>
-  <div class="signature">-Jack Van Thyne-</div>
-</header>
+<div id="wrapper">
+  <header>
+    <div class="signature">-Jack Van Thyne-</div>
+  </header>
 
-<main>
-  <div id="portfolio"></div>
-</main>
+  <main>
+    <div id="portfolio"></div>
+  </main>
 
-<div id="custom-cursor" aria-hidden="true"></div>
+  <div id="custom-cursor" aria-hidden="true"></div>
+</div>
 
 <script>
 const cursor = document.getElementById('custom-cursor');
