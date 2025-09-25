@@ -1,143 +1,118 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project 001 - Project Title</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Times New Roman', serif;
-            background-color: #f5f5f5;
-            display: flex;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 400px; /* Start in expanded position */
-            background-color: #b89f59;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: width 0.3s ease; /* Smooth transition for collapsing */
-            overflow: hidden;
-            box-sizing: border-box;
-        }
-        .sidebar.collapsed {
-            width: 50px; /* Collapsed width */
-        }
-        .toggle-btn {
-            width: 0; 
-            height: 0; 
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 15px solid rgb(114, 92, 46); /* Red triangle */
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.3s;
-        }
-        .sidebar.collapsed .toggle-btn {
-            transform: rotate(180deg); /* Rotate triangle when collapsed */
-        }
-        .description {
-            padding: 20px;
-            font-size: 1em;
-            text-align: left;
-        }
-        .sidebar.collapsed .description {
-            display: none; /* Hide description when collapsed */
-        }
-    </style>
-</head>
-<body>
-    <div class="sidebar" id="sidebar">
-        <div class="toggle-btn" onclick="toggleSidebar()"></div> <!-- Red triangle button -->
-        <div class="description">
-            <h3>"SHŌJI" LIGHT- 2024</h3>
-            <p>
-Here’s the revised version with corrections for grammar and spelling:
-
-2024
-This project was once again inspired by reclaimed materials I had found. I was also very curious about the Japanese practice of "shōji" (a traditional screen-making technique) and wanted to apply it to a lighting application. This was my second attempt at the project; due to the delicacy of the material, my first design broke from too much stress.
-            </p>
-        </div>
-    </div>
-
-    <script>
-        function toggleSidebar() {
-            console.log("Toggle function triggered"); // Log when function is triggered
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar) {
-                console.log("Sidebar element found.");
-                sidebar.classList.toggle('collapsed'); // Toggle the collapsed class
-            } else {
-                console.log("Sidebar element not found.");
-            }
-        }
-    </script>
-</body>
-</html>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stacked Images with Scroll</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Times New Roman', serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-y: auto; /* Enable scrolling on the page */
-        }
-        .image-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 20px; /* Space between images */
-            max-width: 800px;
-        }
-        .image-stack img {
-            max-width: 100%;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SHŌJI LIGHT — 2024</title>
+<!-- Favicon: open white circle -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='white' stroke-width='10'/></svg>">
+<style>
+:root { 
+  --bg:#bdbdaf; /* background color */
+  --fg:#0a0a0a;  /* dark text */
+  --fs: 36px; 
+  --lh: 1.05; 
+}
+
+html, body {
+  height:100%; 
+  margin:0;
+  background:var(--bg); 
+  color:var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  text-transform: uppercase;
+  overflow-y: auto;
+}
+
+* { cursor:none !important; }
+
+.page {
+  position: relative; 
+  min-height: 100vh; 
+  width: 100%;
+  box-sizing:border-box;
+  padding: 80px 0 20px 0; /* top padding for back arrow */
+  margin:0;
+}
+
+.content { 
+  width:100%;
+  font-size: var(--fs); 
+  line-height: var(--lh);
+  letter-spacing: 0.01em;
+  text-align: justify; 
+  text-align-last: justify;
+  margin:0; 
+  padding:0;
+}
+
+/* Title and description same size, normal weight */
+.content h1, .content p {
+  font-size: var(--fs);
+  font-weight: normal;
+  margin:0 0 20px 0;
+}
+
+/* Images half-width, centered, no rounded corners */
+.content img {
+  display: block;
+  width: 50%;
+  margin: 40px auto;
+  border-radius: 0;
+}
+
+/* Custom cursor */
+#custom-cursor {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 32px; 
+  height: 32px;
+  pointer-events: none; 
+  z-index: 9999;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: #0a0a0a;
+}
+
+/* Back arrow triangle pointing left */
+.back-arrow {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 0; 
+  height: 0; 
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 18px solid var(--fg);
+  cursor: pointer;
+  z-index: 999;
+}
+</style>
 </head>
 <body>
-    <div class="image-stack">
-        <img src="images/project012_image1.jpg" alt="Project Image 1">
-        <img src="images/project012_image2.jpg" alt="Project Image 2">
-        <img src="images/project012_image3.jpg" alt="Project Image 3">
 
-    </div>
+<!-- Back arrow -->
+<div class="back-arrow" onclick="history.back()"></div>
+
+<main class="page">
+  <div class="content">
+    <h1>SHŌJI LIGHT</h1>
+    <p>2024 – This project was once again inspired by reclaimed materials I had found. I was also very curious about the Japanese practice of "shōji" (a traditional screen-making technique) and wanted to apply it to a lighting application. This was my second attempt at the project; due to the delicacy of the material, my first design broke from too much stress.</p>
+
+    <img src="images/project012_image1.jpg" alt="Project Image 1">
+    <img src="images/project012_image2.jpg" alt="Project Image 2">
+    <img src="images/project012_image3.jpg" alt="Project Image 3">
+  </div>
+</main>
+
+<div id="custom-cursor" aria-hidden="true"></div>
+
+<script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+});
+</script>
+
 </body>
 </html>
-<div class="refresh-btn" onclick="location.href='index.html'"></div>
-
-<style>
-    .refresh-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background-color: #009688;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-    .refresh-btn:hover {
-        background-color: #00796b;
-        transform: scale(1.05);
-    }
-</style>
