@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Room 001</title>
+    <style>
+        /* Ensure the page takes full height */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Container for the scrollable background */
+        #background-container {
+            position: relative;
+            width: 200vw; /* double-wide */
+            height: 100vh;
+            background-image: url('art_room001_background.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: left center;
+            transition: transform 0.2s ease;
+        }
+
+        /* Optional: content overlay */
+        #content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            pointer-events: none; /* allows background scrolling without interference */
+        }
+    </style>
+</head>
+<body>
+    <div id="background-container"></div>
+    <div id="content">
+        <!-- Add any overlay text or elements here -->
+    </div>
+
+    <script>
+        const container = document.getElementById('background-container');
+        let scrollX = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight') {
+                scrollX = Math.min(scrollX + 50, window.innerWidth); // adjust max as needed
+            } else if(e.key === 'ArrowLeft') {
+                scrollX = Math.max(scrollX - 50, 0);
+            }
+            container.style.transform = `translateX(-${scrollX}px)`;
+        });
+    </script>
+</body>
+</html>
 
