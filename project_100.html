@@ -4,13 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DOVETAIL CHAIR — 2023</title>
-<!-- Favicon: open white circle -->
+<!-- Favicon: white open circle -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='white' stroke-width='10'/></svg>">
 <style>
 :root { 
   --bg:#0a0a0a; 
   --fg:#eaeaea; 
-  --link-hover:#008000; 
   --fs: 36px; 
   --lh: 1.05; 
 }
@@ -27,56 +26,12 @@ html, body {
 
 * { cursor:none !important; }
 
-a {
-  color: var(--fg);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-/* Custom cursor */
-#custom-cursor {
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 32px; 
-  height: 32px;
-  pointer-events: none; 
-  z-index: 9999;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background: #fff; 
-  mix-blend-mode: difference;
-}
-
-/* Floating back arrow (triangle) */
-.back-arrow {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 0; 
-  height: 0; 
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 18px solid var(--fg);
-  cursor: pointer;
-  z-index: 999;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.back-arrow:hover {
-  transform: scale(1.2);
-  border-bottom-color: var(--link-hover);
-}
-
 .page {
   position: relative; 
   min-height: 100vh; 
   width: 100%;
   box-sizing:border-box;
-  padding: 40px 10%;
+  padding: 20px 0;
   margin:0;
 }
 
@@ -91,32 +46,57 @@ a:hover {
   padding:0;
 }
 
-/* Title and description styling (same size) */
+/* Title and description same size font */
 .content h1, .content p {
   font-size: var(--fs);
-  margin: 0 0 20px 0;
+  margin:0 0 20px 0;
 }
 
-/* Title-description separator */
 .separator {
   display: block;
   margin: 0 0 20px 0;
 }
 
-/* Image styling */
+/* Images */
 .content img {
   display: block;
   width: 100%;
-  max-width: 800px;
-  margin: 40px auto;
-  border-radius: 5px;
+  max-width: 100%; /* edge-to-edge */
+  margin: 40px 0;
+}
+
+/* Custom cursor */
+#custom-cursor {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 32px; 
+  height: 32px;
+  pointer-events: none; 
+  z-index: 9999;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: #fff; 
+}
+
+/* Back arrow triangle pointing left */
+.back-arrow {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 0; 
+  height: 0; 
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 18px solid var(--fg);
+  cursor: pointer;
+  z-index: 999;
 }
 </style>
 </head>
 <body>
 
-<!-- Back arrow triangle -->
-<div class="back-arrow" onclick="location.href='archive.html'"></div>
+<!-- Back arrow -->
+<div class="back-arrow" onclick="history.back()"></div>
 
 <main class="page">
   <div class="content">
@@ -138,7 +118,15 @@ a:hover {
   </div>
 </main>
 
+<!-- Custom cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
+
+<script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+});
+</script>
 
 </body>
 </html>
