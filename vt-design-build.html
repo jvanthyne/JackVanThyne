@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VT DESIGN BUILD</title>
+  <title>Van Thyne Design Build</title>
   <!-- Favicon: simple purple circle -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='purple'/></svg>">
   <style>
     :root { 
-      --bg:#2d3027;  /* updated background color */
+      --bg:#575e52;  /* updated background color */
       --fg:#eaeaea; 
-      --fs:36px; 
-      --lh:1.1; 
+      --fs:32px; 
+      --lh:1.2; 
       --accent:purple;
     }
 
@@ -20,7 +20,7 @@
       background:var(--bg); color:var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       text-transform: uppercase;
-      overflow-y: auto; /* Allow scrolling */
+      overflow:hidden;
     }
 
     * { cursor:none !important; }
@@ -34,86 +34,57 @@
     }
 
     .page { 
-      position: relative; min-height:100vh; width:100%; 
-      display:flex; flex-wrap: wrap; 
-      justify-content: center; align-items: flex-start;
-      padding:2rem; box-sizing:border-box;
-      gap:3rem;
+      position: relative; 
+      min-height:100vh; width:100%; 
     }
 
     .text-block {
+      position: absolute;
       font-size: var(--fs);
       line-height: var(--lh);
-      max-width: 600px;
-      text-align: justify;
-      text-align-last: left;
+      max-width: 320px;
+      text-align: left;
     }
 
+    /* All links purple by default, white on hover */
     a {
-      color: var(--fg);
+      color: var(--accent);
       text-decoration: none;
       transition: color 0.2s ease;
     }
 
-    a:hover:not(.contact) {
-      color: var(--accent);
-    }
-
-    a.contact { 
-      color: var(--accent); 
-      transition: color 0.2s ease;
-    }
-
-    a.contact:hover {
+    a:hover {
       color: #ffffff;
     }
-
   </style>
 </head>
 <body>
   <main class="page">
-    <div class="text-block">
-      VT DESIGN BUILD<br>
-      We are a design-build firm specializing in smaller structures — from saunas to art installations to custom furniture. Occasionally, we take on preliminary design work for larger projects, but our focus is on smaller-scale work because we are also full-time students.<br><br>
-
-      OUR PHILOSOPHY<br>
-      We specialize in wood structures and enjoy being involved in every stage of the process — from initial idea to finished reality. Each project is approached thoughtfully, balancing functionality, sustainability, and craft.<br><br>
-
-      We design and build a handful of <a href="products.html">products</a>, from furniture to lighting to small structures.<br><br>
-
-      Some of our past projects include the <a href="project_014.html">Floating Sauna</a>, the <a href="project_019.html">Mobile Sauna</a>, the <a href="project_021.html">Circle Stage</a>, and the <a href="project_024.html">Time Machine</a>, among many others. To see more of our past projects, take a look at the <a href="archives.html">Archives</a>.
+    <div class="text-block" style="top:10%; left:5%;">
+      Van Thyne Design Build is a design-build firm. We make products and one-off projects, specializing in smaller structures — from saunas to art installations to custom furniture. Each project and product is approached thoughtfully, balancing functionality, sustainability, and craft.
     </div>
 
-    <div class="text-block">
-      CONNECT<br>
-      Interested in collaborating? <a href="mailto:info@vtdesignbuild.com" class="contact">Email us</a> to start your project.
+    <div class="text-block" style="top:40%; right:10%;">
+      To see what we design/build take a look at our <a href="products.html">Products</a>.
+    </div>
+
+    <div class="text-block" style="bottom:25%; left:20%;">
+      To see past projects, take a look at the <a href="archives.html">Archives</a>.
+    </div>
+
+    <div class="text-block" style="bottom:10%; right:15%;">
+      To start a new project <a href="mailto:info@vtdesignbuild.com">email us</a>.
     </div>
   </main>
 
   <div id="custom-cursor" aria-hidden="true"></div>
 
   <script>
+    // Custom cursor movement
     const cursor = document.getElementById('custom-cursor');
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
     }, { passive:true });
-
-    const root = document.documentElement;
-    const contentBlocks = document.querySelectorAll('.text-block');
-
-    function fitContent(){
-      const available = window.innerHeight / 2;
-      let lo=20, hi=80;
-      for(let i=0;i<15;i++){
-        let mid = (lo+hi)/2;
-        contentBlocks.forEach(block=>block.style.fontSize = mid+'px');
-        let maxHeight = Math.max(...Array.from(contentBlocks).map(b=>b.scrollHeight));
-        if(maxHeight>available) hi=mid; else lo=mid;
-      }
-    }
-
-    window.addEventListener('load', fitContent);
-    window.addEventListener('resize', ()=>{ clearTimeout(window.__fit_to); window.__fit_to = setTimeout(fitContent, 80); });
   </script>
 </body>
 </html>
