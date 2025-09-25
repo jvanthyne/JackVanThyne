@@ -8,13 +8,16 @@
     :root {
       --bg:#fff;
 
-      /* Tweak these to match perspective of your window shape */
-      --video-rotate-deg: 0;   /* e.g.  -5, 8 */
+      /* Adjust to fit video perspective inside the window */
+      --video-rotate-deg: 0;   /* e.g.  -5, 8  */
       --video-skew-x-deg: 0;   /* e.g.   8, -6 */
       --video-skew-y-deg: 0;   /* e.g.  -3,  4 */
       --video-scale:     1;    /* uniform scale inside bbox */
       --video-offset-x:  0;    /* px offset within bbox after skew/rot */
       --video-offset-y:  0;
+
+      /* Frame thickness in CSS pixels (around the window shape) */
+      --frame-px: 1;
     }
 
     html, body {
@@ -22,12 +25,13 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Hide system cursor; use triangle that inverts beneath it */
+    /* Hide system cursor; custom triangle that inverts what’s behind it */
     * { cursor:none !important; }
     #custom-cursor {
       position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
-      clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference;
-      transform: translate(-100px, -100px);
+      clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
+      background:#fff; mix-blend-mode:difference;
+      transform: translate(-100px, -100px); /* offscreen until first move */
     }
 
     /* Layer stack */
@@ -35,17 +39,18 @@
     .art-background, .art-door { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
     .art-background { z-index:1; }
 
-    /* Video drawn to this canvas, then masked by art_window.png's black region */
+    /* Canvas where the video is rendered & masked by art_window.png’s black area */
     #windowCanvas {
       position:absolute; inset:0; width:100%; height:100%;
-      z-index:2; pointer-events:none; /* drawing only */
+      z-index:2; pointer-events:none;
     }
 
+    /* Top: the door; pixel-precise hover via offscreen canvas */
     .art-door {
-      z-index:3; pointer-events:none; /* custom hit-testing below */
+      z-index:3; pointer-events:none; /* we do hit-testing in JS */
       transition: filter 0.18s ease;
     }
-    /* Invert door ONLY when hovering opaque pixels */
+    /* On hover (opaque pixels only): invert door, no scale */
     .art-door.hovering { filter: invert(1); }
 
     /* Black flash overlay for transition */
@@ -54,35 +59,43 @@
       transition: opacity 0.25s ease;
     }
 
-    /* Hidden assets (not displayed directly) */
+    /* Hidden assets (used by JS) */
     #windowMask, #windowVideo { display:none; }
   </style>
 </head>
 <body>
   <div class="stage" id="stage">
     <img src="art_background.png" class="art-background" alt="">
-    <!-- Canvas where the video is rendered & masked -->
     <canvas id="windowCanvas" width="1920" height="1080"></canvas>
-    <!-- Door on top -->
     <img src="art_door.png" id="doorImg" class="art-door" alt="">
   </div>
 
-  <!-- Mask source: art_window.png (black area = window) -->
+  <!-- Mask source: art_window.png (BLACK AREA = window/visible video) -->
   <img id="windowMask" src="art_window.png" alt="">
-  <!-- Video source for the window -->
+
+  <!-- Video source that will be skewed/scaled and clipped by the mask -->
   <video id="windowVideo" src="art_window.mp4" autoplay muted loop playsinline></video>
 
   <div id="flash" class="flash"></div>
   <div id="custom-cursor"></div>
 
   <script>
-    // ---------- Custom cursor ----------
-    const cursor   = document.getElementById('custom-cursor');
+    // ---------------- Custom cursor ----------------
+    const cursor = document.getElementById('custom-cursor');
+    const moveCursor = (x, y) => {
+      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+    };
     document.addEventListener('mousemove', (e) => {
-      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
-    });
+      moveCursor(e.clientX, e.clientY);
+      testDoorHover(e.clientX, e.clientY);
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => {
+      const t = e.touches[0]; if (!t) return;
+      moveCursor(t.clientX, t.clientY);
+      testDoorHover(t.clientX, t.clientY);
+    }, { passive: true });
 
-    // ---------- Elements ----------
+    // ---------------- Elements ----------------
     const doorImg   = document.getElementById('doorImg');
     const flash     = document.getElementById('flash');
     const winCanvas = document.getElementById('windowCanvas');
@@ -90,19 +103,37 @@
     const maskImg   = document.getElementById('windowMask');
     const video     = document.getElementById('windowVideo');
 
-    // ---------- Door pixel-precise hover (ignore transparent) ----------
+    // Ensure video loops & autoplays robustly
+    video.loop = true;
+    const tryPlay = () => video.play().catch(()=>{});
+    window.addEventListener('pageshow', tryPlay);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
+    // Mobile fallback: play on first user gesture if blocked
+    if (video.paused) {
+      const unlock = () => { tryPlay(); window.removeEventListener('pointerdown', unlock); };
+      window.addEventListener('pointerdown', unlock);
+    }
+
+    // ---------------- Pixel-precise hover for door ----------------
     const doorHitCanvas = document.createElement('canvas');
     const doorHitCtx = doorHitCanvas.getContext('2d', { willReadFrequently:true });
-    const doorBitmap = new Image(); doorBitmap.src = doorImg.src;
     let doorReady = false;
 
-    doorBitmap.onload = () => {
-      doorHitCanvas.width = doorBitmap.naturalWidth;
-      doorHitCanvas.height = doorBitmap.naturalHeight;
-      doorHitCtx.clearRect(0,0,doorHitCanvas.width,doorHitCanvas.height);
-      doorHitCtx.drawImage(doorBitmap, 0, 0);
-      doorReady = true;
-    };
+    function prepareDoorHitmap() {
+      const w = doorImg.naturalWidth || doorImg.width;
+      const h = doorImg.naturalHeight || doorImg.height;
+      if (!w || !h) return;
+      doorHitCanvas.width = w;
+      doorHitCanvas.height = h;
+      doorHitCtx.clearRect(0,0,w,h);
+      const bmp = new Image();
+      bmp.crossOrigin = doorImg.crossOrigin || '';
+      bmp.src = doorImg.currentSrc || doorImg.src;
+      bmp.onload = () => { doorHitCtx.drawImage(bmp, 0, 0); doorReady = true; };
+      if (bmp.complete && bmp.naturalWidth) { doorHitCtx.drawImage(bmp, 0, 0); doorReady = true; }
+    }
+    if (doorImg.complete && doorImg.naturalWidth) prepareDoorHitmap();
+    else doorImg.addEventListener('load', prepareDoorHitmap, { once:true });
 
     function testDoorHover(clientX, clientY){
       if (!doorReady) { doorImg.classList.remove('hovering'); return; }
@@ -117,46 +148,55 @@
       if (px < 0 || py < 0 || px >= doorHitCanvas.width || py >= doorHitCanvas.height) {
         doorImg.classList.remove('hovering'); return;
       }
-      const alpha = doorHitCtx.getImageData(px, py, 1, 1).data[3];
-      if (alpha > 20) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+      const alpha = doorHitCtx.getImageData(px, py, 1, 1).data[3]; // 0..255
+      if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
     }
-    document.addEventListener('mousemove', (e)=>testDoorHover(e.clientX, e.clientY));
 
-    document.addEventListener('click', (e) => {
+    // Click/tap → only when over opaque door pixels
+    function tryEnter(clientX, clientY){
+      if (!doorReady) return;
       const rect = doorImg.getBoundingClientRect();
-      const inside = (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom);
+      const inside = (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
       if (inside && doorImg.classList.contains('hovering')) {
-        flash.style.opacity = 1;
+        flash.style.opacity = 1;        // black flash
         setTimeout(()=>{ window.location.href = 'art-room001.html'; }, 250);
       }
-    });
+    }
+    document.addEventListener('click', (e) => tryEnter(e.clientX, e.clientY));
+    document.addEventListener('touchend', (e) => { const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY); });
 
-    // ---------- Video masking ----------
-    // Build a binary mask from art_window.png where black pixels (near 0,0,0) become opaque.
-    // Then: draw the video scaled to the mask’s black region bounding box, apply optional skew/rotation,
-    // and finally composite with the mask so only the window shape shows.
+    // ---------------- Video masking to art_window.png black region ----------------
     const maskCanvas = document.createElement('canvas');
     const maskCtx = maskCanvas.getContext('2d', { willReadFrequently:true });
+    // Prebuilt black-tinted mask for drawing a thin frame
+    const maskBlackCanvas = document.createElement('canvas');
+    const maskBlackCtx = maskBlackCanvas.getContext('2d', { willReadFrequently:true });
+
     let maskReady = false;
-    let maskBbox = null; // bounding box of black region (in mask image pixels)
+    let maskBbox  = null; // bounding box of the black region (in mask image px)
 
-    maskImg.onload = () => {
-      maskCanvas.width = maskImg.naturalWidth;
-      maskCanvas.height = maskImg.naturalHeight;
-      maskCtx.clearRect(0,0,maskCanvas.width,maskCanvas.height);
+    function buildMask() {
+      const w = maskImg.naturalWidth || maskImg.width;
+      const h = maskImg.naturalHeight || maskImg.height;
+      if (!w || !h) return;
+
+      maskCanvas.width = w;      maskCanvas.height = h;
+      maskBlackCanvas.width = w; maskBlackCanvas.height = h;
+
+      // 1) Build white mask (window only, elsewhere transparent), and find bbox
+      maskCtx.clearRect(0,0,w,h);
       maskCtx.drawImage(maskImg, 0, 0);
-
-      const imgData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      const imgData = maskCtx.getImageData(0, 0, w, h);
       const d = imgData.data;
       let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
-      for (let y=0; y<maskCanvas.height; y++){
-        for (let x=0; x<maskCanvas.width; x++){
-          const i = (y*maskCanvas.width + x) * 4;
+
+      for (let y=0; y<h; y++){
+        for (let x=0; x<w; x++){
+          const i = (y*w + x) * 4;
           const r = d[i], g = d[i+1], b = d[i+2], a = d[i+3];
           const isBlack = (a > 10) && (r < 30 && g < 30 && b < 30);
           if (isBlack) {
-            // White pixel in the mask means "keep" when compositing
-            d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255;
+            d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255; // white keep
             if (x<minX) minX=x; if (y<minY) minY=y;
             if (x>maxX) maxX=x; if (y>maxY) maxY=y;
           } else {
@@ -166,11 +206,23 @@
       }
       maskCtx.putImageData(imgData, 0, 0);
       if (minX !== Infinity) maskBbox = { x:minX, y:minY, w:maxX-minX+1, h:maxY-minY+1 };
+
+      // 2) Build black-tinted version of the mask for the frame
+      maskBlackCtx.clearRect(0,0,w,h);
+      maskBlackCtx.drawImage(maskCanvas, 0, 0);
+      maskBlackCtx.globalCompositeOperation = 'source-in';
+      maskBlackCtx.fillStyle = '#000';
+      maskBlackCtx.fillRect(0,0,w,h);
+      maskBlackCtx.globalCompositeOperation = 'source-over';
+
       maskReady = true;
       requestAnimationFrame(render);
-    };
+    }
 
-    function fitCanvasDisplay(canvas) {
+    if (maskImg.complete && maskImg.naturalWidth) buildMask();
+    else maskImg.addEventListener('load', buildMask, { once:true });
+
+    function fitCanvasToCSS(canvas) {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       const w = Math.round(rect.width  * dpr);
@@ -180,61 +232,53 @@
       }
       return false;
     }
-    function degToRad(d){ return d * Math.PI / 180; }
+    const rad = (deg)=> (deg * Math.PI / 180);
 
     function render(){
-      fitCanvasDisplay(winCanvas);
+      fitCanvasToCSS(winCanvas);
       winCtx.clearRect(0,0,winCanvas.width, winCanvas.height);
 
       if (!maskReady || !maskBbox || video.readyState < 2) {
         requestAnimationFrame(render); return;
       }
 
-      const rect = doorImg.getBoundingClientRect(); // same scaling as other layers
+      // Use the door’s rect as the consistent viewport scale reference
+      const rect = doorImg.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const canvasW = rect.width * dpr;
+      const canvasW = rect.width  * dpr;
       const canvasH = rect.height * dpr;
 
-      // Map mask coordinates to canvas coordinates
+      // Map mask coords → canvas coords
       const scaleX = canvasW / maskCanvas.width;
       const scaleY = canvasH / maskCanvas.height;
-
       const dstX = maskBbox.x * scaleX;
       const dstY = maskBbox.y * scaleY;
       const dstW = maskBbox.w * scaleX;
       const dstH = maskBbox.h * scaleY;
 
-      // CSS-like controls
-      const skewX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-skew-x-deg')) || 0;
-      const skewY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-skew-y-deg')) || 0;
-      const rotate = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-rotate-deg')) || 0;
-      const scaleU = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-scale')) || 1;
-      const offX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-offset-x')) || 0;
-      const offY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--video-offset-y')) || 0;
+      // Controls
+      const cs = getComputedStyle(document.documentElement);
+      const skewX  = parseFloat(cs.getPropertyValue('--video-skew-x-deg')) || 0;
+      const skewY  = parseFloat(cs.getPropertyValue('--video-skew-y-deg')) || 0;
+      const rotate = parseFloat(cs.getPropertyValue('--video-rotate-deg')) || 0;
+      const scaleU = parseFloat(cs.getPropertyValue('--video-scale')) || 1;
+      const offX   = parseFloat(cs.getPropertyValue('--video-offset-x')) || 0;
+      const offY   = parseFloat(cs.getPropertyValue('--video-offset-y')) || 0;
 
-      // Draw the video into the bbox with skew/rotate/scale and optional offsets
+      // ---- Draw the video inside the window bbox with skew/rotate/scale/offset
       winCtx.save();
       winCtx.translate(dstX + offX, dstY + offY);
-      // scale to bbox
       const sx = (dstW / video.videoWidth) * scaleU;
       const sy = (dstH / video.videoHeight) * scaleU;
-
-      // Build transform: translate center → rotate → skew → scale
-      // Move origin to top-left (already), apply skew, rotate, then scale
-      const tanX = Math.tan(degToRad(skewX));
-      const tanY = Math.tan(degToRad(skewY));
-      // Apply transforms in order: rotate around bbox center
       winCtx.translate(dstW/2, dstH/2);
-      winCtx.rotate(degToRad(rotate));
-      winCtx.transform(1, tanY, tanX, 1, 0, 0);  // skew
+      winCtx.rotate(rad(rotate));
+      winCtx.transform(1, Math.tan(rad(skewY)), Math.tan(rad(skewX)), 1, 0, 0); // skew
       winCtx.scale(sx, sy);
       winCtx.translate(-video.videoWidth/2, -video.videoHeight/2);
-
-      // Draw video
       winCtx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
       winCtx.restore();
 
-      // Apply mask so only the window shape is visible
+      // ---- Apply the mask so only the black shape shows the video
       winCtx.save();
       winCtx.globalCompositeOperation = 'destination-in';
       winCtx.drawImage(
@@ -244,33 +288,45 @@
       );
       winCtx.restore();
 
+      // ---- Draw a thin black frame around the window shape (behind the video)
+      // We approximate an outline by drawing the black-tinted mask slightly offset
+      // in 8 directions at 1 CSS px (scaled by DPR), and put it behind existing content.
+      const framePx = Math.max(1, Math.floor((parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--frame-px')) || 1) * dpr));
+      winCtx.save();
+      winCtx.globalCompositeOperation = 'destination-over';
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (dx === 0 && dy === 0) continue;
+          winCtx.drawImage(
+            maskBlackCanvas,
+            0, 0, maskBlackCanvas.width, maskBlackCanvas.height,
+            dx * framePx, dy * framePx, canvasW, canvasH
+          );
+        }
+      }
+      winCtx.restore();
+
       requestAnimationFrame(render);
     }
 
-    // Reset state when coming back via bfcache
+    // Reset visual state when returning via bfcache
     function resetState(){
       const prev = flash.style.transition;
       flash.style.transition = 'none'; flash.style.opacity = 0;
       requestAnimationFrame(()=>{ flash.style.transition = prev || 'opacity 0.25s ease'; });
       doorImg.classList.remove('hovering');
+      // Nudge cursor to recompute hover state
+      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
+      document.dispatchEvent(evt);
     }
     window.addEventListener('pageshow', resetState);
 
-    window.addEventListener('resize', ()=>{
-      // Force hover re-eval mid screen
+    // Keep hover mapping correct after resize
+    window.addEventListener('resize', () => {
       const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
       document.dispatchEvent(evt);
     });
 
-    // Ensure autoplay if blocked until first interaction
-    if (video.paused) {
-      const unlock = () => { video.play().catch(()=>{}); window.removeEventListener('pointerdown', unlock); };
-      window.addEventListener('pointerdown', unlock);
-    }
-
-    // Keep hover test responsive
-    document.addEventListener('mousemove', (e)=> testDoorHover(e.clientX, e.clientY));
-    function testDoorHover(x,y){ /* already wired above; no-op hook */ }
   </script>
 </body>
 </html>
