@@ -1,73 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>&lt; &gt; room 001</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-      background: #000;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&lt; &gt; room 001</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+  }
 
-    * { cursor: none !important; }
+  * { cursor: none !important; }
 
-    #custom-cursor {
-      position: fixed; top: 0; left: 0; width: 32px; height: 32px; pointer-events: none; z-index: 9999;
-      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      background: #fff; mix-blend-mode: difference;
-      transform: translate(-100px, -100px);
-    }
+  #custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    z-index: 9999;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #fff;
+    mix-blend-mode: difference;
+    transform: translate(-100px, -100px);
+  }
 
-    /* Scrollable double-wide background */
-    #background-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200%; /* double-wide in percentage */
-      height: 100vh;
-      background-image: url('art_room001_background.png');
-      background-repeat: no-repeat;
-      background-size: 200% 100%; /* stretch to double width, full height */
-      background-position: left center;
-      transition: transform 0.2s ease;
-      z-index: 1;
-    }
+  #background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 200vw; /* double wide */
+    display: flex;
+    z-index: 1;
+  }
 
-    /* Door overlay */
-    #doorImg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-      z-index: 2;
-      transition: filter 0.18s ease;
-    }
+  #background-container img {
+    height: 100%;
+    width: 100%; /* stretches to 200vw */
+    object-fit: cover;
+  }
 
-    #doorImg.hovering { filter: invert(1); }
+  #doorImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 2;
+    transition: filter 0.18s ease;
+  }
 
-    /* Black flash */
-    #flash {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 999;
-      transition: opacity 0.25s ease;
-    }
-  </style>
+  #doorImg.hovering { filter: invert(1); }
+
+  #flash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 0.25s ease;
+  }
+</style>
 </head>
 <body>
-  <div id="background-container"></div>
+  <div id="background-container">
+    <img src="art_room001_background.png" alt="Background">
+  </div>
+
   <img src="art_room001_door.png" id="doorImg" alt="Door">
   <div id="flash"></div>
   <div id="custom-cursor"></div>
@@ -75,22 +83,17 @@
   <script>
     // ---------------- Cursor ----------------
     const cursor = document.getElementById('custom-cursor');
-    const moveCursor = (x, y) => {
-      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
-    };
-    document.addEventListener('mousemove', e => moveCursor(e.clientX, e.clientY));
-    document.addEventListener('touchmove', e => {
-      const t = e.touches[0]; if (!t) return;
-      moveCursor(t.clientX, t.clientY);
+    document.addEventListener('mousemove', e => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
     });
 
     // ---------------- Scrollable background ----------------
     const container = document.getElementById('background-container');
     let scrollX = 0;
-    const maxScroll = window.innerWidth; // scroll limit
+    const maxScroll = window.innerWidth; 
     document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight') scrollX = Math.min(scrollX + 50, maxScroll);
-      else if (e.key === 'ArrowLeft') scrollX = Math.max(scrollX - 50, 0);
+      if(e.key === 'ArrowRight') scrollX = Math.min(scrollX + 50, maxScroll);
+      if(e.key === 'ArrowLeft') scrollX = Math.max(scrollX - 50, 0);
       container.style.transform = `translateX(-${scrollX}px)`;
     });
 
@@ -125,26 +128,26 @@
       const px = Math.floor(xNorm * doorCanvas.width);
       const py = Math.floor(yNorm * doorCanvas.height);
       const alpha = doorCtx.getImageData(px, py, 1, 1).data[3];
-      if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+      if(alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
     }
 
     document.addEventListener('mousemove', e => testDoorHover(e.clientX, e.clientY));
     document.addEventListener('touchmove', e => {
-      const t = e.touches[0]; if (!t) return;
+      const t = e.touches[0]; if(!t) return;
       testDoorHover(t.clientX, t.clientY);
     });
 
     function tryEnter(clientX, clientY){
-      if (!doorReady) return;
+      if(!doorReady) return;
       const rect = doorImg.getBoundingClientRect();
       const inside = clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
-      if (inside && doorImg.classList.contains('hovering')) {
+      if(inside && doorImg.classList.contains('hovering')){
         document.getElementById('flash').style.opacity = 1;
         setTimeout(()=>{ window.location.href = 'next-room.html'; }, 250);
       }
     }
     document.addEventListener('click', e => tryEnter(e.clientX, e.clientY));
-    document.addEventListener('touchend', e => { const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY); });
+    document.addEventListener('touchend', e => { const t = e.changedTouches[0]; if(t) tryEnter(t.clientX, t.clientY); });
   </script>
 </body>
 </html>
