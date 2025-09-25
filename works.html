@@ -48,6 +48,14 @@ html, body {
   height: 100%;
   cursor: pointer;
   overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3); /* frame around empty image */
+  box-sizing: border-box;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.item:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 .item img {
@@ -58,25 +66,15 @@ html, body {
   top: 0;
   left: 0;
   display: block;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .item img.main {
-  opacity: 0; /* lazy load: hide initially */
-}
-
-.item img.logo {
-  opacity: 1; /* logo visible by default */
+  opacity: 0; /* lazy load hidden initially */
 }
 
 .item:hover img.main {
   opacity: 1;
-  transform: scale(1.05);
-}
-
-.item:hover img.logo {
-  opacity: 0;
-  transform: scale(1.05);
 }
 </style>
 </head>
@@ -85,13 +83,13 @@ html, body {
 <div class="grid-container" id="grid"></div>
 
 <script>
-// Custom cursor movement
+// Custom cursor
 const cursor = document.getElementById('custom-cursor');
 document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
 });
 
-// Project images array
+// All project images
 const mainImages = [
 "project001_image1.jpg","project001_image2.jpg","project001_image3.jpg","project001_image4.jpg","project001_image5.jpg","project001_image6.jpg","project001_image7.jpg","project001_image8.jpg","project001_image9.jpg","project001_image10.jpg","project001_image11.jpg","project001_image12.jpg","project001_image13.jpg",
 "project002_image1.jpg","project002_image2.jpg","project002_image3.jpg","project002_image4.jpg","project002_image5.jpg","project002_image6.jpg","project002_image7.jpg","project002_image8.jpg","project002_image9.jpg","project002_image10.jpg",
@@ -118,18 +116,6 @@ const mainImages = [
 "project024_image1.jpg","project024_image2.jpg","project024_image3.jpg","project024_image4.jpg"
 ];
 
-// Logos
-const logos = {
-"project001":"project001_bw.png","project002":"project002_bw.png","project003":"project003_bw.png",
-"project004":"project004_bw.png","project005":"project005_bw.png","project006":"project006_bw.png",
-"project007":"project007_bw.png","project008":"project008_bw.png","project009":"project009_bw.png",
-"project010":"project010_bw.png","project011":"project011_bw.png","project012":"project012_bw.png",
-"project013":"project013_bw.png","project014":"project014_bw.png","project015":"project015_bw.png",
-"project016":"project016_bw.png","project017":"project017_bw.png","project018":"project018_bw.png",
-"project019":"project019_bw.png","project020":"project020_bw.png","project021":"project021_bw.png",
-"project022":"project022_bw.png","project023":"project023_bw.png","project024":"project024_bw.png"
-};
-
 // Shuffle function for random order
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -145,16 +131,11 @@ const grid = document.getElementById('grid');
 shuffledImages.forEach(imgFile => {
   const item = document.createElement('a');
   const projectName = imgFile.split("_")[0];
-  item.href = `${projectName}.html`; // link to project page
+  item.href = `${projectName}.html`;
   item.className = 'item';
 
-  const logoImg = document.createElement('img');
-  logoImg.src = `images/${logos[projectName]}`;
-  logoImg.className = 'logo';
-  logoImg.alt = projectName;
-
   const mainImg = document.createElement('img');
-  mainImg.dataset.src = `images/${imgFile}`; // lazy load
+  mainImg.dataset.src = `images/${imgFile}`;
   mainImg.className = 'main';
   mainImg.alt = imgFile;
 
@@ -163,7 +144,6 @@ shuffledImages.forEach(imgFile => {
     if(!mainImg.src) mainImg.src = mainImg.dataset.src;
   });
 
-  item.appendChild(logoImg);
   item.appendChild(mainImg);
   grid.appendChild(item);
 });
