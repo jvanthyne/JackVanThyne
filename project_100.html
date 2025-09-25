@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DOVETAIL CHAIR — 2023</title>
-<!-- Favicon: white open circle -->
+<!-- Favicon: open white circle -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='white' stroke-width='10'/></svg>">
 <style>
 :root { 
@@ -31,7 +31,7 @@ html, body {
   min-height: 100vh; 
   width: 100%;
   box-sizing:border-box;
-  padding: 20px 0;
+  padding: 80px 0 20px 0; /* top padding for back arrow */
   margin:0;
 }
 
@@ -46,23 +46,20 @@ html, body {
   padding:0;
 }
 
-/* Title and description same size font */
+/* Title and description same size, not bold, no separator */
 .content h1, .content p {
   font-size: var(--fs);
-  margin:0 0 20px 0;
+  font-weight: normal;
+  margin:0;
 }
 
-.separator {
-  display: block;
-  margin: 0 0 20px 0;
-}
-
-/* Images */
+/* Images slightly inset from edges */
 .content img {
   display: block;
-  width: 100%;
-  max-width: 100%; /* edge-to-edge */
-  margin: 40px 0;
+  width: calc(100% - 40px); /* inset 20px on each side */
+  max-width: calc(100% - 40px);
+  margin: 40px 20px;
+  border-radius: 5px;
 }
 
 /* Custom cursor */
@@ -101,7 +98,6 @@ html, body {
 <main class="page">
   <div class="content">
     <h1>DOVETAIL CHAIR</h1>
-    <span class="separator">--</span>
     <p>2023 – During a semester in Denmark studying furniture design, I built this project using a single sheet of plywood. The piece was designed to pack flat, used no glue, and featured hand-cut dovetail joints.</p>
     
     <img src="images/project001_image1.jpg" alt="Dovetail Chair Image 1">
@@ -118,7 +114,6 @@ html, body {
   </div>
 </main>
 
-<!-- Custom cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
 <script>
