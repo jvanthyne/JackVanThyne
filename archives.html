@@ -3,23 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio Scatter</title>
+<title>Archives</title>
+
+<!-- White dot favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='white'/></svg>">
+
 <style>
+  :root { --fg:#eaeaea; }
+
   html, body {
     margin: 0; padding: 0;
     height: 100%; width: 100%;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     overflow: hidden;
+    background: none;
     cursor: none; /* hide default cursor */
-    background: none; /* remove black background */
   }
+
+  * { cursor: none !important; } /* enforce hiding everywhere */
 
   /* Triangle custom cursor */
   #custom-cursor {
     position: fixed; top: 0; left: 0; width: 32px; height: 32px;
     pointer-events: none; z-index: 9999;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    background: #000; /* black cursor for visibility on light bg */
+    background: #000; /* black triangle */
     mix-blend-mode: difference;
   }
 
@@ -77,7 +85,6 @@ document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
 });
 
-// Project list
 const projects = [
   { number: "001", bw: "project001_bw.png" },
   { number: "002", bw: "project002_bw.png" },
@@ -143,7 +150,6 @@ function positionProjects() {
     img.alt = `Project ${project.number}`;
     card.appendChild(img);
 
-    // Hover color effect
     card.addEventListener("mouseenter", () => {
       img.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random()*360}deg)`;
     });
