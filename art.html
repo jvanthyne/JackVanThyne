@@ -15,25 +15,65 @@
     .gallery-container {
       width: 100%;
       height: 100%;
-      background-image: url('art_background.png'); /* Your background image */
-      background-size: cover;      /* Make image fill the page */
-      background-position: center; /* Center the image */
-      background-repeat: no-repeat;
+      position: relative;
+      background-color: black;
       display: flex;
-      align-items: flex-start;     /* Align text at the top */
-      padding: 50px;
-      box-sizing: border-box;
+      justify-content: center;
+      align-items: center;
     }
 
+    /* Background image */
+    .background {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Door image perfectly aligned */
+    .door {
+      width: 100%;  /* Same size as background so borders line up */
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+      z-index: 2;  /* On top of background */
+      transition: filter 0.3s ease, transform 0.2s ease;
+    }
+
+    .door:hover {
+      filter: hue-rotate(0deg) saturate(500%) brightness(120%) sepia(100%) hue-rotate(-50deg); /* Turns red */
+      transform: scale(1.01); /* Slight zoom */
+    }
+
+    /* Gallery title on top */
     .gallery-title {
+      position: absolute;
+      top: 50px;
+      left: 50px;
       color: white;
       font-size: 3rem;
       text-transform: uppercase;
+      z-index: 3;
     }
   </style>
 </head>
 <body>
   <div class="gallery-container">
+    <!-- Background image -->
+    <img src="art_background.png" alt="Gallery Background" class="background">
+
+    <!-- Door image -->
+    <a href="art-room001.html">
+      <img src="door.png" alt="Door" class="door">
+    </a>
+
+    <!-- Gallery title -->
     <h1 class="gallery-title">VAN THYNE DIGITAL GALLERY</h1>
   </div>
 </body>
