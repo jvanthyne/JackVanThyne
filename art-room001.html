@@ -12,38 +12,52 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Optional custom cursor (triangle that inverts behind it) */
+    /* Hide native cursor everywhere */
     * { cursor:none !important; }
+
+    /* ---------- TOPMOST custom triangle cursor ---------- */
     #custom-cursor{
-      position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
+      position:fixed; top:0; left:0; width:32px; height:32px;
+      pointer-events:none;
+
+      /* Put it above literally everything (flash, videos, filters, etc.) */
+      z-index: 2147483647;
+
+      /* Triangle */
       clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
-      background:#000; mix-blend-mode:difference;
-      transform: translate(-100px, -100px);
+      background:#fff;                  /* visible on dark */
+      mix-blend-mode:difference;        /* flips to black on white */
+      /* Strong outline so it's visible even if blend-mode isn’t supported */
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.85),
+        0 0 6px rgba(0,0,0,0.45);
+
+      transform: translate(-100px, -100px);  /* offscreen until init */
     }
 
-    /* Stage is 200vw so it’s “double wide” */
+    /* Double-wide “room” that we scroll by translating */
     .stage {
       position:relative; width:200vw; height:100vh;
-      /* moved by transform when you press arrow keys */
       will-change: transform;
       transition: transform 0.18s ease-out;
     }
 
-    /* Two image layers stretched to exactly match the stage size */
+    /* Two perfectly aligned layers: background + door overlay */
     .layer {
       position:absolute; inset:0;
       width:200vw; height:100vh;
-      object-fit: fill;          /* ensures pixel-aligned stretching to 200vw x 100vh */
+      object-fit: fill;  /* stretches PNGs to exactly 200vw x 100vh */
     }
     .art-background { z-index:1; }
     .art-door       { z-index:3; pointer-events:none; transition: filter 0.18s ease; }
 
-    /* Door hover effect (same as reference: invert only) */
+    /* Door hover (same as reference: invert only) */
     .art-door.hovering { filter: invert(1); }
 
-    /* Black flash for the transition */
+    /* Flash transition (kept below the cursor by z-index) */
     .flash {
-      position:fixed; inset:0; background:#000; opacity:0; pointer-events:none; z-index:999;
+      position:fixed; inset:0; background:#000; opacity:0; pointer-events:none;
+      z-index: 999999;              /* below the cursor’s 2147483647 */
       transition: opacity 0.25s ease;
     }
   </style>
@@ -56,29 +70,38 @@
   </div>
 
   <div id="flash" class="flash"></div>
+
+  <!-- Keep the cursor LAST in DOM so it naturally stacks above siblings -->
   <div id="custom-cursor"></div>
 
   <script>
-    /* ---------- Custom cursor ---------- */
+    /* ---------- Init cursor visible at center ---------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      const c = document.getElementById('custom-cursor');
+      c.style.transform = `translate(${window.innerWidth/2 - 16}px, ${window.innerHeight/2 - 16}px)`;
+    });
+
+    /* ---------- Custom cursor + feed hover tester ---------- */
     const cursor = document.getElementById('custom-cursor');
-    const moveCursor = (x,y)=> cursor.style.transform = `translate(${x-16}px, ${y-16}px)`;
-    document.addEventListener('mousemove', e => {
+    function moveCursor(x,y){
+      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+    }
+    document.addEventListener('mousemove', (e) => {
       moveCursor(e.clientX, e.clientY);
       testDoorHover(e.clientX, e.clientY);
     }, {passive:true});
-    document.addEventListener('touchmove', e => {
+    document.addEventListener('touchmove', (e) => {
       const t = e.touches[0]; if (!t) return;
       moveCursor(t.clientX, t.clientY);
       testDoorHover(t.clientX, t.clientY);
     }, {passive:true});
 
-    /* ---------- Horizontal scroll with arrow keys (double wide) ---------- */
+    /* ---------- Horizontal scroll (double wide) ---------- */
     const stage = document.getElementById('stage');
     let scrollX = 0;
     const maxScroll = () => Math.max(0, window.innerWidth); // 200vw - 100vw
 
-    function applyScroll() {
-      // move the whole 200vw stage left as you scroll
+    function applyScroll(){
       stage.style.transform = `translateX(-${scrollX}px)`;
     }
 
@@ -91,10 +114,11 @@
         applyScroll();
       }
     });
+
     window.addEventListener('resize', () => {
       scrollX = Math.min(scrollX, maxScroll());
       applyScroll();
-      // Nudge hover recompute after resize
+      // re-evaluate hover after layout shift
       const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
       document.dispatchEvent(evt);
     });
@@ -114,7 +138,6 @@
       doorHitCanvas.width = w;
       doorHitCanvas.height = h;
       doorHitCtx.clearRect(0,0,w,h);
-
       const bmp = new Image();
       bmp.crossOrigin = doorImg.crossOrigin || '';
       bmp.src = doorImg.currentSrc || doorImg.src;
@@ -126,15 +149,14 @@
 
     function testDoorHover(clientX, clientY){
       if (!doorReady) { doorImg.classList.remove('hovering'); return; }
-      // Because the door image is stretched to the full stage (200vw x 100vh)
-      // and the stage is transformed, getBoundingClientRect() yields the
-      // on-screen rect we can map against directly.
+      // The door covers the entire 200vw x 100vh stage, which itself is translated.
+      // getBoundingClientRect() returns the on-screen rect we can map against.
       const rect = doorImg.getBoundingClientRect();
       if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
         doorImg.classList.remove('hovering'); return;
       }
-      const xNorm = (clientX - rect.left) / rect.width;   // 0..1 across the 200vw image
-      const yNorm = (clientY - rect.top)  / rect.height;  // 0..1 across the 100vh image
+      const xNorm = (clientX - rect.left) / rect.width;   // 0..1 across stretched image
+      const yNorm = (clientY - rect.top)  / rect.height;  // 0..1 across stretched image
       const px = Math.floor(xNorm * doorHitCanvas.width);
       const py = Math.floor(yNorm * doorHitCanvas.height);
       if (px < 0 || py < 0 || px >= doorHitCanvas.width || py >= doorHitCanvas.height) {
@@ -149,18 +171,18 @@
       const rect = doorImg.getBoundingClientRect();
       const inside = (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
       if (inside && doorImg.classList.contains('hovering')) {
-        // Flash, then go to art.html (as requested)
         const flash = document.getElementById('flash');
-        flash.style.opacity = 1;
-        setTimeout(()=>{ window.location.href = 'art.html'; }, 250);
+        flash.style.opacity = 1;               // quick flash
+        setTimeout(()=>{ window.location.href = 'art.html'; }, 250); // go to art.html
       }
     }
+
     document.addEventListener('click', (e) => tryEnter(e.clientX, e.clientY));
     document.addEventListener('touchend', (e) => {
       const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY);
     });
 
-    // Reset hover state on page restore
+    // Reset hover state when returning via bfcache
     window.addEventListener('pageshow', () => {
       doorImg.classList.remove('hovering');
       const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
