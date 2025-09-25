@@ -4,15 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>VT DESIGN BUILD</title>
-  <!-- Favicon: simple yellow circle -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='yellow'/></svg>">
+  <!-- Favicon: simple purple circle -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='purple'/></svg>">
   <style>
     :root { 
       --bg:#0a0a0a; 
       --fg:#eaeaea; 
       --fs:36px; 
       --lh:1.1; 
-      --accent:#ffd400;
+      --accent:purple;
     }
 
     html, body {
@@ -49,22 +49,21 @@
       text-align-last: left;
     }
 
-    /* All links default style */
+    /* All project links default style */
     a {
       color: var(--fg);
       text-decoration: none;
-      transition: font-weight 0.2s ease;
+      transition: color 0.2s ease;
     }
 
-    /* Hover effect: bold */
+    /* Hover effect: purple */
     a:hover:not(.contact) {
-      font-weight: bold;
+      color: var(--accent);
     }
 
-    /* Contact link */
+    /* Contact link: always purple */
     a.contact { 
       color: var(--accent); 
-      font-weight: normal;
     }
 
   </style>
