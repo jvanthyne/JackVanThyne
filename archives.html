@@ -5,37 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Portfolio Scatter</title>
 <style>
+  :root { --bg:#0a0a0a; --fg:#eaeaea; }
+
   html, body {
-    height: 100%;
-    margin: 0;
+    margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    background: var(--bg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    overflow: hidden;
+    cursor: none; /* hide default cursor */
   }
-  main {
-    height: 100%;
+
+  #custom-cursor {
+    position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+    pointer-events: none; z-index: 9999;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #fff; mix-blend-mode: difference;
   }
+
   #portfolio {
     position: relative;
     width: 100vw;
     height: 100vh;
   }
+
   .project {
     position: absolute;
-    width: 130px;       /* container width */
-    height: 130px;      /* container height */
+    width: 130px;
+    height: 130px;
     cursor: pointer;
     user-select: none;
-    overflow: hidden;   /* ensures image cannot overflow */
+    overflow: hidden;
   }
+
   .project img {
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* fill container, crop if needed */
+    object-fit: contain; /* scale image to fit container without cropping */
     display: block;
-    transform-origin: center center;
-    transition: transform 0.3s ease;
+    transition: filter 0.3s ease;
   }
-  .project:hover img {
-    transform: scale(1.05); /* subtle zoom on hover */
-  }
+
   header .signature {
     position: fixed;
     bottom: 0;
@@ -46,6 +56,7 @@
     font-size: 16px;
     z-index: 10;
     pointer-events: none;
+    color: var(--fg);
   }
 </style>
 </head>
@@ -55,10 +66,18 @@
 </header>
 
 <main>
-  <div class="portfolio" id="portfolio"></div>
+  <div id="portfolio"></div>
 </main>
 
+<div id="custom-cursor" aria-hidden="true"></div>
+
 <script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+});
+
+// Project list
 const projects = [
   { number: "001", bw: "project001_bw.png" },
   { number: "002", bw: "project002_bw.png" },
@@ -89,6 +108,7 @@ const projects = [
 function positionProjects() {
   const portfolio = document.getElementById("portfolio");
   portfolio.innerHTML = "";
+
   const projectSize = 130;
   const spacing = 30;
   const nameAreaHeight = 120;
@@ -118,14 +138,22 @@ function positionProjects() {
     card.style.left = `${xPos}px`;
     card.style.top = `${yPos}px`;
 
-    // Only show the icon, no project name
     const img = document.createElement("img");
     img.src = project.bw;
     img.alt = `Project ${project.number}`;
     card.appendChild(img);
 
+    // Color hover effect
+    card.addEventListener("mouseenter", () => {
+      img.style.filter = `brightness(0) saturate(100%) invert(50%) sepia(1) hue-rotate(${Math.random()*360}deg)`;
+    });
+    card.addEventListener("mouseleave", () => {
+      img.style.filter = "none";
+    });
+
     card.addEventListener("click", () => {
-      window.location.href = `project_${project.number}.html`;
+      const formatted = project.number.padStart(3, "0");
+      window.location.href = `project_${formatted}.html`;
     });
 
     portfolio.appendChild(card);
