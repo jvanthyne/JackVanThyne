@@ -1,80 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Van Thyne Digital Gallery</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Times New Roman', serif;
-    }
+    :root { --bg: transparent; --fg: #fff; }
+    html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
+    
+    /* Custom cursor */
+    #custom-cursor { position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999; clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference; }
 
-    .gallery-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      background-color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    /* Full-screen container */
+    .gallery-container { width:100%; height:100%; position:relative; }
 
-    /* Background image */
-    .background {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-
-    /* Door image perfectly aligned */
+    /* Door image positioned exactly */
     .door {
-      width: 100%;  /* Same size as background so borders line up */
-      height: 100%;
-      object-fit: cover;
-      position: absolute;
-      top: 0;
-      left: 0;
-      cursor: pointer;
-      z-index: 2;  /* On top of background */
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      cursor:pointer;
       transition: filter 0.3s ease, transform 0.2s ease;
     }
 
     .door:hover {
       filter: hue-rotate(0deg) saturate(500%) brightness(120%) sepia(100%) hue-rotate(-50deg); /* Turns red */
-      transform: scale(1.01); /* Slight zoom */
+      transform: scale(1.01);
     }
 
-    /* Gallery title on top */
-    .gallery-title {
-      position: absolute;
-      top: 50px;
-      left: 50px;
-      color: white;
-      font-size: 3rem;
-      text-transform: uppercase;
-      z-index: 3;
+    /* Background image transparent placeholder (matches door border) */
+    .background {
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      pointer-events:none; /* so door captures clicks */
     }
   </style>
 </head>
 <body>
   <div class="gallery-container">
-    <!-- Background image -->
-    <img src="art_background.png" alt="Gallery Background" class="background">
+    <!-- Background placeholder -->
+    <img src="art_background.png" alt="Background" class="background">
 
-    <!-- Door image -->
+    <!-- Door clickable -->
     <a href="art-room001.html">
       <img src="door.png" alt="Door" class="door">
     </a>
-
-    <!-- Gallery title -->
-    <h1 class="gallery-title">VAN THYNE DIGITAL GALLERY</h1>
   </div>
+
+  <!-- Custom cursor -->
+  <div id="custom-cursor"></div>
+
+  <script>
+    const cursor = document.getElementById('custom-cursor');
+
+    // Cursor follow
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+    });
+  </script>
 </body>
 </html>
