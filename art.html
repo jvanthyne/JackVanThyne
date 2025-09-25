@@ -5,63 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Van Thyne Digital Gallery</title>
   <style>
-    :root { --bg: transparent; --fg: #fff; }
-    html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
-    
-    /* Custom cursor */
-    #custom-cursor { position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999; clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference; }
+    :root { --bg:#fff; }
+    html, body {
+      margin:0; height:100%; background:var(--bg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden;
+    }
 
-    /* Full-screen container */
+    /* Custom cursor */
+    #custom-cursor {
+      position:fixed; top:0; left:0; width:32px; height:32px; pointer-events:none; z-index:9999;
+      clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#000; mix-blend-mode:difference;
+    }
+
+    /* Full container */
     .gallery-container { width:100%; height:100%; position:relative; }
 
-    /* Door image positioned exactly */
-    .door {
-      position:absolute;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      cursor:pointer;
-      transition: filter 0.3s ease, transform 0.2s ease;
+    /* Middle layer: art background */
+    .art-background {
+      position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:1;
     }
 
-    .door:hover {
-      filter: hue-rotate(0deg) saturate(500%) brightness(120%) sepia(100%) hue-rotate(-50deg); /* Turns red */
-      transform: scale(1.01);
+    /* Top layer: door */
+    .art-door {
+      position:absolute; top:0; left:0; width:100%; height:100%; cursor:pointer; z-index:2; transition: transform 0.2s ease;
     }
 
-    /* Background image transparent placeholder (matches door border) */
-    .background {
-      position:absolute;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      pointer-events:none; /* so door captures clicks */
+    /* Optional slight hover scaling */
+    .art-door:hover { transform: scale(1.01); }
+
+    /* Flash overlay */
+    .flash {
+      position:fixed; top:0; left:0; width:100%; height:100%; background:white;
+      opacity:0; pointer-events:none; z-index:999; transition: opacity 0.25s ease;
     }
   </style>
 </head>
 <body>
   <div class="gallery-container">
-    <!-- Background placeholder -->
-    <img src="art_background.png" alt="Background" class="background">
-
-    <!-- Door clickable -->
-    <a href="art-room001.html">
-      <img src="door.png" alt="Door" class="door">
-    </a>
+    <img src="art-background.png" class="art-background">
+    <img id="door" src="door.png" class="art-door">
   </div>
+
+  <!-- Flash overlay -->
+  <div id="flash" class="flash"></div>
 
   <!-- Custom cursor -->
   <div id="custom-cursor"></div>
 
   <script>
     const cursor = document.getElementById('custom-cursor');
+    const door = document.getElementById('door');
+    const flash = document.getElementById('flash');
 
     // Cursor follow
     document.addEventListener('mousemove', (e) => {
       cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+    });
+
+    // Click door → flash then navigate
+    door.addEventListener('click', () => {
+      flash.style.opacity = 1; // Show white flash
+      setTimeout(() => {
+        window.location.href = "art-room001.html";
+      }, 250); // delay to show flash
     });
   </script>
 </body>
