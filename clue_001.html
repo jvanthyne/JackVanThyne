@@ -18,8 +18,9 @@
     overflow: hidden;
   }
 
-  video {
+  iframe {
     width: 80%;
+    height: 360px;
     margin-top: 20px;
     border: 1px solid #444;
   }
@@ -76,42 +77,41 @@
 </head>
 <body>
 
-<video id="clueVideo" autoplay loop>
-  <source src="Clue_001.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<!-- YouTube video embed -->
+<iframe src="https://www.youtube.com/embed/ljakZC4h4IU?autoplay=1&loop=1&playlist=ljakZC4h4IU" 
+        frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+</iframe>
 
 <div class="terminal">
   <div class="line">ENTER PASSWORD TO CONTINUE:</div>
-  <input type="text" id="passwordInput" placeholder="TYPE PASSWORD...">
+  <input type="text" id="passwordInput" placeholder="TYPE PASSWORD..." autofocus>
   <div class="error" id="errorMessage"></div>
 </div>
 
 <img src="mysterious-image.jpg" id="popupImage" alt="Mysterious Reward">
 
 <script>
-  const video = document.getElementById('clueVideo');
-  video.volume = 0.5; 
-  video.play().catch(() => console.log("Autoplay with sound may be blocked."));
-
   const passwordInput = document.getElementById('passwordInput');
   const errorMessage = document.getElementById('errorMessage');
   const popupImage = document.getElementById('popupImage');
   const correctPassword = "DALE TILLERY";
 
-  // Array of terminal-style colors
-  const colors = ["#FFFFFF", "#FFDD55", "#55FFFF", "#FF55FF", "#FF5555", "#55FF55"];
+  // Autofocus input on page load
+  window.onload = () => {
+    passwordInput.focus();
+  }
 
-  passwordInput.addEventListener('input', () => {
-    const inputVal = passwordInput.value.toUpperCase().trim();
-    if(inputVal === correctPassword) {
-      popupImage.style.display = "block";
-      errorMessage.textContent = '';
-    } else if(inputVal.length > 0) {
-      errorMessage.textContent = "ACCESS DENIED";
-      errorMessage.style.color = colors[Math.floor(Math.random() * colors.length)];
-    } else {
-      errorMessage.textContent = "";
+  // Submit password on Enter
+  passwordInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+      const inputVal = passwordInput.value.toUpperCase().trim();
+      if(inputVal === correctPassword) {
+        popupImage.style.display = "block";
+        errorMessage.textContent = '';
+      } else {
+        errorMessage.textContent = "ACCESS DENIED";
+      }
+      passwordInput.value = '';
     }
   });
 
