@@ -8,8 +8,8 @@
   body {
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
-    background-color: #0d0d0d;
-    color: #00ff00;
+    background-color: #000000; /* pure black */
+    color: #00ff00; /* classic green */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,14 +21,12 @@
   video {
     width: 80%;
     margin-top: 20px;
-    border: 2px solid #00ff00;
-    box-shadow: 0 0 20px #00ff00;
+    border: 1px solid #00ff00; /* thin green border */
   }
 
   .terminal {
     background: #000000;
-    border: 2px solid #00ff00;
-    box-shadow: 0 0 20px #00ff00 inset;
+    border: 1px solid #00ff00;
     padding: 20px;
     margin-top: 20px;
     width: 80%;
@@ -36,6 +34,7 @@
     min-height: 200px;
     display: flex;
     flex-direction: column;
+    font-size: 1.1em;
   }
 
   .terminal input {
@@ -43,11 +42,11 @@
     border: none;
     color: #00ff00;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 1.2em;
+    font-size: 1.1em;
     outline: none;
     width: 100%;
     text-transform: uppercase;
-    border-right: 2px solid #00ff00;
+    border-right: 1px solid #00ff00;
     padding-right: 5px;
   }
 
@@ -65,8 +64,7 @@
     transform: translate(-50%, -50%);
     max-width: 70%;
     max-height: 70%;
-    border: 3px solid #00ff00;
-    box-shadow: 0 0 30px #00ff00;
+    border: 1px solid #00ff00;
     z-index: 1000;
   }
 </style>
@@ -105,9 +103,9 @@
     }
   });
 
-  // Flickering cursor effect
+  // Classic blinking cursor
   setInterval(() => {
-    passwordInput.style.borderRight = passwordInput.style.borderRight === '2px solid #00ff00' ? '2px solid #0d0d0d' : '2px solid #00ff00';
+    passwordInput.style.borderRight = passwordInput.style.borderRight === '1px solid #00ff00' ? '1px solid #000' : '1px solid #00ff00';
   }, 500);
 </script>
 
