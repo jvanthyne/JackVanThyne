@@ -8,8 +8,8 @@
   body {
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
-    background-color: #000000; /* pure black */
-    color: #00ff00; /* classic green */
+    background-color: #000000;
+    color: #00ff00;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,7 +21,7 @@
   video {
     width: 80%;
     margin-top: 20px;
-    border: 1px solid #00ff00; /* thin green border */
+    border: 1px solid #00ff00;
   }
 
   .terminal {
@@ -71,8 +71,8 @@
 </head>
 <body>
 
-<video autoplay loop muted>
-  <source src="your-video.mp4" type="video/mp4">
+<video id="clueVideo" autoplay loop>
+  <source src="Clue_001.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
@@ -85,6 +85,12 @@
 <img src="mysterious-image.jpg" id="popupImage" alt="Mysterious Reward">
 
 <script>
+  const video = document.getElementById('clueVideo');
+  video.volume = 0.5; // set initial volume
+  video.play().catch(() => {
+    console.log("Autoplay with sound may be blocked by browser.");
+  });
+
   const passwordInput = document.getElementById('passwordInput');
   const errorMessage = document.getElementById('errorMessage');
   const popupImage = document.getElementById('popupImage');
