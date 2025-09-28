@@ -15,6 +15,7 @@
     align-items: center;
     justify-content: flex-start;
     height: 100vh;
+    overflow: hidden;
   }
 
   video {
@@ -55,6 +56,19 @@
     margin-top: 10px;
     font-size: 0.9em;
   }
+
+  #popupImage {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 70%;
+    max-height: 70%;
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 30px #00ff00;
+    z-index: 1000;
+  }
 </style>
 </head>
 <body>
@@ -70,16 +84,20 @@
   <div class="error" id="errorMessage"></div>
 </div>
 
+<img src="mysterious-image.jpg" id="popupImage" alt="Mysterious Reward">
+
 <script>
   const passwordInput = document.getElementById('passwordInput');
   const errorMessage = document.getElementById('errorMessage');
+  const popupImage = document.getElementById('popupImage');
   const correctPassword = "DALE TILLERY";
 
   passwordInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
       const inputVal = passwordInput.value.toUpperCase().trim();
       if(inputVal === correctPassword) {
-        window.location.href = "next-page.html"; // replace with your next page URL
+        popupImage.style.display = "block";
+        errorMessage.textContent = '';
       } else {
         errorMessage.textContent = "ACCESS DENIED";
         passwordInput.value = '';
