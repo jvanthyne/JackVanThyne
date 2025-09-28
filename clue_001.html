@@ -20,8 +20,8 @@
 
   .video-container {
     position: relative;
-    width: 80%;
-    padding-bottom: 45%; /* 16:9 aspect ratio */
+    width: 60%; /* smaller width */
+    padding-bottom: 33.75%; /* maintain 16:9 aspect ratio */
     margin-top: 20px;
   }
 
@@ -31,7 +31,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border: 0; /* no border */
+    border: 0;
   }
 
   .terminal {
@@ -39,8 +39,8 @@
     padding: 20px;
     margin-top: 20px;
     width: 80%;
-    max-width: 600px;
-    min-height: 200px;
+    max-width: 500px;
+    min-height: 150px;
     display: flex;
     flex-direction: column;
     font-size: 1.1em;
@@ -118,7 +118,7 @@
         popupImage.style.display = "block";
         errorMessage.textContent = '';
       } else {
-        errorMessage.textContent = "ACCESS DENIED";
+        errorMessage.textContent = "ACCESS DENIED"; // display when password wrong
       }
       passwordInput.value = '';
     }
