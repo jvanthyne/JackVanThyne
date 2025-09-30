@@ -12,182 +12,140 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* Hide native cursor everywhere */
     * { cursor:none !important; }
 
-    /* ---------- TOPMOST custom triangle cursor ---------- */
     #custom-cursor{
       position:fixed; top:0; left:0; width:32px; height:32px;
       pointer-events:none;
-
-      /* Put it above literally everything (flash, videos, filters, etc.) */
-      z-index: 2147483647;
-
-      /* Triangle */
+      z-index:2147483647;
       clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
-      background:#fff;                  /* visible on dark */
-      mix-blend-mode:difference;        /* flips to black on white */
-      /* Strong outline so it's visible even if blend-mode isn’t supported */
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.85),
-        0 0 6px rgba(0,0,0,0.45);
-
-      transform: translate(-100px, -100px);  /* offscreen until init */
+      background:#fff;
+      mix-blend-mode:difference;
+      box-shadow:0 0 0 1px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.45);
+      transform: translate(-100px, -100px);
     }
 
-    /* Double-wide “room” that we scroll by translating */
     .stage {
       position:relative; width:200vw; height:100vh;
       will-change: transform;
       transition: transform 0.18s ease-out;
+      overflow:hidden;
     }
 
-    /* Two perfectly aligned layers: background + door overlay */
     .layer {
       position:absolute; inset:0;
       width:200vw; height:100vh;
-      object-fit: fill;  /* stretches PNGs to exactly 200vw x 100vh */
+      object-fit: fill;
     }
     .art-background { z-index:1; }
     .art-door       { z-index:3; pointer-events:none; transition: filter 0.18s ease; }
-
-    /* Door hover (same as reference: invert only) */
     .art-door.hovering { filter: invert(1); }
 
-    /* Flash transition (kept below the cursor by z-index) */
     .flash {
       position:fixed; inset:0; background:#000; opacity:0; pointer-events:none;
-      z-index: 999999;              /* below the cursor’s 2147483647 */
+      z-index: 999999;
       transition: opacity 0.25s ease;
+    }
+
+    /* ---- YouTube wall videos ---- */
+    .video-wall iframe {
+      position:absolute;
+      width:320px; height:180px;
+      border:none;
+      z-index:2;
     }
   </style>
 </head>
 <body>
-  <!-- Double-wide room -->
   <div class="stage" id="stage">
     <img src="art_room001_background.png" class="layer art-background" alt="Room background">
     <img src="art_room001_door.png"        class="layer art-door" id="doorImg" alt="Door overlay">
+
+    <!-- Staggered YouTube videos across 200vw wall -->
+    <div class="video-wall">
+      <iframe style="left:5vw; top:10%;" 
+        src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&loop=1&playlist=hWi82rb9htU"></iframe>
+
+      <iframe style="left:35vw; top:30%;" 
+        src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&loop=1&playlist=0ImkgM6bshM"></iframe>
+
+      <iframe style="left:65vw; top:55%;" 
+        src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&loop=1&playlist=O1BMu3R6Spc"></iframe>
+
+      <iframe style="left:95vw; top:20%;" 
+        src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&loop=1&playlist=FLMUcnRIlKE"></iframe>
+
+      <iframe style="left:125vw; top:45%;" 
+        src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&loop=1&playlist=hMse6W3nS7c"></iframe>
+
+      <iframe style="left:155vw; top:15%;" 
+        src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&loop=1&playlist=N8SXElfR1d4"></iframe>
+
+      <iframe style="left:185vw; top:60%;" 
+        src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&loop=1&playlist=jZPUQCJydzk"></iframe>
+    </div>
   </div>
 
   <div id="flash" class="flash"></div>
-
-  <!-- Keep the cursor LAST in DOM so it naturally stacks above siblings -->
   <div id="custom-cursor"></div>
 
   <script>
-    /* ---------- Init cursor visible at center ---------- */
     window.addEventListener('DOMContentLoaded', () => {
       const c = document.getElementById('custom-cursor');
       c.style.transform = `translate(${window.innerWidth/2 - 16}px, ${window.innerHeight/2 - 16}px)`;
     });
 
-    /* ---------- Custom cursor + feed hover tester ---------- */
     const cursor = document.getElementById('custom-cursor');
-    function moveCursor(x,y){
-      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
-    }
-    document.addEventListener('mousemove', (e) => {
-      moveCursor(e.clientX, e.clientY);
-      testDoorHover(e.clientX, e.clientY);
-    }, {passive:true});
-    document.addEventListener('touchmove', (e) => {
-      const t = e.touches[0]; if (!t) return;
-      moveCursor(t.clientX, t.clientY);
-      testDoorHover(t.clientX, t.clientY);
-    }, {passive:true});
+    function moveCursor(x,y){ cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`; }
+    document.addEventListener('mousemove', e => { moveCursor(e.clientX, e.clientY); testDoorHover(e.clientX, e.clientY); });
+    document.addEventListener('touchmove', e => { const t=e.touches[0]; if(t){moveCursor(t.clientX,t.clientY); testDoorHover(t.clientX,t.clientY);} });
 
-    /* ---------- Horizontal scroll (double wide) ---------- */
     const stage = document.getElementById('stage');
-    let scrollX = 0;
-    const maxScroll = () => Math.max(0, window.innerWidth); // 200vw - 100vw
-
-    function applyScroll(){
-      stage.style.transform = `translateX(-${scrollX}px)`;
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') {
-        scrollX = Math.min(scrollX + 60, maxScroll());
-        applyScroll();
-      } else if (e.key === 'ArrowLeft') {
-        scrollX = Math.max(scrollX - 60, 0);
-        applyScroll();
-      }
+    let scrollX=0; const maxScroll=()=>Math.max(0,window.innerWidth);
+    function applyScroll(){ stage.style.transform=`translateX(-${scrollX}px)`; }
+    document.addEventListener('keydown', e=>{
+      if(e.key==='ArrowRight'){scrollX=Math.min(scrollX+60,maxScroll());applyScroll();}
+      else if(e.key==='ArrowLeft'){scrollX=Math.max(scrollX-60,0);applyScroll();}
     });
+    window.addEventListener('resize',()=>{scrollX=Math.min(scrollX,maxScroll());applyScroll();});
 
-    window.addEventListener('resize', () => {
-      scrollX = Math.min(scrollX, maxScroll());
-      applyScroll();
-      // re-evaluate hover after layout shift
-      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-      document.dispatchEvent(evt);
-    });
-
-    /* ---------- Pixel-precise door hover & click (reference behavior) ---------- */
-    const doorImg = document.getElementById('doorImg');
-
-    // Offscreen canvas for hit-testing the door’s opaque pixels
-    const doorHitCanvas = document.createElement('canvas');
-    const doorHitCtx = doorHitCanvas.getContext('2d', { willReadFrequently:true });
-    let doorReady = false;
-
-    function prepareDoorHitmap() {
-      const w = doorImg.naturalWidth  || doorImg.width;
-      const h = doorImg.naturalHeight || doorImg.height;
-      if (!w || !h) return;
-      doorHitCanvas.width = w;
-      doorHitCanvas.height = h;
-      doorHitCtx.clearRect(0,0,w,h);
-      const bmp = new Image();
-      bmp.crossOrigin = doorImg.crossOrigin || '';
-      bmp.src = doorImg.currentSrc || doorImg.src;
-      bmp.onload = () => { doorHitCtx.drawImage(bmp, 0, 0); doorReady = true; };
-      if (bmp.complete && bmp.naturalWidth) { doorHitCtx.drawImage(bmp, 0, 0); doorReady = true; }
+    const doorImg=document.getElementById('doorImg');
+    const doorHitCanvas=document.createElement('canvas');
+    const doorHitCtx=doorHitCanvas.getContext('2d',{willReadFrequently:true});
+    let doorReady=false;
+    function prepareDoorHitmap(){
+      const w=doorImg.naturalWidth||doorImg.width;
+      const h=doorImg.naturalHeight||doorImg.height;
+      if(!w||!h)return;
+      doorHitCanvas.width=w; doorHitCanvas.height=h;
+      const bmp=new Image(); bmp.src=doorImg.currentSrc||doorImg.src;
+      bmp.onload=()=>{doorHitCtx.drawImage(bmp,0,0); doorReady=true;};
+      if(bmp.complete&&bmp.naturalWidth){doorHitCtx.drawImage(bmp,0,0); doorReady=true;}
     }
-    if (doorImg.complete && doorImg.naturalWidth) prepareDoorHitmap();
-    else doorImg.addEventListener('load', prepareDoorHitmap, { once:true });
-
-    function testDoorHover(clientX, clientY){
-      if (!doorReady) { doorImg.classList.remove('hovering'); return; }
-      // The door covers the entire 200vw x 100vh stage, which itself is translated.
-      // getBoundingClientRect() returns the on-screen rect we can map against.
-      const rect = doorImg.getBoundingClientRect();
-      if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
-        doorImg.classList.remove('hovering'); return;
-      }
-      const xNorm = (clientX - rect.left) / rect.width;   // 0..1 across stretched image
-      const yNorm = (clientY - rect.top)  / rect.height;  // 0..1 across stretched image
-      const px = Math.floor(xNorm * doorHitCanvas.width);
-      const py = Math.floor(yNorm * doorHitCanvas.height);
-      if (px < 0 || py < 0 || px >= doorHitCanvas.width || py >= doorHitCanvas.height) {
-        doorImg.classList.remove('hovering'); return;
-      }
-      const alpha = doorHitCtx.getImageData(px, py, 1, 1).data[3]; // 0..255
-      if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+    if(doorImg.complete&&doorImg.naturalWidth)prepareDoorHitmap();
+    else doorImg.addEventListener('load',prepareDoorHitmap,{once:true});
+    function testDoorHover(x,y){
+      if(!doorReady){doorImg.classList.remove('hovering');return;}
+      const rect=doorImg.getBoundingClientRect();
+      if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom){doorImg.classList.remove('hovering');return;}
+      const xNorm=(x-rect.left)/rect.width;
+      const yNorm=(y-rect.top)/rect.height;
+      const px=Math.floor(xNorm*doorHitCanvas.width);
+      const py=Math.floor(yNorm*doorHitCanvas.height);
+      const alpha=doorHitCtx.getImageData(px,py,1,1).data[3];
+      if(alpha>1)doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
     }
-
-    function tryEnter(clientX, clientY){
-      if (!doorReady) return;
-      const rect = doorImg.getBoundingClientRect();
-      const inside = (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom);
-      if (inside && doorImg.classList.contains('hovering')) {
-        const flash = document.getElementById('flash');
-        flash.style.opacity = 1;               // quick flash
-        setTimeout(()=>{ window.location.href = 'art.html'; }, 250); // go to art.html
+    function tryEnter(x,y){
+      if(!doorReady)return;
+      const rect=doorImg.getBoundingClientRect();
+      if(x>=rect.left&&x<=rect.right&&y>=rect.top&&y<=rect.bottom&&doorImg.classList.contains('hovering')){
+        const flash=document.getElementById('flash');
+        flash.style.opacity=1;
+        setTimeout(()=>{window.location.href='art.html';},250);
       }
     }
-
-    document.addEventListener('click', (e) => tryEnter(e.clientX, e.clientY));
-    document.addEventListener('touchend', (e) => {
-      const t = e.changedTouches[0]; if (t) tryEnter(t.clientX, t.clientY);
-    });
-
-    // Reset hover state when returning via bfcache
-    window.addEventListener('pageshow', () => {
-      doorImg.classList.remove('hovering');
-      const evt = new MouseEvent('mousemove', { clientX: window.innerWidth/2, clientY: window.innerHeight/2 });
-      document.dispatchEvent(evt);
-    });
+    document.addEventListener('click',e=>tryEnter(e.clientX,e.clientY));
+    document.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(t)tryEnter(t.clientX,t.clientY);});
   </script>
 </body>
 </html>
