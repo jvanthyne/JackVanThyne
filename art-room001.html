@@ -1,102 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Wall with Door and Cursor</title>
-  <style>
-    body {
-      margin: 0;
-      overflow-x: auto; /* horizontal scroll */
-      overflow-y: hidden;
-      background-color: white; /* first layer */
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&lt; &gt; room 001</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #fff; /* white background base */
+    overflow-x: scroll; /* horizontal scroll only */
+    overflow-y: hidden;
+  }
 
-    /* Background image */
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 1;
-      pointer-events: none;
-    }
+  #scene {
+    position: relative;
+    width: 200%;  /* double wide for horizontal scroll */
+    height: 100vh;
+  }
 
-    /* Door image */
-    .door {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      z-index: 2;
-      pointer-events: none;
-    }
+  /* Background */
+  #bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
 
-    /* Video wall */
-    .video-wall {
-      display: flex;
-      flex-direction: row;
-      align-items: center; /* center vertically */
-      justify-content: center;
-      gap: 20px;
-      height: 100vh;
-      padding: 0 80px;
-      z-index: 3;
-      position: relative;
-    }
+  /* Door */
+  #door {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    transition: filter 0.2s ease;
+    pointer-events: none; /* controlled in JS */
+  }
+  #door.hovering {
+    filter: invert(1);
+  }
 
-    .video-wall iframe {
-      width: 380px;
-      height: 220px;
-      border: none;
-    }
+  /* Videos */
+  .wall-video {
+    position: absolute;
+    width: 260px;
+    height: 150px;
+    bottom: 200px; /* raised higher than before */
+    border: none;
+    box-shadow: none;
+    z-index: 3;
+  }
 
-    /* Custom cursor */
-    .cursor {
-      position: fixed;
-      width: 30px;
-      height: 30px;
-      background: transparent;
-      border-left: 15px solid black;
-      border-top: 15px solid transparent;
-      border-bottom: 15px solid transparent;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 9999;
-    }
-  </style>
+  /* Cursor */
+  #custom-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px; height: 32px;
+    pointer-events: none;
+    z-index: 9999; /* always on top */
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #000;
+    transform: translate(-100px, -100px);
+  }
+</style>
 </head>
 <body>
-  <!-- Background -->
-  <img src="background.png" alt="Background" class="background">
+<div id="scene">
+  <!-- background and door -->
+  <img id="bg" src="art_room001_background.png" alt="Background">
+  <img id="door" src="art_room001_door.png" alt="Door">
 
-  <!-- Door -->
-  <img src="door.png" alt="Door" class="door">
+  <!-- videos (staggered slightly across wall, all shifted upward) -->
+  <iframe class="wall-video" style="left: 180px;" 
+    src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&controls=0&loop=1&playlist=hWi82rb9htU"></iframe>
+  <iframe class="wall-video" style="left: 500px; bottom: 240px;" 
+    src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&controls=0&loop=1&playlist=0ImkgM6bshM"></iframe>
+  <iframe class="wall-video" style="left: 820px;" 
+    src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&controls=0&loop=1&playlist=O1BMu3R6Spc"></iframe>
+  <iframe class="wall-video" style="left: 1140px; bottom: 240px;" 
+    src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&controls=0&loop=1&playlist=FLMUcnRIlKE"></iframe>
+  <iframe class="wall-video" style="left: 1460px;" 
+    src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&controls=0&loop=1&playlist=hMse6W3nS7c"></iframe>
+  <iframe class="wall-video" style="left: 1780px; bottom: 240px;" 
+    src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&controls=0&loop=1&playlist=N8SXElfR1d4"></iframe>
+  <iframe class="wall-video" style="left: 2100px;" 
+    src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&controls=0&loop=1&playlist=jZPUQCJydzk"></iframe>
+  <iframe class="wall-video" style="left: 2420px; bottom: 240px;" 
+    src="https://www.youtube.com/embed/yWdhz6hPLDI?autoplay=1&mute=1&controls=0&loop=1&playlist=yWdhz6hPLDI"></iframe>
+</div>
 
-  <!-- Video Wall -->
-  <div class="video-wall">
-    <iframe src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&controls=0&loop=1&playlist=hWi82rb9htU"></iframe>
-    <iframe src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&controls=0&loop=1&playlist=0ImkgM6bshM"></iframe>
-    <iframe src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&controls=0&loop=1&playlist=O1BMu3R6Spc"></iframe>
-    <iframe src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&controls=0&loop=1&playlist=FLMUcnRIlKE"></iframe>
-    <iframe src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&controls=0&loop=1&playlist=hMse6W3nS7c"></iframe>
-    <iframe src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&controls=0&loop=1&playlist=N8SXElfR1d4"></iframe>
-    <iframe src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&controls=0&loop=1&playlist=jZPUQCJydzk"></iframe>
-    <iframe src="https://www.youtube.com/embed/yWdhz6hPLDI?autoplay=1&mute=1&controls=0&loop=1&playlist=yWdhz6hPLDI"></iframe>
-  </div>
+<!-- Custom cursor -->
+<div id="custom-cursor"></div>
 
-  <!-- Custom Cursor -->
-  <div class="cursor"></div>
+<script>
+  const cursor = document.getElementById('custom-cursor');
+  const moveCursor = (x, y) => {
+    cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+  };
+  document.addEventListener('mousemove', (e) => moveCursor(e.clientX, e.clientY));
 
-  <script>
-    const cursor = document.querySelector('.cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
-  </script>
+  /* Door hover + click */
+  const doorImg = document.getElementById('door');
+  const doorHitCanvas = document.createElement('canvas');
+  const doorHitCtx = doorHitCanvas.getContext('2d', { willReadFrequently: true });
+  let doorReady = false;
+
+  function prepareDoorHitmap() {
+    const w = doorImg.naturalWidth || doorImg.width;
+    const h = doorImg.naturalHeight || doorImg.height;
+    if (!w || !h) return;
+    doorHitCanvas.width = w;
+    doorHitCanvas.height = h;
+    doorHitCtx.clearRect(0,0,w,h);
+    doorHitCtx.drawImage(doorImg, 0, 0);
+    doorReady = true;
+  }
+  if (doorImg.complete && doorImg.naturalWidth) prepareDoorHitmap();
+  else doorImg.addEventListener('load', prepareDoorHitmap, { once:true });
+
+  function testDoorHover(x, y) {
+    if (!doorReady) { doorImg.classList.remove('hovering'); return; }
+    const rect = doorImg.getBoundingClientRect();
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      doorImg.classList.remove('hovering'); return;
+    }
+    const px = Math.floor((x - rect.left) / rect.width * doorHitCanvas.width);
+    const py = Math.floor((y - rect.top) / rect.height * doorHitCanvas.height);
+    const alpha = doorHitCtx.getImageData(px, py, 1, 1).data[3];
+    if (alpha > 1) doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
+  }
+
+  document.addEventListener('mousemove', (e) => testDoorHover(e.clientX, e.clientY));
+  document.addEventListener('click', (e) => {
+    if (doorImg.classList.contains('hovering')) {
+      window.location.href = 'art.html';
+    }
+  });
+</script>
 </body>
 </html>
