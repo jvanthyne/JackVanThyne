@@ -10,68 +10,66 @@
     padding: 0;
     height: 100%;
     width: 100%;
-    background: #000;
-    overflow-x: scroll;  /* horizontal scroll only */
-    overflow-y: hidden;  /* disable vertical scroll */
+    background: transparent;  /* transparent background */
+    overflow-x: scroll;       /* horizontal scroll */
+    overflow-y: hidden;       /* no vertical scroll */
   }
 
-  /* Background container */
-  #background-container {
+  /* Stage container - double wide */
+  .stage {
     position: relative;
-    width: 220%;        /* add some extra width for borders */
+    width: 200vw;  /* double screen width */
     height: 100vh;
+    background: transparent;
     display: flex;
-    justify-content: center; /* center content */
     align-items: center;
-    padding: 0 5%;      /* left/right border space */
-    box-sizing: border-box;
+    justify-content: center;
+    padding: 0 5vw; /* offset left/right edges */
   }
 
-  #background-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* keep proportions (no cropping) */
-    display: block;
-  }
-
-  /* Video wall */
-  .video-wall {
+  /* Background image */
+  .art-background {
     position: absolute;
-    top: 12%;         
-    left: 7%;         
-    width: 186%;      
-    height: 76%;      
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 50;      
-  }
-
-  .video-wall iframe {
-    width: 360px;
-    height: 200px;
-    border: none;
-    margin: 0 20px;
-    transform: translateY(var(--stagger, 0));
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  }
-
-  .video-wall iframe:nth-child(odd) {
-    --stagger: -30px;
-  }
-  .video-wall iframe:nth-child(even) {
-    --stagger: 30px;
-  }
-
-  /* Custom cursor */
-  #custom-cursor {
-    position: fixed;
     top: 0;
     left: 0;
-    width: 32px;
-    height: 32px;
+    width: 200vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* Door image */
+  .art-door {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 2;
+    pointer-events: auto;
+    transition: filter 0.2s ease;
+  }
+  .art-door.hovering {
+    filter: invert(1);
+  }
+
+  /* YouTube video frames */
+  .video-frame {
+    position: absolute;
+    width: 420px;
+    height: 240px;
+    border: none;
+    z-index: 3;
+  }
+
+  /* Custom triangle cursor */
+  #custom-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px; height: 32px;
     pointer-events: none;
-    z-index: 9999;  
+    z-index: 9999;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     background: #fff;
     mix-blend-mode: difference;
@@ -80,45 +78,50 @@
 </style>
 </head>
 <body>
-  <!-- Background -->
-  <div id="background-container">
-    <img src="art_room001_background.png" alt="Background">
-  </div>
+  <div class="stage">
+    <!-- Background -->
+    <img src="art_room001_background.png" class="art-background" alt="">
 
-  <!-- Video wall -->
-  <div class="video-wall">
-    <iframe src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&loop=1&playlist=hWi82rb9htU" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&loop=1&playlist=0ImkgM6bshM" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&loop=1&playlist=O1BMu3R6Spc" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&loop=1&playlist=FLMUcnRIlKE" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&loop=1&playlist=hMse6W3nS7c" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&loop=1&playlist=N8SXElfR1d4" allow="autoplay; fullscreen" loading="lazy"></iframe>
-    <iframe src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&loop=1&playlist=jZPUQCJydzk" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <!-- Door -->
+    <img src="art_room001_door.png" id="doorImg" class="art-door" alt="">
+
+    <!-- Staggered YouTube videos -->
+    <iframe class="video-frame" style="top:20%; left:10%;" src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&loop=1&playlist=hWi82rb9htU" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:50%; left:25%;" src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&loop=1&playlist=0ImkgM6bshM" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:30%; left:45%;" src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&loop=1&playlist=O1BMu3R6Spc" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:60%; left:60%;" src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&loop=1&playlist=FLMUcnRIlKE" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:25%; left:80%;" src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&loop=1&playlist=hMse6W3nS7c" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:55%; left:100%;" src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&loop=1&playlist=N8SXElfR1d4" allow="autoplay; encrypted-media"></iframe>
+    <iframe class="video-frame" style="top:35%; left:130%;" src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&loop=1&playlist=jZPUQCJydzk" allow="autoplay; encrypted-media"></iframe>
   </div>
 
   <!-- Custom cursor -->
   <div id="custom-cursor"></div>
 
-<script>
-  // Cursor follows mouse
-  const cursor = document.getElementById('custom-cursor');
-  document.addEventListener('mousemove', (e) => {
-    cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
-  });
+  <script>
+    /* Custom cursor tracking */
+    const cursor = document.getElementById('custom-cursor');
+    const moveCursor = (x, y) => {
+      cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+    };
+    document.addEventListener('mousemove', (e) => moveCursor(e.clientX, e.clientY), { passive:true });
+    document.addEventListener('touchmove', (e) => {
+      const t = e.touches[0]; if (t) moveCursor(t.clientX, t.clientY);
+    }, { passive:true });
 
-  // Initialize cursor in center on load
-  window.addEventListener('DOMContentLoaded', () => {
-    cursor.style.transform = `translate(${window.innerWidth/2 - 16}px, ${window.innerHeight/2 - 16}px)`;
-  });
-
-  // Horizontal scrolling with arrow keys
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') {
-      window.scrollBy({ left: 100, behavior: 'smooth' });
-    } else if (e.key === 'ArrowLeft') {
-      window.scrollBy({ left: -100, behavior: 'smooth' });
-    }
-  });
-</script>
+    /* Door hover + click → go to art.html */
+    const doorImg = document.getElementById('doorImg');
+    document.addEventListener('mousemove', (e) => {
+      const rect = doorImg.getBoundingClientRect();
+      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        doorImg.classList.add('hovering');
+      } else {
+        doorImg.classList.remove('hovering');
+      }
+    });
+    doorImg.addEventListener('click', () => {
+      window.location.href = 'art.html';
+    });
+  </script>
 </body>
 </html>
