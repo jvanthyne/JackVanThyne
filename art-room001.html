@@ -1,151 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>&lt; &gt; room 001</title>
-  <style>
-    :root { --bg:#fff; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&lt; &gt; room 001</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    overflow-x: scroll;  /* allow horizontal scroll */
+    overflow-y: hidden;  /* disable vertical scroll */
+  }
 
-    html, body {
-      margin:0; height:100%; overflow:hidden; background:var(--bg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+  /* Background container */
+  #background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100vh;
+    display: flex;
+  }
 
-    * { cursor:none !important; }
+  #background-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-    #custom-cursor{
-      position:fixed; top:0; left:0; width:32px; height:32px;
-      pointer-events:none;
-      z-index:2147483647;
-      clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
-      background:#fff;
-      mix-blend-mode:difference;
-      box-shadow:0 0 0 1px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.45);
-      transform: translate(-100px, -100px);
-    }
+  /* Video wall */
+  .video-wall {
+    position: absolute;
+    top: 10%;          /* offset from top */
+    left: 5%;          /* offset from left */
+    width: 190%;       /* slightly less than 200% for side offsets */
+    height: 80%;       /* keeps row vertically centered */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;       /* above background */
+  }
 
-    .stage {
-      position:relative; width:200vw; height:100vh;
-      will-change: transform;
-      transition: transform 0.18s ease-out;
-      overflow:hidden;
-    }
+  .video-wall iframe {
+    width: 360px;
+    height: 200px;
+    border: none;
+    margin: 0 20px;
+    transform: translateY(var(--stagger, 0));
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
 
-    .layer {
-      position:absolute; inset:0;
-      width:200vw; height:100vh;
-      object-fit: fill;
-    }
-    .art-background { z-index:1; }
-    .art-door       { z-index:3; pointer-events:none; transition: filter 0.18s ease; }
-    .art-door.hovering { filter: invert(1); }
+  .video-wall iframe:nth-child(odd) {
+    --stagger: -30px;
+  }
+  .video-wall iframe:nth-child(even) {
+    --stagger: 30px;
+  }
 
-    .flash {
-      position:fixed; inset:0; background:#000; opacity:0; pointer-events:none;
-      z-index: 999999;
-      transition: opacity 0.25s ease;
-    }
-
-    /* ---- YouTube wall videos ---- */
-    .video-wall iframe {
-      position:absolute;
-      width:320px; height:180px;
-      border:none;
-      z-index:2;
-    }
-  </style>
+  /* Custom cursor */
+  #custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    z-index: 9999;  /* stays on top */
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    background: #fff;
+    mix-blend-mode: difference;
+    transform: translate(-100px, -100px);
+  }
+</style>
 </head>
 <body>
-  <div class="stage" id="stage">
-    <img src="art_room001_background.png" class="layer art-background" alt="Room background">
-    <img src="art_room001_door.png"        class="layer art-door" id="doorImg" alt="Door overlay">
-
-    <!-- Staggered YouTube videos across 200vw wall -->
-    <div class="video-wall">
-      <iframe style="left:5vw; top:10%;" 
-        src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&loop=1&playlist=hWi82rb9htU"></iframe>
-
-      <iframe style="left:35vw; top:30%;" 
-        src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&loop=1&playlist=0ImkgM6bshM"></iframe>
-
-      <iframe style="left:65vw; top:55%;" 
-        src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&loop=1&playlist=O1BMu3R6Spc"></iframe>
-
-      <iframe style="left:95vw; top:20%;" 
-        src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&loop=1&playlist=FLMUcnRIlKE"></iframe>
-
-      <iframe style="left:125vw; top:45%;" 
-        src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&loop=1&playlist=hMse6W3nS7c"></iframe>
-
-      <iframe style="left:155vw; top:15%;" 
-        src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&loop=1&playlist=N8SXElfR1d4"></iframe>
-
-      <iframe style="left:185vw; top:60%;" 
-        src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&loop=1&playlist=jZPUQCJydzk"></iframe>
-    </div>
+  <!-- Background -->
+  <div id="background-container">
+    <img src="art_room001_background.png" alt="Background">
   </div>
 
-  <div id="flash" class="flash"></div>
+  <!-- Video wall -->
+  <div class="video-wall">
+    <iframe src="https://www.youtube.com/embed/hWi82rb9htU?autoplay=1&mute=1&loop=1&playlist=hWi82rb9htU" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/0ImkgM6bshM?autoplay=1&mute=1&loop=1&playlist=0ImkgM6bshM" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/O1BMu3R6Spc?autoplay=1&mute=1&loop=1&playlist=O1BMu3R6Spc" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/FLMUcnRIlKE?autoplay=1&mute=1&loop=1&playlist=FLMUcnRIlKE" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/hMse6W3nS7c?autoplay=1&mute=1&loop=1&playlist=hMse6W3nS7c" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/N8SXElfR1d4?autoplay=1&mute=1&loop=1&playlist=N8SXElfR1d4" allow="autoplay; fullscreen" loading="lazy"></iframe>
+    <iframe src="https://www.youtube.com/embed/jZPUQCJydzk?autoplay=1&mute=1&loop=1&playlist=jZPUQCJydzk" allow="autoplay; fullscreen" loading="lazy"></iframe>
+  </div>
+
+  <!-- Custom cursor -->
   <div id="custom-cursor"></div>
 
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const c = document.getElementById('custom-cursor');
-      c.style.transform = `translate(${window.innerWidth/2 - 16}px, ${window.innerHeight/2 - 16}px)`;
-    });
+<script>
+  // Cursor follows mouse
+  const cursor = document.getElementById('custom-cursor');
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+  });
 
-    const cursor = document.getElementById('custom-cursor');
-    function moveCursor(x,y){ cursor.style.transform = `translate(${x - 16}px, ${y - 16}px)`; }
-    document.addEventListener('mousemove', e => { moveCursor(e.clientX, e.clientY); testDoorHover(e.clientX, e.clientY); });
-    document.addEventListener('touchmove', e => { const t=e.touches[0]; if(t){moveCursor(t.clientX,t.clientY); testDoorHover(t.clientX,t.clientY);} });
+  // Initialize cursor in center on load
+  window.addEventListener('DOMContentLoaded', () => {
+    cursor.style.transform = `translate(${window.innerWidth/2 - 16}px, ${window.innerHeight/2 - 16}px)`;
+  });
 
-    const stage = document.getElementById('stage');
-    let scrollX=0; const maxScroll=()=>Math.max(0,window.innerWidth);
-    function applyScroll(){ stage.style.transform=`translateX(-${scrollX}px)`; }
-    document.addEventListener('keydown', e=>{
-      if(e.key==='ArrowRight'){scrollX=Math.min(scrollX+60,maxScroll());applyScroll();}
-      else if(e.key==='ArrowLeft'){scrollX=Math.max(scrollX-60,0);applyScroll();}
-    });
-    window.addEventListener('resize',()=>{scrollX=Math.min(scrollX,maxScroll());applyScroll();});
-
-    const doorImg=document.getElementById('doorImg');
-    const doorHitCanvas=document.createElement('canvas');
-    const doorHitCtx=doorHitCanvas.getContext('2d',{willReadFrequently:true});
-    let doorReady=false;
-    function prepareDoorHitmap(){
-      const w=doorImg.naturalWidth||doorImg.width;
-      const h=doorImg.naturalHeight||doorImg.height;
-      if(!w||!h)return;
-      doorHitCanvas.width=w; doorHitCanvas.height=h;
-      const bmp=new Image(); bmp.src=doorImg.currentSrc||doorImg.src;
-      bmp.onload=()=>{doorHitCtx.drawImage(bmp,0,0); doorReady=true;};
-      if(bmp.complete&&bmp.naturalWidth){doorHitCtx.drawImage(bmp,0,0); doorReady=true;}
+  // Horizontal scrolling with arrow keys
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') {
+      window.scrollBy({ left: 100, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft') {
+      window.scrollBy({ left: -100, behavior: 'smooth' });
     }
-    if(doorImg.complete&&doorImg.naturalWidth)prepareDoorHitmap();
-    else doorImg.addEventListener('load',prepareDoorHitmap,{once:true});
-    function testDoorHover(x,y){
-      if(!doorReady){doorImg.classList.remove('hovering');return;}
-      const rect=doorImg.getBoundingClientRect();
-      if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom){doorImg.classList.remove('hovering');return;}
-      const xNorm=(x-rect.left)/rect.width;
-      const yNorm=(y-rect.top)/rect.height;
-      const px=Math.floor(xNorm*doorHitCanvas.width);
-      const py=Math.floor(yNorm*doorHitCanvas.height);
-      const alpha=doorHitCtx.getImageData(px,py,1,1).data[3];
-      if(alpha>1)doorImg.classList.add('hovering'); else doorImg.classList.remove('hovering');
-    }
-    function tryEnter(x,y){
-      if(!doorReady)return;
-      const rect=doorImg.getBoundingClientRect();
-      if(x>=rect.left&&x<=rect.right&&y>=rect.top&&y<=rect.bottom&&doorImg.classList.contains('hovering')){
-        const flash=document.getElementById('flash');
-        flash.style.opacity=1;
-        setTimeout(()=>{window.location.href='art.html';},250);
-      }
-    }
-    document.addEventListener('click',e=>tryEnter(e.clientX,e.clientY));
-    document.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(t)tryEnter(t.clientX,t.clientY);});
-  </script>
+  });
+</script>
 </body>
 </html>
