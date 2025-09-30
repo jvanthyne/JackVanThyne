@@ -5,190 +5,121 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Van Thyne Design Build</title>
 
-<!-- Favicon: small orange circle -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='orange'/></svg>">
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='orange'/><text x='50%' y='50%' font-size='50' text-anchor='middle' alignment-baseline='central' fill='white'>V</text></svg>">
 
 <style>
 :root {
-  --bg:#575e52;   /* background */
-  --fg:#000000;   /* main text black */
-  --accent:orange; /* links & highlights */
-  --frame-size:150px;
+  --bg:#575e52;
+  --fg:#000;
+  --accent:orange;
+  --frame-size:120px;
 }
 
-/* Base layout */
+/* Reset */
 html, body {
   margin:0; padding:0;
-  min-height:100%; width:100%;
-  background:var(--bg);
+  height:100%; width:100%;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--fg);
   overflow: hidden;
 }
 
-* { cursor:none !important; }
-
 /* Custom cursor */
 #custom-cursor {
-  position: fixed; top: 0; left: 0; width: 32px; height: 32px;
-  pointer-events: none; z-index: 9999;
+  position:fixed; top:0; left:0; width:32px; height:32px;
+  pointer-events:none; z-index:9999;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background: #fff; mix-blend-mode: difference;
+  background:#fff; mix-blend-mode:difference;
 }
 
-/* Top right logo */
+/* Logo top-right */
 .logo {
-  position: fixed;
-  top: 1rem; right: 1rem;
-  width: 60px; height: 60px;
-  cursor: pointer;
-  z-index: 1000;
+  position:fixed; top:1rem; right:1rem;
+  width:60px; height:60px; z-index:1000;
 }
+.logo img { width:100%; height:100%; object-fit:contain; }
 
 /* Left sidebar categories */
 .category-sidebar {
-  width: 100px;
+  position: fixed;
+  left:0; top:0;
+  width:100px; height:100%;
+  display:flex; flex-direction:column; gap:1rem;
+  padding:1rem; box-sizing:border-box;
   background: rgba(0,0,0,0.1);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .category {
-  cursor: pointer;
-  font-weight: bold;
-  color: var(--fg);
+  cursor:pointer; font-weight:bold; color:var(--fg); text-align:left;
 }
 
 /* Product list */
 .product-list {
-  width: 25%;
-  padding: 1rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  overflow-y: auto;
-  height: 100vh;
+  position: fixed;
+  left:100px; top:0;
+  width:20%; height:100%;
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+  padding:1rem; box-sizing:border-box;
+  scrollbar-width:none; /* hide scrollbar */
 }
+.product-list::-webkit-scrollbar { display:none; }
 
-/* Product items */
 .product-item {
-  width: var(--frame-size);
-  height: var(--frame-size);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border:1px solid rgba(0,0,0,0.2);
-  border-radius:8px;
-  background: #fff6e6;
-  text-align: center;
+  display:flex; flex-direction:column; align-items:center;
+  margin-bottom:1rem;
   cursor:pointer;
-  transition: border 0.2s ease, transform 0.2s ease;
+  text-align:center;
 }
-
 .product-item img {
-  width: 80%; height: 80%;
-  object-fit: cover;
-  border-radius:6px;
+  width:100%; max-width: var(--frame-size);
+  border-radius: 4px;
 }
-
 .product-item-title {
-  font-size: 14px;
-  margin-top: 0.3rem;
-  color: var(--fg);
-}
-
-.product-item.selected {
-  border: 2px solid var(--accent);
+  margin-top:0.3rem; font-size:14px;
 }
 
 /* Right display */
 .product-display {
-  flex:1;
+  position: fixed;
+  left: 320px; top:0;
+  right:0; bottom:0;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:flex-start;
   padding:2rem;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
 }
 
 .large-image {
-  max-width:60%;
-  border-radius:8px;
-  margin-bottom:1rem;
+  max-width:50%; border-radius:8px; margin-bottom:1rem;
 }
+.description { width:50%; font-size:18px; margin-bottom:1rem; line-height:1.4; }
 
-.description {
-  font-size:20px;
-  line-height:1.4;
-  margin-bottom:1rem;
-  text-align:left;
-  width:60%;
-}
-
+/* Controls */
 .controls {
-  display:flex;
-  align-items:center;
-  gap:1rem;
-  margin-bottom:2rem;
+  display:flex; align-items:center; gap:1rem;
 }
-
-select, button {
-  padding:0.5rem 1rem;
-  font-size:16px;
-  cursor:pointer;
-  text-transform: uppercase;
-}
-
 button {
-  background: var(--accent);
-  color: #fff;
-  border:none;
-  border-radius:4px;
-  transition: background 0.2s ease, color 0.2s ease;
+  background:var(--accent); color:#fff; border:none; padding:0.5rem 1rem; cursor:pointer;
+  text-transform:uppercase; border-radius:4px;
 }
+button:hover { background:#fff; color:var(--accent); }
 
-button:hover {
-  background:#fff;
-  color:var(--accent);
+/* Truck */
+.truck {
+  position:fixed; bottom:1rem; right:1rem;
+  width:300px; height:150px; background:url('flatbed_truck.png') no-repeat center/contain;
 }
-
-/* Wheelbarrow */
-.wheelbarrow {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  width: 100px;
-  min-height:100px;
-  border:2px solid var(--accent);
-  border-radius:8px;
-  padding:0.5rem;
-  display:flex;
-  flex-wrap: wrap;
-  gap:0.5rem;
-  background: rgba(0,0,0,0.05);
-}
-
-.wheelbarrow img {
-  width:40px; height:40px;
-  object-fit:cover;
-  border-radius:4px;
-}
+.truck img.item { width:50px; height:50px; position:absolute; bottom:10px; border-radius:4px; transition:all 0.3s; }
 </style>
 </head>
-
 <body>
 
-<!-- Custom cursor -->
-<div id="custom-cursor" aria-hidden="true"></div>
+<div id="custom-cursor"></div>
 
-<!-- Logo -->
-<div class="logo">
-  <img src="images/logo.png" alt="VT Design Build Logo">
-</div>
+<div class="logo"><img src="VT_logo.png" alt="Logo"></div>
 
-<!-- Category sidebar -->
 <div class="category-sidebar" id="categorySidebar">
   <div class="category" data-filter="all">All</div>
   <div class="category" data-filter="lighting">Lighting</div>
@@ -197,68 +128,79 @@ button:hover {
   <div class="category" data-filter="art">Art</div>
 </div>
 
-<!-- Product list -->
 <div class="product-list" id="productList">
-  <div class="product-item" data-category="structures" data-title="Floating Sauna" data-description="A serene floating sauna on the water." data-image="images/project_014.jpg">
-    <img src="images/project_014_thumb.jpg" alt="Floating Sauna">
-    <div class="product-item-title">Floating Sauna</div>
+  <!-- Lighting sample products -->
+  <div class="product-item" data-category="lighting" data-title="Lighting 1" data-description="Lighting description 1" data-image="images/lighting1.jpg">
+    <img src="images/lighting1.jpg" alt="Lighting 1">
+    <div class="product-item-title">Lighting 1</div>
   </div>
-  <div class="product-item" data-category="structures" data-title="Mobile Sauna" data-description="A mobile sauna designed for transport anywhere." data-image="images/project_019.jpg">
-    <img src="images/project_019_thumb.jpg" alt="Mobile Sauna">
-    <div class="product-item-title">Mobile Sauna</div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 2" data-description="Lighting description 2" data-image="images/lighting2.jpg">
+    <img src="images/lighting2.jpg" alt="Lighting 2">
+    <div class="product-item-title">Lighting 2</div>
   </div>
-  <div class="product-item" data-category="structures" data-title="Circle Stage" data-description="A stage installation for events and performances." data-image="images/project_021.jpg">
-    <img src="images/project_021_thumb.jpg" alt="Circle Stage">
-    <div class="product-item-title">Circle Stage</div>
+  <!-- Add 8 more fake lighting products -->
+  <div class="product-item" data-category="lighting" data-title="Lighting 3" data-description="Lighting description 3" data-image="images/lighting3.jpg">
+    <img src="images/lighting3.jpg" alt="Lighting 3">
+    <div class="product-item-title">Lighting 3</div>
   </div>
-  <div class="product-item" data-category="art" data-title="Time Machine" data-description="Interactive time machine installation." data-image="images/project_024.jpg">
-    <img src="images/project_024_thumb.jpg" alt="Time Machine">
-    <div class="product-item-title">Time Machine</div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 4" data-description="Lighting description 4" data-image="images/lighting4.jpg">
+    <img src="images/lighting4.jpg" alt="Lighting 4">
+    <div class="product-item-title">Lighting 4</div>
   </div>
-  <div class="product-item" data-category="furniture" data-title="3716 Fortunato Way" data-description="Residential project at 3716 Fortunato Way." data-image="images/project_024_thumb.jpg">
-    <img src="images/project_024_thumb.jpg" alt="3716 Fortunato Way">
-    <div class="product-item-title">3716 Fortunato Way</div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 5" data-description="Lighting description 5" data-image="images/lighting5.jpg">
+    <img src="images/lighting5.jpg" alt="Lighting 5">
+    <div class="product-item-title">Lighting 5</div>
   </div>
-  <div class="product-item" data-category="all" data-title="Archives" data-description="View all products and projects in our archives." data-image="images/archives.jpg">
-    <img src="images/archives_thumb.jpg" alt="Archives">
-    <div class="product-item-title">Archives</div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 6" data-description="Lighting description 6" data-image="images/lighting6.jpg">
+    <img src="images/lighting6.jpg" alt="Lighting 6">
+    <div class="product-item-title">Lighting 6</div>
   </div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 7" data-description="Lighting description 7" data-image="images/lighting7.jpg">
+    <img src="images/lighting7.jpg" alt="Lighting 7">
+    <div class="product-item-title">Lighting 7</div>
+  </div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 8" data-description="Lighting description 8" data-image="images/lighting8.jpg">
+    <img src="images/lighting8.jpg" alt="Lighting 8">
+    <div class="product-item-title">Lighting 8</div>
+  </div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 9" data-description="Lighting description 9" data-image="images/lighting9.jpg">
+    <img src="images/lighting9.jpg" alt="Lighting 9">
+    <div class="product-item-title">Lighting 9</div>
+  </div>
+  <div class="product-item" data-category="lighting" data-title="Lighting 10" data-description="Lighting description 10" data-image="images/lighting10.jpg">
+    <img src="images/lighting10.jpg" alt="Lighting 10">
+    <div class="product-item-title">Lighting 10</div>
+  </div>
+  <!-- Repeat similar blocks for furniture, structures, art -->
 </div>
 
-<!-- Right display -->
 <div class="product-display">
   <img class="large-image" id="largeImage" src="" alt="Hover a product">
-  <div class="description" id="description"><span>Hover over a product to see details.</span></div>
+  <div class="description" id="description"><span>Hover over a product to see details</span></div>
   <div class="controls" id="controls" style="display:none;">
     <label for="quantity">Quantity:</label>
     <select id="quantity">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
+      <option value="1">1</option><option value="2">2</option>
+      <option value="3">3</option><option value="4">4</option>
     </select>
-    <button id="addToWheelbarrow">Add to Truck</button>
+    <button id="addToTruck">Add to Truck</button>
   </div>
 </div>
 
-<!-- Wheelbarrow -->
-<div class="wheelbarrow" id="wheelbarrow"></div>
+<div class="truck" id="truck"></div>
 
 <script>
+// Custom cursor
 const cursor = document.getElementById('custom-cursor');
 document.addEventListener('mousemove', e => {
-  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
 });
 
+// Product hover and selection
 const items = document.querySelectorAll('.product-item');
-const categories = document.querySelectorAll('.category');
 const largeImage = document.getElementById('largeImage');
 const description = document.getElementById('description');
 const controls = document.getElementById('controls');
-const quantitySelect = document.getElementById('quantity');
-const addButton = document.getElementById('addToWheelbarrow');
-const wheelbarrow = document.getElementById('wheelbarrow');
-
 let selectedProduct = null;
 
 items.forEach(item => {
@@ -266,13 +208,16 @@ items.forEach(item => {
     if(selectedProduct) selectedProduct.classList.remove('selected');
     item.classList.add('selected');
     selectedProduct = item;
-
     largeImage.src = item.dataset.image;
-    largeImage.style.display = 'block';
     description.textContent = item.dataset.description;
     controls.style.display = 'flex';
   });
 });
+
+// Add to truck
+const truck = document.getElementById('truck');
+const addButton = document.getElementById('addToTruck');
+const quantitySelect = document.getElementById('quantity');
 
 addButton.addEventListener('click', () => {
   if(selectedProduct){
@@ -280,20 +225,22 @@ addButton.addEventListener('click', () => {
     for(let i=0;i<quantity;i++){
       const img = document.createElement('img');
       img.src = selectedProduct.dataset.image;
-      wheelbarrow.appendChild(img);
+      img.className = 'item';
+      const existing = truck.querySelectorAll('.item').length;
+      img.style.left = `${10 + (existing % 5) * 55}px`;
+      img.style.bottom = `${10 + Math.floor(existing/5) * 55}px`;
+      truck.appendChild(img);
     }
   }
 });
 
-categories.forEach(cat => {
-  cat.addEventListener('click', () => {
+// Category filtering
+const categories = document.querySelectorAll('.category');
+categories.forEach(cat=>{
+  cat.addEventListener('click', ()=>{
     const filter = cat.dataset.filter;
-    items.forEach(item => {
-      if(filter === 'all' || item.dataset.category === filter){
-        item.style.display = 'flex';
-      } else {
-        item.style.display = 'none';
-      }
+    items.forEach(item=>{
+      item.style.display = (filter==='all' || item.dataset.category===filter)?'flex':'none';
     });
   });
 });
