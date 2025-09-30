@@ -11,37 +11,40 @@
     height: 100%;
     width: 100%;
     background: #000;
-    overflow-x: scroll;  /* allow horizontal scroll */
+    overflow-x: scroll;  /* horizontal scroll only */
     overflow-y: hidden;  /* disable vertical scroll */
   }
 
   /* Background container */
   #background-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200%;
+    position: relative;
+    width: 220%;        /* add some extra width for borders */
     height: 100vh;
     display: flex;
+    justify-content: center; /* center content */
+    align-items: center;
+    padding: 0 5%;      /* left/right border space */
+    box-sizing: border-box;
   }
 
   #background-container img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* keep proportions (no cropping) */
+    display: block;
   }
 
   /* Video wall */
   .video-wall {
     position: absolute;
-    top: 10%;          /* offset from top */
-    left: 5%;          /* offset from left */
-    width: 190%;       /* slightly less than 200% for side offsets */
-    height: 80%;       /* keeps row vertically centered */
+    top: 12%;         
+    left: 7%;         
+    width: 186%;      
+    height: 76%;      
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 50;       /* above background */
+    z-index: 50;      
   }
 
   .video-wall iframe {
@@ -68,7 +71,7 @@
     width: 32px;
     height: 32px;
     pointer-events: none;
-    z-index: 9999;  /* stays on top */
+    z-index: 9999;  
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     background: #fff;
     mix-blend-mode: difference;
