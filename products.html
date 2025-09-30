@@ -6,7 +6,7 @@
 <title>Van Thyne Design Build</title>
 
 <!-- Favicon -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='orange'/><text x='50%' y='50%' font-size='50' text-anchor='middle' alignment-baseline='central' fill='white'>V</text></svg>">
+<link rel="icon" href="VT_logo.png" type="image/png">
 
 <style>
 :root {
@@ -16,15 +16,18 @@
   --frame-size:120px;
 }
 
-/* Reset */
+/* Base */
 html, body {
   margin:0; padding:0;
   height:100%; width:100%;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   background: var(--bg);
   color: var(--fg);
+  text-transform: uppercase;
   overflow: hidden;
 }
+
+* { cursor:none !important; }
 
 /* Custom cursor */
 #custom-cursor {
@@ -34,26 +37,22 @@ html, body {
   background:#fff; mix-blend-mode:difference;
 }
 
-/* Logo top-right */
+/* Logo */
 .logo {
   position:fixed; top:1rem; right:1rem;
   width:60px; height:60px; z-index:1000;
 }
 .logo img { width:100%; height:100%; object-fit:contain; }
 
-/* Left sidebar categories */
+/* Categories sidebar */
 .category-sidebar {
-  position: fixed;
-  left:0; top:0;
+  position: fixed; left:0; top:0;
   width:100px; height:100%;
   display:flex; flex-direction:column; gap:1rem;
   padding:1rem; box-sizing:border-box;
   background: rgba(0,0,0,0.1);
 }
-
-.category {
-  cursor:pointer; font-weight:bold; color:var(--fg); text-align:left;
-}
+.category { cursor:pointer; font-weight:bold; color:var(--fg); text-align:left; }
 
 /* Product list */
 .product-list {
@@ -63,7 +62,7 @@ html, body {
   display:flex; flex-direction:column;
   overflow-y:auto;
   padding:1rem; box-sizing:border-box;
-  scrollbar-width:none; /* hide scrollbar */
+  scrollbar-width:none;
 }
 .product-list::-webkit-scrollbar { display:none; }
 
@@ -77,9 +76,7 @@ html, body {
   width:100%; max-width: var(--frame-size);
   border-radius: 4px;
 }
-.product-item-title {
-  margin-top:0.3rem; font-size:14px;
-}
+.product-item-title { margin-top:0.3rem; font-size:14px; }
 
 /* Right display */
 .product-display {
@@ -89,38 +86,53 @@ html, body {
   display:flex; flex-direction:column; align-items:center;
   justify-content:flex-start;
   padding:2rem;
+  text-transform: uppercase;
 }
-
-.large-image {
-  max-width:50%; border-radius:8px; margin-bottom:1rem;
-}
-.description { width:50%; font-size:18px; margin-bottom:1rem; line-height:1.4; }
+.large-image { max-width:50%; border-radius:8px; margin-bottom:1rem; }
+.description { width:50%; font-size:18px; margin-bottom:1rem; line-height:1.4; text-transform: uppercase; }
 
 /* Controls */
 .controls {
-  display:flex; align-items:center; gap:1rem;
+  display:flex; align-items:center; gap:1rem; margin-bottom:2rem;
 }
-button {
-  background:var(--accent); color:#fff; border:none; padding:0.5rem 1rem; cursor:pointer;
-  text-transform:uppercase; border-radius:4px;
+button#addToTruck {
+  background: var(--accent);
+  color:#fff; border:none;
+  padding:0.5rem 1.2rem; font-weight:bold;
+  cursor:pointer; border-radius:6px;
+  font-family:inherit; font-size:14px;
+  text-transform: uppercase;
+  transition: all 0.2s;
 }
-button:hover { background:#fff; color:var(--accent); }
+button#addToTruck:hover { background:#fff; color: var(--accent); }
+
+select#quantity {
+  padding:0.5rem 1rem; font-size:14px;
+  appearance:none; -webkit-appearance:none;
+  background: #fff url('data:image/svg+xml;utf8,<svg viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,0 5,6" fill="black"/></svg>') no-repeat right 0.5rem center;
+  border:1px solid #000; border-radius:6px;
+  cursor:pointer;
+}
 
 /* Truck */
 .truck {
   position:fixed; bottom:1rem; right:1rem;
-  width:300px; height:150px; background:url('flatbed_truck.png') no-repeat center/contain;
+  width:300px; height:150px;
+  background:url('flatbed_truck.png') no-repeat center/contain;
 }
-.truck img.item { width:50px; height:50px; position:absolute; bottom:10px; border-radius:4px; transition:all 0.3s; }
+.truck img.item {
+  width:50px; height:50px; position:absolute;
+  border-radius:4px;
+  transition: all 0.5s ease;
+}
 </style>
 </head>
+
 <body>
-
 <div id="custom-cursor"></div>
-
 <div class="logo"><img src="VT_logo.png" alt="Logo"></div>
 
-<div class="category-sidebar" id="categorySidebar">
+<div class="category-sidebar">
   <div class="category" data-filter="all">All</div>
   <div class="category" data-filter="lighting">Lighting</div>
   <div class="category" data-filter="furniture">Furniture</div>
@@ -129,49 +141,15 @@ button:hover { background:#fff; color:var(--accent); }
 </div>
 
 <div class="product-list" id="productList">
-  <!-- Lighting sample products -->
+  <!-- Sample: 10 products per category -->
+  <!-- Lighting -->
   <div class="product-item" data-category="lighting" data-title="Lighting 1" data-description="Lighting description 1" data-image="images/lighting1.jpg">
-    <img src="images/lighting1.jpg" alt="Lighting 1">
-    <div class="product-item-title">Lighting 1</div>
+    <img src="images/lighting1.jpg" alt="Lighting 1"><div class="product-item-title">Lighting 1</div>
   </div>
   <div class="product-item" data-category="lighting" data-title="Lighting 2" data-description="Lighting description 2" data-image="images/lighting2.jpg">
-    <img src="images/lighting2.jpg" alt="Lighting 2">
-    <div class="product-item-title">Lighting 2</div>
+    <img src="images/lighting2.jpg" alt="Lighting 2"><div class="product-item-title">Lighting 2</div>
   </div>
-  <!-- Add 8 more fake lighting products -->
-  <div class="product-item" data-category="lighting" data-title="Lighting 3" data-description="Lighting description 3" data-image="images/lighting3.jpg">
-    <img src="images/lighting3.jpg" alt="Lighting 3">
-    <div class="product-item-title">Lighting 3</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 4" data-description="Lighting description 4" data-image="images/lighting4.jpg">
-    <img src="images/lighting4.jpg" alt="Lighting 4">
-    <div class="product-item-title">Lighting 4</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 5" data-description="Lighting description 5" data-image="images/lighting5.jpg">
-    <img src="images/lighting5.jpg" alt="Lighting 5">
-    <div class="product-item-title">Lighting 5</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 6" data-description="Lighting description 6" data-image="images/lighting6.jpg">
-    <img src="images/lighting6.jpg" alt="Lighting 6">
-    <div class="product-item-title">Lighting 6</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 7" data-description="Lighting description 7" data-image="images/lighting7.jpg">
-    <img src="images/lighting7.jpg" alt="Lighting 7">
-    <div class="product-item-title">Lighting 7</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 8" data-description="Lighting description 8" data-image="images/lighting8.jpg">
-    <img src="images/lighting8.jpg" alt="Lighting 8">
-    <div class="product-item-title">Lighting 8</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 9" data-description="Lighting description 9" data-image="images/lighting9.jpg">
-    <img src="images/lighting9.jpg" alt="Lighting 9">
-    <div class="product-item-title">Lighting 9</div>
-  </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 10" data-description="Lighting description 10" data-image="images/lighting10.jpg">
-    <img src="images/lighting10.jpg" alt="Lighting 10">
-    <div class="product-item-title">Lighting 10</div>
-  </div>
-  <!-- Repeat similar blocks for furniture, structures, art -->
+  <!-- Repeat up to 10 lighting products -->
 </div>
 
 <div class="product-display">
@@ -179,10 +157,7 @@ button:hover { background:#fff; color:var(--accent); }
   <div class="description" id="description"><span>Hover over a product to see details</span></div>
   <div class="controls" id="controls" style="display:none;">
     <label for="quantity">Quantity:</label>
-    <select id="quantity">
-      <option value="1">1</option><option value="2">2</option>
-      <option value="3">3</option><option value="4">4</option>
-    </select>
+    <select id="quantity"><option>1</option><option>2</option><option>3</option><option>4</option></select>
     <button id="addToTruck">Add to Truck</button>
   </div>
 </div>
@@ -192,55 +167,71 @@ button:hover { background:#fff; color:var(--accent); }
 <script>
 // Custom cursor
 const cursor = document.getElementById('custom-cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
-});
+document.addEventListener('mousemove', e => cursor.style.transform = `translate(${e.clientX-16}px,${e.clientY-16}px)`);
 
-// Product hover and selection
 const items = document.querySelectorAll('.product-item');
 const largeImage = document.getElementById('largeImage');
 const description = document.getElementById('description');
 const controls = document.getElementById('controls');
 let selectedProduct = null;
 
-items.forEach(item => {
-  item.addEventListener('mouseenter', () => {
+// Hover selection
+items.forEach(item=>{
+  item.addEventListener('mouseenter', ()=>{
     if(selectedProduct) selectedProduct.classList.remove('selected');
     item.classList.add('selected');
-    selectedProduct = item;
-    largeImage.src = item.dataset.image;
-    description.textContent = item.dataset.description;
-    controls.style.display = 'flex';
+    selectedProduct=item;
+    largeImage.src=item.dataset.image;
+    description.textContent=item.dataset.description.toUpperCase();
+    controls.style.display='flex';
   });
 });
 
-// Add to truck
+// Add to truck with drop animation
 const truck = document.getElementById('truck');
-const addButton = document.getElementById('addToTruck');
-const quantitySelect = document.getElementById('quantity');
+document.getElementById('addToTruck').addEventListener('click', ()=>{
+  if(!selectedProduct) return;
+  const quantity = parseInt(document.getElementById('quantity').value);
+  const productSize = 50; const spacing = 10;
 
-addButton.addEventListener('click', () => {
-  if(selectedProduct){
-    const quantity = parseInt(quantitySelect.value);
-    for(let i=0;i<quantity;i++){
-      const img = document.createElement('img');
-      img.src = selectedProduct.dataset.image;
-      img.className = 'item';
-      const existing = truck.querySelectorAll('.item').length;
-      img.style.left = `${10 + (existing % 5) * 55}px`;
-      img.style.bottom = `${10 + Math.floor(existing/5) * 55}px`;
+  for(let i=0;i<quantity;i++){
+    const img=document.createElement('img');
+    img.src=selectedProduct.dataset.image;
+    img.className='item';
+    img.style.position='fixed';
+    img.style.width=`${productSize}px`;
+    img.style.height=`${productSize}px`;
+    const rect=largeImage.getBoundingClientRect();
+    img.style.left=`${rect.left}px`;
+    img.style.top=`${rect.top}px`;
+    img.style.transition='all 0.6s ease';
+    document.body.appendChild(img);
+
+    const existing=truck.querySelectorAll('.item').length;
+    const targetLeft=10+(existing%5)*(productSize+spacing*1.5);
+    const targetBottom=10+Math.floor(existing/5)*(productSize+spacing);
+    const truckRect=truck.getBoundingClientRect();
+    const targetTop=truckRect.bottom-targetBottom-productSize;
+    const targetX=truckRect.left+targetLeft;
+
+    setTimeout(()=>{ img.style.left=`${targetX}px`; img.style.top=`${targetTop}px`; },10);
+
+    img.addEventListener('transitionend', ()=>{
+      img.style.position='absolute';
+      img.style.bottom=`${targetBottom}px`;
+      img.style.left=`${targetLeft}px`;
+      img.style.top='';
       truck.appendChild(img);
-    }
+    });
   }
 });
 
 // Category filtering
-const categories = document.querySelectorAll('.category');
-categories.forEach(cat=>{
+document.querySelectorAll('.category').forEach(cat=>{
   cat.addEventListener('click', ()=>{
-    const filter = cat.dataset.filter;
+    const filter=cat.dataset.filter;
     items.forEach(item=>{
-      item.style.display = (filter==='all' || item.dataset.category===filter)?'flex':'none';
+      item.style.display=(filter==='all'||item.dataset.category===filter)?'flex':'none';
     });
   });
 });
