@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Van Thyne Design Build</title>
 
-<!-- Favicon -->
-<link rel="icon" href="VT_logo.png" type="image/png">
+<!-- Favicon: VT_logo with orange background -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='orange'/><image href='VT_logo.png' x='10' y='10' width='80' height='80'/></svg>" type="image/svg+xml">
 
 <style>
 :root {
@@ -48,11 +48,19 @@ html, body {
 .category-sidebar {
   position: fixed; left:0; top:0;
   width:100px; height:100%;
-  display:flex; flex-direction:column; gap:1rem;
+  display:flex; flex-direction:column; gap:0.5rem;
   padding:1rem; box-sizing:border-box;
   background: rgba(0,0,0,0.1);
 }
-.category { cursor:pointer; font-weight:bold; color:var(--fg); text-align:left; }
+.category { 
+  cursor:pointer; 
+  font-weight:bold; 
+  color:var(--fg); 
+  text-align:left; 
+  font-size:12px; 
+  transition: color 0.2s ease;
+}
+.category:hover { color:white; }
 
 /* Product list */
 .product-list {
@@ -95,24 +103,16 @@ html, body {
 .controls {
   display:flex; align-items:center; gap:1rem; margin-bottom:2rem;
 }
+/* Add to truck button */
 button#addToTruck {
-  background: var(--accent);
-  color:#fff; border:none;
+  background:black; color:var(--accent); border:none;
   padding:0.5rem 1.2rem; font-weight:bold;
   cursor:pointer; border-radius:6px;
   font-family:inherit; font-size:14px;
   text-transform: uppercase;
   transition: all 0.2s;
 }
-button#addToTruck:hover { background:#fff; color: var(--accent); }
-
-select#quantity {
-  padding:0.5rem 1rem; font-size:14px;
-  appearance:none; -webkit-appearance:none;
-  background: #fff url('data:image/svg+xml;utf8,<svg viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,0 5,6" fill="black"/></svg>') no-repeat right 0.5rem center;
-  border:1px solid #000; border-radius:6px;
-  cursor:pointer;
-}
+button#addToTruck:hover { color:#fff; }
 
 /* Truck */
 .truck {
@@ -141,23 +141,25 @@ select#quantity {
 </div>
 
 <div class="product-list" id="productList">
-  <!-- Sample: 10 products per category -->
-  <!-- Lighting -->
+  <!-- Sample: 3 per category, can replicate to 10 for testing -->
   <div class="product-item" data-category="lighting" data-title="Lighting 1" data-description="Lighting description 1" data-image="images/lighting1.jpg">
     <img src="images/lighting1.jpg" alt="Lighting 1"><div class="product-item-title">Lighting 1</div>
   </div>
-  <div class="product-item" data-category="lighting" data-title="Lighting 2" data-description="Lighting description 2" data-image="images/lighting2.jpg">
-    <img src="images/lighting2.jpg" alt="Lighting 2"><div class="product-item-title">Lighting 2</div>
+  <div class="product-item" data-category="furniture" data-title="Furniture 1" data-description="Furniture description 1" data-image="images/furniture1.jpg">
+    <img src="images/furniture1.jpg" alt="Furniture 1"><div class="product-item-title">Furniture 1</div>
   </div>
-  <!-- Repeat up to 10 lighting products -->
+  <div class="product-item" data-category="structures" data-title="Structure 1" data-description="Structure description 1" data-image="images/structure1.jpg">
+    <img src="images/structure1.jpg" alt="Structure 1"><div class="product-item-title">Structure 1</div>
+  </div>
+  <div class="product-item" data-category="art" data-title="Art 1" data-description="Art description 1" data-image="images/art1.jpg">
+    <img src="images/art1.jpg" alt="Art 1"><div class="product-item-title">Art 1</div>
+  </div>
 </div>
 
 <div class="product-display">
   <img class="large-image" id="largeImage" src="" alt="Hover a product">
   <div class="description" id="description"><span>Hover over a product to see details</span></div>
   <div class="controls" id="controls" style="display:none;">
-    <label for="quantity">Quantity:</label>
-    <select id="quantity"><option>1</option><option>2</option><option>3</option><option>4</option></select>
     <button id="addToTruck">Add to Truck</button>
   </div>
 </div>
@@ -191,39 +193,37 @@ items.forEach(item=>{
 const truck = document.getElementById('truck');
 document.getElementById('addToTruck').addEventListener('click', ()=>{
   if(!selectedProduct) return;
-  const quantity = parseInt(document.getElementById('quantity').value);
-  const productSize = 50; const spacing = 10;
+  const productSize = 50;
+  const spacing = 10;
 
-  for(let i=0;i<quantity;i++){
-    const img=document.createElement('img');
-    img.src=selectedProduct.dataset.image;
-    img.className='item';
-    img.style.position='fixed';
-    img.style.width=`${productSize}px`;
-    img.style.height=`${productSize}px`;
-    const rect=largeImage.getBoundingClientRect();
-    img.style.left=`${rect.left}px`;
-    img.style.top=`${rect.top}px`;
-    img.style.transition='all 0.6s ease';
-    document.body.appendChild(img);
+  const img=document.createElement('img');
+  img.src=selectedProduct.dataset.image;
+  img.className='item';
+  img.style.position='fixed';
+  img.style.width=`${productSize}px`;
+  img.style.height=`${productSize}px`;
+  const rect=largeImage.getBoundingClientRect();
+  img.style.left=`${rect.left}px`;
+  img.style.top=`${rect.top}px`;
+  img.style.transition='all 0.6s ease';
+  document.body.appendChild(img);
 
-    const existing=truck.querySelectorAll('.item').length;
-    const targetLeft=10+(existing%5)*(productSize+spacing*1.5);
-    const targetBottom=10+Math.floor(existing/5)*(productSize+spacing);
-    const truckRect=truck.getBoundingClientRect();
-    const targetTop=truckRect.bottom-targetBottom-productSize;
-    const targetX=truckRect.left+targetLeft;
+  const existing=truck.querySelectorAll('.item').length;
+  const targetLeft=10+(existing%5)*(productSize+spacing*1.5);
+  const targetBottom=10+Math.floor(existing/5)*(productSize+spacing);
+  const truckRect=truck.getBoundingClientRect();
+  const targetTop=truckRect.bottom-targetBottom-productSize;
+  const targetX=truckRect.left+targetLeft;
 
-    setTimeout(()=>{ img.style.left=`${targetX}px`; img.style.top=`${targetTop}px`; },10);
+  setTimeout(()=>{ img.style.left=`${targetX}px`; img.style.top=`${targetTop}px`; },10);
 
-    img.addEventListener('transitionend', ()=>{
-      img.style.position='absolute';
-      img.style.bottom=`${targetBottom}px`;
-      img.style.left=`${targetLeft}px`;
-      img.style.top='';
-      truck.appendChild(img);
-    });
-  }
+  img.addEventListener('transitionend', ()=>{
+    img.style.position='absolute';
+    img.style.bottom=`${targetBottom}px`;
+    img.style.left=`${targetLeft}px`;
+    img.style.top='';
+    truck.appendChild(img);
+  });
 });
 
 // Category filtering
