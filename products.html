@@ -1,275 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Van Thyne Design Build</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Van Thyne Design Build</title>
 
-<!-- Favicon: VT_logo with black background -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='black'/><image href='VT_logo.png' x='10' y='10' width='80' height='80'/></svg>" type="image/svg+xml">
+  <!-- Favicon: VT_logo.png centered on a WHITE square -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/><image href='VT_logo.png' x='10' y='10' width='80' height='80' /></svg>">
+  <!-- Fallback (some browsers prefer png) -->
+  <link rel="icon" type="image/png" href="VT_logo.png" />
 
-<style>
-:root {
-  --bg:#575e52;
-  --fg:#000;
-  --accent:orange;
-  --frame-size:120px;
-  --font:'Segoe UI', Helvetica, Arial, sans-serif;
-}
+  <style>
+    :root{
+      /* Match your index/VT design build style */
+      --bg:#575e52;           /* background */
+      --fg:#000000;           /* main text is black */
+      --fs:32px;              /* base size for key text */
+      --lh:1.2;               /* base line-height */
+      --accent:orange;        /* accent color (links/buttons text) */
 
-/* Base */
-html, body {
-  margin:0; padding:0;
-  height:100%; width:100%;
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--fg);
-  text-transform: uppercase;
-  overflow:hidden;
-}
+      /* Truck stacking + product thumb sizing */
+      --thumb:120px;
+      --cargo-item:50px;
+      --cargo-gap:10px;
 
-* { cursor:none !important; }
+      /* Cargo offset (1.5 spaces right, 1 space up) */
+      --cargo-offset-x: calc( (var(--cargo-item) + var(--cargo-gap)) * 1.5 );
+      --cargo-offset-y: calc( (var(--cargo-item) + var(--cargo-gap)) * 1 );
+    }
 
-/* Custom cursor */
-#custom-cursor {
-  position:fixed; top:0; left:0; width:32px; height:32px;
-  pointer-events:none; z-index:9999;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  background:#fff; mix-blend-mode:difference;
-}
+    /* Base page */
+    html, body{
+      margin:0; padding:0; height:100%; width:100%;
+      background:var(--bg); color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      text-transform: uppercase;
+      overflow:hidden;
+    }
 
-/* Logo */
-.logo {
-  position:fixed; top:1rem; right:1rem;
-  width:60px; height:60px; z-index:1000;
-}
-.logo img { width:100%; height:100%; object-fit:contain; }
+    *{ cursor:none !important; }
 
-/* Categories sidebar */
-.category-sidebar {
-  position: fixed; left:0; top:0;
-  width:100px; height:100%;
-  display:flex; flex-direction:column; gap:0.5rem;
-  padding:1rem; box-sizing:border-box;
-  background: rgba(0,0,0,0.1);
-}
-.category { 
-  cursor:pointer; font-weight:bold; color:var(--fg); text-align:left; font-size:12px; 
-  transition: color 0.2s ease;
-}
-.category:hover { color:white; }
+    /* Custom cursor */
+    #custom-cursor{
+      position:fixed; top:0; left:0; width:32px; height:32px;
+      pointer-events:none; z-index:9999;
+      clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
+      background:#fff; mix-blend-mode:difference;
+    }
 
-/* Product list */
-.product-list {
-  position: fixed;
-  left:100px; top:0;
-  width:20%; height:100%;
-  display:flex; flex-direction:column;
-  overflow-y:auto;
-  padding:1rem; box-sizing:border-box;
-  scrollbar-width:none;
-}
-.product-list::-webkit-scrollbar { display:none; }
+    /* Logo (top right) */
+    .logo{
+      position:fixed; top:1rem; right:1rem; width:60px; height:60px; z-index:1000;
+    }
+    .logo img{ width:100%; height:100%; object-fit:contain; }
 
-.product-item {
-  display:flex; flex-direction:column; align-items:center;
-  margin-bottom:1rem; cursor:pointer; text-align:center;
-}
-.product-item img { width:100%; max-width: var(--frame-size); border-radius: 4px; }
-.product-item-title { margin-top:0.3rem; font-size:14px; }
+    /* LEFT: Categories (far left) */
+    .category-sidebar{
+      position:fixed; left:0; top:0; width:100px; height:100%;
+      display:flex; flex-direction:column; gap:0.5rem;
+      padding:1rem; box-sizing:border-box;
+      background:rgba(0,0,0,0.1);
+    }
+    .category{
+      font-size:12px; line-height:1;
+      color:var(--fg); font-weight:600;
+      transition:color .2s ease;
+      user-select:none;
+    }
+    .category:hover{ color:#fff; }     /* hover → white */
 
-/* Right display */
-.product-display {
-  position: fixed;
-  left: 320px; top:0;
-  right:0; bottom:0;
-  display:flex; flex-direction:column; align-items:center;
-  justify-content:flex-start;
-  padding:2rem;
-  text-transform: uppercase;
-}
-.large-image { max-width:50%; border-radius:8px; margin-bottom:1rem; }
-.description { width:50%; font-size:18px; margin-bottom:1rem; line-height:1.4; }
+    /* LEFT: Products list column (scroll only here) */
+    .product-list{
+      position:fixed; left:100px; top:0; width:20%; height:100%;
+      display:flex; flex-direction:column; gap:1rem;
+      padding:1rem; box-sizing:border-box;
+      overflow-y:auto; scrollbar-width:none;
+    }
+    .product-list::-webkit-scrollbar{ display:none; }
 
-/* Controls */
-.controls { display:flex; align-items:center; gap:1rem; margin-bottom:2rem; }
-button#addToTruck {
-  background:black; color:var(--accent); border:none; padding:0.5rem 1.2rem;
-  font-weight:bold; cursor:pointer; text-transform:uppercase; font-family:var(--font);
-  transition:all 0.2s;
-}
-button#addToTruck:hover { color:white; }
+    .product-item{
+      display:flex; flex-direction:column; align-items:center; text-align:center;
+      user-select:none;
+    }
+    .product-item img{
+      width:100%; max-width:var(--thumb); border-radius:4px;
+      transition:filter .2s ease;
+    }
+    .product-item:hover img{ filter:brightness(120%); }  /* subtle hover lift */
 
-/* Truck */
-.truck {
-  position:fixed; bottom:1rem; right:1rem;
-  width:300px; height:150px;
-  background:url('flatbed_truck.png') no-repeat center/contain;
-  transition: filter 0.3s ease;
-}
-.truck:hover { filter: brightness(150%); cursor:pointer; }
+    .product-item-title{
+      font-size:14px; line-height:1.1; margin-top:.25rem; color:var(--fg);
+      letter-spacing:.02em;
+    }
 
-/* Truck items */
-.truck img.item { width:50px; height:50px; position:absolute; transition: all 0.6s ease; border-radius:0; }
-.truck img.item:hover { filter: brightness(200%); cursor:pointer; }
+    /* RIGHT: Display area */
+    .product-display{
+      position:fixed; left: calc(100px + 20%); top:0; right:0; bottom:0;
+      display:flex; flex-direction:column; align-items:center; padding:2rem;
+      box-sizing:border-box;
+    }
+    .large-image{
+      max-width:50%; border-radius:8px; margin-bottom:1rem;
+      display:none;
+    }
+    .description{
+      width:50%; font-size:var(--fs); line-height:var(--lh); color:var(--fg);
+      margin-bottom:1rem;
+    }
 
-/* Cart popup */
-#cartPopup {
-  position:fixed; bottom:170px; right:10px;
-  width:300px; max-height:400px;
-  background:#000; color:#fff; padding:1rem; overflow-y:auto;
-  display:none; flex-direction:column; border:1px solid #fff;
-  z-index:2000;
-}
-#cartPopup h3 { margin-top:0; }
-#cartPopup button { margin-top:0.5rem; background:#fff; color:#000; border:none; padding:0.5rem; cursor:pointer; font-weight:bold; text-transform:uppercase; }
-</style>
+    /* Button (perfect rectangle, black bg, orange text → white on hover) */
+    .controls{ display:none; align-items:center; gap:1rem; }
+    #addToTruck{
+      background:#000; color:var(--accent); border:none;
+      padding:.5rem 1.25rem; font-weight:700; font-size:16px;
+      letter-spacing:.02em;
+      transition:color .2s ease, background .2s ease;
+    }
+    #addToTruck:hover{ color:#fff; }
+
+    /* TRUCK (bottom right) */
+    .truck{
+      position:fixed; bottom:1rem; right:1rem;
+      width:300px; height:150px;
+      background:url('flatbed_truck.png') no-repeat center/contain;
+      transition:filter .2s ease;
+      z-index:900;
+    }
+    .truck:hover{ filter:invert(1) brightness(200%); } /* white-ish on hover */
+
+    /* Cargo items positioned INSIDE the truck container */
+    .truck .item{
+      position:absolute; width:var(--cargo-item); height:var(--cargo-item);
+      border-radius:0; transition:filter .2s ease;
+      object-fit:cover;
+    }
+    .truck .item:hover{ filter:invert(1) brightness(220%); } /* turns white */
+
+    /* POPUP CART */
+    .cart-popup{
+      position:fixed; right:10px; bottom:170px; width:320px; max-height:420px;
+      display:none; flex-direction:column; gap:.75rem;
+      background:#000; color:#fff; border:1px solid #fff; padding:1rem;
+      z-index:1001; overflow:auto;
+    }
+    .cart-popup-header{
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .cart-title{ font-size:20px; line-height:1; }
+    .cart-close{
+      background:#fff; color:#000; border:none; padding:.25rem .5rem; font-weight:700;
+      cursor:pointer;
+    }
+    .cart-line{ display:flex; justify-content:space-between; gap:.5rem; font-size:16px; }
+    .cart-total{ font-weight:800; border-top:1px solid #fff; padding-top:.5rem; margin-top:.25rem; }
+    .checkout{
+      background:#fff; color:#000; border:none; padding:.5rem; font-weight:800; cursor:pointer;
+    }
+  </style>
 </head>
-
 <body>
-<div id="custom-cursor"></div>
-<div class="logo"><img src="VT_logo.png" alt="Logo"></div>
+  <!-- Custom Cursor -->
+  <div id="custom-cursor" aria-hidden="true"></div>
 
-<div class="category-sidebar">
-  <div class="category" data-filter="all">All</div>
-  <div class="category" data-filter="lighting">Lighting</div>
-  <div class="category" data-filter="furniture">Furniture</div>
-  <div class="category" data-filter="structures">Structures</div>
-  <div class="category" data-filter="art">Art</div>
-</div>
+  <!-- Logo -->
+  <div class="logo"><img src="VT_logo.png" alt="VT LOGO"></div>
 
-<div class="product-list" id="productList">
-  <!-- Sample Products -->
-  <div class="product-item" data-category="lighting" data-title="Lighting 1" data-price="100" data-image="images/lighting1.jpg">
-    <img src="images/lighting1.jpg" alt="Lighting 1"><div class="product-item-title">Lighting 1</div>
+  <!-- CATEGORY SIDEBAR -->
+  <aside class="category-sidebar" id="categorySidebar">
+    <div class="category" data-filter="all">ALL</div>
+    <div class="category" data-filter="lighting">LIGHTING</div>
+    <div class="category" data-filter="furniture">FURNITURE</div>
+    <div class="category" data-filter="structures">STRUCTURES</div>
+    <div class="category" data-filter="art">ART</div>
+  </aside>
+
+  <!-- PRODUCTS LIST -->
+  <section class="product-list" id="productList">
+    <!-- Add more items as needed; keep data-price for the popup -->
+    <div class="product-item" data-category="lighting" data-title="LIGHTING 1" data-price="120" data-image="images/lighting1.jpg">
+      <img src="images/lighting1.jpg" alt="LIGHTING 1">
+      <div class="product-item-title">LIGHTING 1</div>
+    </div>
+
+    <div class="product-item" data-category="furniture" data-title="FURNITURE 1" data-price="380" data-image="images/furniture1.jpg">
+      <img src="images/furniture1.jpg" alt="FURNITURE 1">
+      <div class="product-item-title">FURNITURE 1</div>
+    </div>
+
+    <div class="product-item" data-category="structures" data-title="STRUCTURE 1" data-price="950" data-image="images/structure1.jpg">
+      <img src="images/structure1.jpg" alt="STRUCTURE 1">
+      <div class="product-item-title">STRUCTURE 1</div>
+    </div>
+
+    <div class="product-item" data-category="art" data-title="ART 1" data-price="220" data-image="images/art1.jpg">
+      <img src="images/art1.jpg" alt="ART 1">
+      <div class="product-item-title">ART 1</div>
+    </div>
+  </section>
+
+  <!-- RIGHT DISPLAY -->
+  <main class="product-display">
+    <img id="largeImage" class="large-image" src="" alt="">
+    <div id="description" class="description">HOVER OVER A PRODUCT TO SEE DETAILS</div>
+    <div id="controls" class="controls">
+      <button id="addToTruck">ADD TO TRUCK</button>
+    </div>
+  </main>
+
+  <!-- TRUCK -->
+  <div id="truck" class="truck" title="CLICK TO VIEW CART"></div>
+
+  <!-- POPUP CART -->
+  <div id="cartPopup" class="cart-popup">
+    <div class="cart-popup-header">
+      <div class="cart-title">CART ITEMS</div>
+      <button id="cartClose" class="cart-close">CLOSE</button>
+    </div>
+    <div id="cartList"></div>
+    <div id="cartTotal" class="cart-total"></div>
+    <button id="checkoutBtn" class="checkout">CHECKOUT</button>
   </div>
-  <div class="product-item" data-category="furniture" data-title="Furniture 1" data-price="200" data-image="images/furniture1.jpg">
-    <img src="images/furniture1.jpg" alt="Furniture 1"><div class="product-item-title">Furniture 1</div>
-  </div>
-</div>
 
-<div class="product-display">
-  <img class="large-image" id="largeImage" src="" alt="Hover a product">
-  <div class="description" id="description"><span>Hover over a product to see details</span></div>
-  <div class="controls" id="controls" style="display:none;">
-    <button id="addToTruck">Add to Truck</button>
-  </div>
-</div>
+  <script>
+    /* Cursor */
+    const cursor = document.getElementById('custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+    }, { passive: true });
 
-<div class="truck" id="truck"></div>
-<div id="cartPopup">
-  <h3>Cart Items</h3>
-  <div id="cartList"></div>
-  <button id="checkoutBtn">Checkout</button>
-</div>
+    /* Elements */
+    const productItems = document.querySelectorAll('.product-item');
+    const largeImage   = document.getElementById('largeImage');
+    const description  = document.getElementById('description');
+    const controls     = document.getElementById('controls');
+    const addBtn       = document.getElementById('addToTruck');
+    const truck        = document.getElementById('truck');
 
-<script>
-// Cursor
-const cursor = document.getElementById('custom-cursor');
-document.addEventListener('mousemove', e => cursor.style.transform = `translate(${e.clientX-16}px,${e.clientY-16}px)`);
+    const cartPopup    = document.getElementById('cartPopup');
+    const cartClose    = document.getElementById('cartClose');
+    const cartList     = document.getElementById('cartList');
+    const cartTotal    = document.getElementById('cartTotal');
+    const checkoutBtn  = document.getElementById('checkoutBtn');
 
-// Product hover
-const items = document.querySelectorAll('.product-item');
-const largeImage = document.getElementById('largeImage');
-const description = document.getElementById('description');
-const controls = document.getElementById('controls');
-let selectedProduct = null;
-let cart = [];
+    /* State */
+    let selectedProduct = null;
+    // Cart as map: title -> { title, price, qty }
+    const cart = new Map();
 
-items.forEach(item=>{
-  item.addEventListener('mouseenter', ()=>{
-    if(selectedProduct) selectedProduct.classList.remove('selected');
-    item.classList.add('selected');
-    selectedProduct=item;
-    largeImage.src=item.dataset.image;
-    description.textContent=item.dataset.title.toUpperCase() + " - $" + item.dataset.price;
-    controls.style.display='flex';
-  });
-});
-
-// Add to truck
-const truck = document.getElementById('truck');
-document.getElementById('addToTruck').addEventListener('click', ()=>{
-  if(!selectedProduct) return;
-
-  const productSize = 50;
-  const spacing = 10;
-
-  const img=document.createElement('img');
-  img.src=selectedProduct.dataset.image;
-  img.className='item';
-  img.dataset.title=selectedProduct.dataset.title;
-  img.dataset.price=selectedProduct.dataset.price;
-
-  // Start above truck
-  const truckRect=truck.getBoundingClientRect();
-  img.style.position='fixed';
-  img.style.width=`${productSize}px`;
-  img.style.height=`${productSize}px`;
-  img.style.left=`${truckRect.left + truckRect.width/2 - productSize/2}px`;
-  img.style.top=`${truckRect.top - productSize - 10}px`;
-  document.body.appendChild(img);
-
-  // Target stacked position
-  const existing=truck.querySelectorAll('.item').length;
-  const targetLeft=10+(existing%5)*(productSize+spacing*1.5);
-  const targetBottom=10+Math.floor(existing/5)*(productSize+spacing);
-  const targetTop=truckRect.bottom-targetBottom-productSize;
-  const targetX=truckRect.left+targetLeft;
-
-  setTimeout(()=>{ img.style.left=`${targetX}px`; img.style.top=`${targetTop}px`; },10);
-
-  img.addEventListener('transitionend', ()=>{
-    img.style.position='absolute';
-    img.style.bottom=`${targetBottom}px`;
-    img.style.left=`${targetLeft}px`;
-    img.style.top='';
-    truck.appendChild(img);
-    cart.push({title:img.dataset.title, price:img.dataset.price});
-    setupCartHover(img);
-  });
-});
-
-// Remove from cart on hover
-function setupCartHover(img){
-  img.addEventListener('mouseenter', ()=>{ img.style.filter='brightness(200%)'; });
-  img.addEventListener('mouseleave', ()=>{ img.style.filter=''; });
-  img.addEventListener('click', ()=>{
-    cart = cart.filter(p=>p.title !== img.dataset.title);
-    img.remove();
-  });
-}
-
-// Truck hover to show cart popup
-truck.addEventListener('mouseenter', ()=>truck.style.filter='brightness(150%)');
-truck.addEventListener('mouseleave', ()=>truck.style.filter='');
-
-truck.addEventListener('click', ()=>{
-  const popup = document.getElementById('cartPopup');
-  popup.style.display = popup.style.display==='flex'?'none':'flex';
-  const list = document.getElementById('cartList');
-  list.innerHTML='';
-  cart.forEach(p=>{
-    const div=document.createElement('div');
-    div.textContent=`${p.title} - $${p.price}`;
-    list.appendChild(div);
-  });
-});
-
-document.getElementById('checkoutBtn').addEventListener('click', ()=>{
-  const bodyText = cart.map(p=>`${p.title} - $${p.price}`).join('%0D%0A');
-  window.location.href = `mailto:info@vtdesignbuild.com?subject=Cart%20Checkout&body=${bodyText}`;
-});
-
-// Category filtering
-document.querySelectorAll('.category').forEach(cat=>{
-  cat.addEventListener('click', ()=>{
-    const filter=cat.dataset.filter;
-    items.forEach(item=>{
-      item.style.display=(filter==='all'||item.dataset.category===filter)?'flex':'none';
+    /* Hover products → set selection */
+    productItems.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        selectedProduct = {
+          title: item.dataset.title,
+          price: parseFloat(item.dataset.price || '0'),
+          image: item.dataset.image
+        };
+        largeImage.src = selectedProduct.image;
+        largeImage.style.display = 'block';
+        description.textContent = `${selectedProduct.title} — $${selectedProduct.price.toFixed(2)}`;
+        controls.style.display = 'flex';
+      });
     });
-  });
-});
-</script>
+
+    /* Helper: update popup content */
+    function renderCartPopup(){
+      cartList.innerHTML = '';
+      let total = 0;
+      for (const {title, price, qty} of cart.values()){
+        const line = document.createElement('div');
+        line.className = 'cart-line';
+        line.textContent = `${title}  ×  ${qty}`;
+        const priceEl = document.createElement('div');
+        priceEl.textContent = `$${(price * qty).toFixed(2)}`;
+        line.appendChild(priceEl);
+        cartList.appendChild(line);
+        total += price * qty;
+      }
+      cartTotal.textContent = `TOTAL — $${total.toFixed(2)}`;
+    }
+
+    /* Helper: set up hover/click removal on cargo item */
+    function attachCargoEvents(imgEl){
+      imgEl.addEventListener('mouseenter', () => {
+        imgEl.style.filter = 'invert(1) brightness(220%)';
+      });
+      imgEl.addEventListener('mouseleave', () => {
+        imgEl.style.filter = '';
+      });
+      imgEl.addEventListener('click', () => {
+        // Remove one unit of this title from cart
+        const t = imgEl.dataset.title;
+        if (cart.has(t)){
+          const entry = cart.get(t);
+          entry.qty -= 1;
+          if (entry.qty <= 0){ cart.delete(t); }
+          else { cart.set(t, entry); }
+        }
+        imgEl.remove();
+        renderCartPopup();
+      });
+    }
+
+    /* Add to Truck: animate drop from above, stack inside bed */
+    addBtn.addEventListener('click', () => {
+      if (!selectedProduct) return;
+
+      // 1) Create a floating clone to animate
+      const drop = document.createElement('img');
+      drop.src = selectedProduct.image;
+      drop.style.position = 'fixed';
+      drop.style.width = getComputedStyle(document.documentElement).getPropertyValue('--cargo-item');
+      drop.style.height = getComputedStyle(document.documentElement).getPropertyValue('--cargo-item');
+      drop.style.objectFit = 'cover';
+      drop.style.transition = 'left .55s ease, top .55s ease';
+
+      // Start above the truck center
+      const tRect = truck.getBoundingClientRect();
+      const size = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-item'));
+      drop.style.left = `${tRect.left + (tRect.width/2) - (size/2)}px`;
+      drop.style.top  = `${tRect.top  - size - 12}px`;
+      document.body.appendChild(drop);
+
+      // 2) Compute target stacking position (grid in truck)
+      const existing = truck.querySelectorAll('.item').length;
+      const cols = 5; // grid columns inside bed
+      const gap  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-gap'));
+
+      // cargo origin offsets
+      const offX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-offset-x'));
+      const offY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-offset-y'));
+
+      const col = existing % cols;
+      const row = Math.floor(existing / cols);
+
+      const targetLeftInTruck  = offX + col * (size + gap);
+      const targetBottomInTruck= offY + row * (size + gap);
+
+      const targetLeft = tRect.left + targetLeftInTruck;
+      const targetTop  = tRect.bottom - targetBottomInTruck - size;
+
+      // 3) Animate
+      requestAnimationFrame(() => {
+        drop.style.left = `${targetLeft}px`;
+        drop.style.top  = `${targetTop}px`;
+      });
+
+      // 4) On arrival: move into truck container, absolute coords (left/bottom)
+      drop.addEventListener('transitionend', () => {
+        const cargo = document.createElement('img');
+        cargo.src = selectedProduct.image;
+        cargo.className = 'item';
+        cargo.dataset.title = selectedProduct.title;
+        cargo.dataset.price = selectedProduct.price.toFixed(2);
+        cargo.style.left   = `${targetLeftInTruck}px`;
+        cargo.style.bottom = `${targetBottomInTruck}px`;
+        attachCargoEvents(cargo);
+        truck.appendChild(cargo);
+        drop.remove();
+
+        // Update cart quantities
+        if (cart.has(selectedProduct.title)){
+          const entry = cart.get(selectedProduct.title);
+          entry.qty += 1;
+          cart.set(selectedProduct.title, entry);
+        } else {
+          cart.set(selectedProduct.title, {title:selectedProduct.title, price:selectedProduct.price, qty:1});
+        }
+        renderCartPopup();
+      });
+    });
+
+    /* Truck: hover visual already in CSS; click toggles popup */
+    truck.addEventListener('click', () => {
+      const showing = cartPopup.style.display === 'flex';
+      cartPopup.style.display = showing ? 'none' : 'flex';
+    });
+
+    /* Close popup */
+    cartClose.addEventListener('click', () => {
+      cartPopup.style.display = 'none';
+    });
+
+    /* Checkout: draft email with cart lines */
+    checkoutBtn.addEventListener('click', () => {
+      if (cart.size === 0) return;
+      let lines = [];
+      let total = 0;
+      for (const {title, price, qty} of cart.values()){
+        const sub = price * qty;
+        total += sub;
+        lines.push(`${title} — QTY ${qty} — $${sub.toFixed(2)}`);
+      }
+      lines.push(`TOTAL — $${total.toFixed(2)}`);
+      const body = encodeURIComponent(lines.join('\n'));
+      location.href = `mailto:info@vtdesignbuild.com?subject=VT%20DESIGN%20BUILD%20—%20CART%20CHECKOUT&body=${body}`;
+    });
+
+    /* Category filter */
+    document.querySelectorAll('.category').forEach(cat => {
+      cat.addEventListener('click', () => {
+        const filter = cat.dataset.filter;
+        document.querySelectorAll('.product-item').forEach(it => {
+          it.style.display = (filter === 'all' || it.dataset.category === filter) ? 'flex' : 'none';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
