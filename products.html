@@ -3,173 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VT DESIGN BUILD — Interactive Gallery</title>
+<title>Van Thyne Design Build</title>
+
+<!-- Favicon: small orange circle -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='orange'/></svg>">
+
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --fg: #eaeaea;
-    --accent: hotpink; /* Add to Truck button color */
-    --hover-border: 2px solid #fff;
-    --frame-size: 150px;
-  }
+:root {
+  --bg:#575e52;   /* background */
+  --fg:#000000;   /* main text black */
+  --accent:orange; /* links & highlights */
+  --frame-size:150px;
+}
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    text-transform: uppercase;
-    overflow: hidden;
-  }
+/* Base layout */
+html, body {
+  margin:0; padding:0;
+  min-height:100%; width:100%;
+  background:var(--bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  text-transform: uppercase;
+  overflow: hidden;
+}
 
-  body {
-    display: flex;
-  }
+* { cursor:none !important; }
 
-  /* Left product grid */
-  .product-list {
-    width: 30%;
-    padding: 1rem;
-    box-sizing: border-box;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    overflow-y: auto;
-    height: 100vh;
-    border-right: 1px solid rgba(255,255,255,0.1);
-  }
+/* Custom cursor */
+#custom-cursor {
+  position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+  pointer-events: none; z-index: 9999;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  background: #fff; mix-blend-mode: difference;
+}
 
-  .product-item {
-    width: var(--frame-size);
-    height: var(--frame-size);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    transition: border 0.2s ease, transform 0.2s ease;
-    text-align: center;
-  }
+/* Top right logo */
+.logo {
+  position: fixed;
+  top: 1rem; right: 1rem;
+  width: 60px; height: 60px;
+  cursor: pointer;
+  z-index: 1000;
+}
 
-  .product-item img {
-    width: 80%;
-    height: 80%;
-    object-fit: cover;
-    border-radius: 6px;
-  }
+/* Left sidebar categories */
+.category-sidebar {
+  width: 100px;
+  background: rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-  .product-item-title {
-    font-size: 14px;
-    margin-top: 0.3rem;
-    color: var(--fg);
-  }
+.category {
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--fg);
+}
 
-  .product-item.selected {
-    border: var(--hover-border);
-  }
+/* Product list */
+.product-list {
+  width: 25%;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  overflow-y: auto;
+  height: 100vh;
+}
 
-  /* Right display */
-  .product-display {
-    width: 70%;
-    padding: 2rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-  }
+/* Product items */
+.product-item {
+  width: var(--frame-size);
+  height: var(--frame-size);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border:1px solid rgba(0,0,0,0.2);
+  border-radius:8px;
+  background: #fff6e6;
+  text-align: center;
+  cursor:pointer;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
 
-  .large-image {
-    max-width: 60%;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
+.product-item img {
+  width: 80%; height: 80%;
+  object-fit: cover;
+  border-radius:6px;
+}
 
-  .description {
-    font-size: 20px;
-    line-height: 1.4;
-    margin-bottom: 1rem;
-    text-align: left;
-    width: 60%;
-  }
+.product-item-title {
+  font-size: 14px;
+  margin-top: 0.3rem;
+  color: var(--fg);
+}
 
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
+.product-item.selected {
+  border: 2px solid var(--accent);
+}
 
-  select, button {
-    padding: 0.5rem 1rem;
-    font-size: 16px;
-    cursor: pointer;
-    text-transform: uppercase;
-  }
+/* Right display */
+.product-display {
+  flex:1;
+  padding:2rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
 
-  button {
-    background: var(--accent); /* Pink */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
+.large-image {
+  max-width:60%;
+  border-radius:8px;
+  margin-bottom:1rem;
+}
 
-  button:hover {
-    background: #fff;
-    color: var(--accent);
-  }
+.description {
+  font-size:20px;
+  line-height:1.4;
+  margin-bottom:1rem;
+  text-align:left;
+  width:60%;
+}
 
-  /* Wheelbarrow */
-  .wheelbarrow {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    width: 100px;
-    min-height: 100px;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    padding: 0.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    background: rgba(255,255,255,0.05);
-  }
+.controls {
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:2rem;
+}
 
-  .wheelbarrow img {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
+select, button {
+  padding:0.5rem 1rem;
+  font-size:16px;
+  cursor:pointer;
+  text-transform: uppercase;
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border:none;
+  border-radius:4px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+button:hover {
+  background:#fff;
+  color:var(--accent);
+}
+
+/* Wheelbarrow */
+.wheelbarrow {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 100px;
+  min-height:100px;
+  border:2px solid var(--accent);
+  border-radius:8px;
+  padding:0.5rem;
+  display:flex;
+  flex-wrap: wrap;
+  gap:0.5rem;
+  background: rgba(0,0,0,0.05);
+}
+
+.wheelbarrow img {
+  width:40px; height:40px;
+  object-fit:cover;
+  border-radius:4px;
+}
 </style>
 </head>
+
 <body>
 
-<div class="product-list">
-  <div class="product-item" data-title="Floating Sauna" data-description="A serene floating sauna on the water." data-image="images/project_014.jpg">
+<!-- Custom cursor -->
+<div id="custom-cursor" aria-hidden="true"></div>
+
+<!-- Logo -->
+<div class="logo">
+  <img src="images/logo.png" alt="VT Design Build Logo">
+</div>
+
+<!-- Category sidebar -->
+<div class="category-sidebar" id="categorySidebar">
+  <div class="category" data-filter="all">All</div>
+  <div class="category" data-filter="lighting">Lighting</div>
+  <div class="category" data-filter="furniture">Furniture</div>
+  <div class="category" data-filter="structures">Structures</div>
+  <div class="category" data-filter="art">Art</div>
+</div>
+
+<!-- Product list -->
+<div class="product-list" id="productList">
+  <div class="product-item" data-category="structures" data-title="Floating Sauna" data-description="A serene floating sauna on the water." data-image="images/project_014.jpg">
     <img src="images/project_014_thumb.jpg" alt="Floating Sauna">
     <div class="product-item-title">Floating Sauna</div>
   </div>
-  <div class="product-item" data-title="Mobile Sauna" data-description="A mobile sauna designed for transport anywhere." data-image="images/project_019.jpg">
+  <div class="product-item" data-category="structures" data-title="Mobile Sauna" data-description="A mobile sauna designed for transport anywhere." data-image="images/project_019.jpg">
     <img src="images/project_019_thumb.jpg" alt="Mobile Sauna">
     <div class="product-item-title">Mobile Sauna</div>
   </div>
-  <div class="product-item" data-title="Circle Stage" data-description="A stage installation for events and performances." data-image="images/project_021.jpg">
+  <div class="product-item" data-category="structures" data-title="Circle Stage" data-description="A stage installation for events and performances." data-image="images/project_021.jpg">
     <img src="images/project_021_thumb.jpg" alt="Circle Stage">
     <div class="product-item-title">Circle Stage</div>
   </div>
-  <div class="product-item" data-title="Time Machine" data-description="Interactive time machine installation." data-image="images/project_024.jpg">
+  <div class="product-item" data-category="art" data-title="Time Machine" data-description="Interactive time machine installation." data-image="images/project_024.jpg">
     <img src="images/project_024_thumb.jpg" alt="Time Machine">
     <div class="product-item-title">Time Machine</div>
   </div>
+  <div class="product-item" data-category="furniture" data-title="3716 Fortunato Way" data-description="Residential project at 3716 Fortunato Way." data-image="images/project_024_thumb.jpg">
+    <img src="images/project_024_thumb.jpg" alt="3716 Fortunato Way">
+    <div class="product-item-title">3716 Fortunato Way</div>
+  </div>
+  <div class="product-item" data-category="all" data-title="Archives" data-description="View all products and projects in our archives." data-image="images/archives.jpg">
+    <img src="images/archives_thumb.jpg" alt="Archives">
+    <div class="product-item-title">Archives</div>
+  </div>
 </div>
 
+<!-- Right display -->
 <div class="product-display">
   <img class="large-image" id="largeImage" src="" alt="Hover a product">
   <div class="description" id="description"><span>Hover over a product to see details.</span></div>
@@ -185,10 +241,17 @@
   </div>
 </div>
 
+<!-- Wheelbarrow -->
 <div class="wheelbarrow" id="wheelbarrow"></div>
 
 <script>
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+});
+
 const items = document.querySelectorAll('.product-item');
+const categories = document.querySelectorAll('.category');
 const largeImage = document.getElementById('largeImage');
 const description = document.getElementById('description');
 const controls = document.getElementById('controls');
@@ -198,7 +261,6 @@ const wheelbarrow = document.getElementById('wheelbarrow');
 
 let selectedProduct = null;
 
-// Select product and keep selection until another is selected
 items.forEach(item => {
   item.addEventListener('mouseenter', () => {
     if(selectedProduct) selectedProduct.classList.remove('selected');
@@ -212,18 +274,29 @@ items.forEach(item => {
   });
 });
 
-// Add to wheelbarrow (truck)
 addButton.addEventListener('click', () => {
-  if(selectedProduct) {
+  if(selectedProduct){
     const quantity = parseInt(quantitySelect.value);
-    for(let i=0; i<quantity; i++){
+    for(let i=0;i<quantity;i++){
       const img = document.createElement('img');
       img.src = selectedProduct.dataset.image;
       wheelbarrow.appendChild(img);
     }
   }
 });
-</script>
 
+categories.forEach(cat => {
+  cat.addEventListener('click', () => {
+    const filter = cat.dataset.filter;
+    items.forEach(item => {
+      if(filter === 'all' || item.dataset.category === filter){
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>
