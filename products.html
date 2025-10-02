@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
-<!-- Favicon -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
@@ -48,7 +47,7 @@
   a:hover{ color:#fff; }
   button:focus, a:focus{ outline:none; }
 
-  /* Cursor */
+  /* Custom cursor */
   #custom-cursor{
     position:fixed; top:0; left:0; width:var(--cursor); height:var(--cursor);
     pointer-events:none; z-index:9999;
@@ -66,22 +65,13 @@
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
     transition:filter .2s ease, transform .2s ease;
-    filter:none;
-    transform-origin:center;
+    filter:none; transform-origin:center;
   }
   .truck-icon:hover{ filter:invert(1) brightness(2); }
   .truck-icon.flash{ animation:truckflash var(--flash-ms) ease; }
   .truck-icon.bounce{ animation:truckbounce var(--bounce-ms) cubic-bezier(.34,1.56,.64,1); }
-
-  @keyframes truckflash{
-    0% { filter:invert(1) brightness(2); }
-    100%{ filter:none; }
-  }
-  @keyframes truckbounce{
-    0%   { transform:scale(1); }
-    40%  { transform:scale(1.08); }
-    100% { transform:scale(1); }
-  }
+  @keyframes truckflash{ 0%{filter:invert(1) brightness(2);} 100%{filter:none;} }
+  @keyframes truckbounce{ 0%{transform:scale(1);} 40%{transform:scale(1.08);} 100%{transform:scale(1);} }
 
   /* Logo centered above sidebar */
   .logo-above-sidebar{
@@ -110,7 +100,7 @@
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* Grid — perfect square tiles; icon scales inside (contain) */
+  /* Grid — perfect square tiles; icon scales inside (contain); no icon border */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -127,18 +117,27 @@
     transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .tile:hover{ background:#000; color:#fff; }
+
   .tile-img{
     flex:1 1 auto; width:100%; min-height:0;
     display:flex; align-items:center; justify-content:center;
-    background:#fff;
-    border:1px solid #000;           /* frame around icon area */
+    /* no background, no border; the icon’s transparent areas show tile bg */
   }
   .tile-img img{
-    width:100%; height:100%; object-fit:contain;   /* SEE FULL ICON */
-    background:#fff;
+    width:100%; height:100%; object-fit:contain;   /* show full icon */
+    image-rendering:auto;
+    /* base: assume black icon on transparent */
+    filter:none;
+    transition:filter .15s ease;
   }
-  .tile:hover .tile-img{ border-color:#fff; }
-  .tile .t{ width:100%; text-align:center; line-height:1.1; }
+  /* Hover: flip icon to white (on black tile) */
+  .tile:hover .tile-img img{ filter:invert(1) brightness(2) saturate(0); }
+
+  /* Title: clamp so titles don't overflow square */
+  .tile .t{
+    width:100%; text-align:center; line-height:1.1;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
 
   /* Featured */
   .featured{
@@ -151,20 +150,18 @@
     position:relative; width:100%; max-width:640px; height:var(--carousel-h);
     background:#fff; border:1px solid #000; display:none;
   }
-  /* Inner adds tiny top/bottom inset inside the white frame */
   .carousel-inner{
-    position:absolute; inset:0; padding:6px 0;   /* slight top/bottom inset */
-    display:grid; place-items:center;
-    background:#fff;
+    position:absolute; inset:0; padding:12px 0;   /* more top/bottom inset */
+    display:grid; place-items:center; background:#fff; z-index:1;
   }
   .carousel-inner img{
-    width:100%; height:100%; object-fit:contain; /* SEE ENTIRE IMAGE */
-    background:#fff;
+    width:100%; height:100%; object-fit:contain; background:#fff;
   }
   .nav-btn{
     position:absolute; top:50%; transform:translateY(-50%);
     width:28px; height:28px; background:#000; color:#fff; border:none;
     display:grid; place-items:center; cursor:pointer; transition:color .2s ease;
+    z-index:3;
   }
   .nav-btn:hover{ color:var(--accent); }
   .nav-left{ left:6px; clip-path:polygon(100% 0, 0 50%, 100% 100%); }
@@ -211,20 +208,35 @@
   .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:1000; }
   .cart{
     position:absolute; right:20px; top:calc(var(--header-h) + 12px);
-    width:360px; max-height:70vh; overflow:auto;
+    width:400px; max-height:70vh; overflow:auto;
     background:#fff; color:#000; border:1px solid #000; padding:12px; box-sizing:border-box;
   }
   .cart-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .close{ background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer; transition:color .2s ease; }
   .close:hover{ color:var(--accent); }
+
+  /* Cart line: thumb | name | qty-ctrl | subtotal | remove */
   .line{
-    display:grid; grid-template-columns:48px 1fr auto auto; align-items:center; gap:8px;
+    display:grid; grid-template-columns:56px 1fr auto auto auto; align-items:center; gap:8px;
     padding:6px 0; border-bottom:1px solid #000;
   }
   .line img{
-    width:48px; height:48px; object-fit:contain; /* SEE WHOLE ICON IN CART */
-    background:#fff; border:1px solid #000;
+    width:56px; height:56px; object-fit:contain; background:#fff; border:1px solid #000;
   }
+  .qtymini{
+    display:flex; align-items:center; gap:6px;
+    background:#fff; border:1px solid #000; padding:2px 4px;
+  }
+  .qbtn{
+    width:22px; height:22px; background:#000; color:#fff; border:none; cursor:pointer; transition:color .2s ease;
+  }
+  .qbtn:hover{ color:var(--accent); }
+  .qval{ min-width:18px; text-align:center; }
+  .rm{
+    background:#000; color:#fff; border:1px solid #000; padding:4px 6px; cursor:pointer; transition:color .2s ease;
+  }
+  .rm:hover{ color:var(--accent); }
+
   .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
   .drive{ margin-top:10px; width:100%; display:inline-block; text-align:center;
           background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
@@ -300,11 +312,11 @@
   <div class="credit">THIS WEBSITE WAS MADE BY <a href="https://jackvanthyne.org/index.html">JACK VAN THYNE</a></div>
 </footer>
 
-<!-- Cart popup -->
+<!-- Truck popup -->
 <div class="overlay" id="overlay" style="display:none;">
   <div class="cart" role="dialog" aria-modal="true">
     <div class="cart-header">
-      <div>CART</div>
+      <div>TRUCK</div>
       <button class="close" id="closeCart">CLOSE</button>
     </div>
     <div id="cartList"></div>
@@ -485,9 +497,9 @@ function renderGrid(){
     tile.appendChild(imgWrap);
     tile.appendChild(title);
 
-    // hover only before first click
+    // Hover only before first click
     tile.addEventListener('mouseenter', () => { if (!locked) preview(p); });
-    // click locks; clicking another replaces
+    // Click locks (clicking another replaces)
     tile.addEventListener('click', () => select(p));
 
     grid.appendChild(tile);
@@ -554,8 +566,10 @@ addBtn.addEventListener('click', () => {
     CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.icon || p.images[0] || '') });
   }
   truckIcon.classList.add('flash','bounce');
-  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
-  setTimeout(() => truckIcon.classList.remove('bounce'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bounce-ms')) || 400);
+  setTimeout(() => truckIcon.classList.remove('flash'),
+    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
+  setTimeout(() => truckIcon.classList.remove('bounce'),
+    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bounce-ms')) || 400);
 });
 
 /* Sidebar filters */
@@ -574,33 +588,7 @@ cats.forEach(c => {
   });
 });
 
-/* Cart popup */
-function renderCart(){
-  cartList.innerHTML = '';
-  let total = 0;
-  CART.forEach(({title, price, qty, thumb}) => {
-    const line = document.createElement('div');
-    line.className = 'line';
-
-    const img = document.createElement('img');
-    img.src = thumb || '';
-    img.alt = title;
-
-    const name = document.createElement('div'); name.textContent = title;
-    const q    = document.createElement('div'); q.textContent = '× ' + qty;
-    const sub  = document.createElement('div'); sub.textContent = money(price * qty);
-
-    line.appendChild(img); line.appendChild(name); line.appendChild(q); line.appendChild(sub);
-    cartList.appendChild(line);
-    total += price * qty;
-  });
-  grandTotal.textContent = money(total);
-
-  // Update mailto link to reflect current cart
-  driveLink.href = buildMailto(total);
-}
-
-/* Mailto builder */
+/* Build mailto from cart */
 function buildMailto(total){
   let lines = [];
   CART.forEach(({title, price, qty}) => {
@@ -612,13 +600,72 @@ function buildMailto(total){
   lines.push('');
   lines.push('Best,');
   lines.push('_____');
-
   const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
   const body = encodeURIComponent(lines.join('\r\n'));
   return `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
 }
 
-/* Open/close cart */
+/* Cart popup */
+function renderCart(){
+  cartList.innerHTML = '';
+  let total = 0;
+  CART.forEach(({id, title, price, qty, thumb}) => {
+    const line = document.createElement('div');
+    line.className = 'line';
+    line.dataset.id = id;
+
+    const img = document.createElement('img');
+    img.src = thumb || '';
+    img.alt = title;
+
+    const name = document.createElement('div');
+    name.textContent = title;
+
+    const qtyMini = document.createElement('div');
+    qtyMini.className = 'qtymini';
+    qtyMini.innerHTML = `
+      <button class="qbtn" data-act="dec">-</button>
+      <div class="qval">${qty}</div>
+      <button class="qbtn" data-act="inc">+</button>
+    `;
+
+    const sub = document.createElement('div');
+    sub.className = 'subtotal';
+    sub.textContent = money(price * qty);
+
+    const rm = document.createElement('button');
+    rm.className = 'rm'; rm.textContent = 'REMOVE'; rm.dataset.act = 'rm';
+
+    line.appendChild(img);
+    line.appendChild(name);
+    line.appendChild(qtyMini);
+    line.appendChild(sub);
+    line.appendChild(rm);
+
+    cartList.appendChild(line);
+    total += price * qty;
+  });
+  grandTotal.textContent = money(total);
+  driveLink.href = buildMailto(total);
+}
+
+/* Qty/Remove within cart (event delegation) */
+cartList.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const line = e.target.closest('.line');
+  if (!line) return;
+  const id = line.dataset.id;
+  if (!CART.has(id)) return;
+
+  const entry = CART.get(id);
+  const act = btn.dataset.act;
+  if (act === 'inc') entry.qty += 1;
+  if (act === 'dec') entry.qty = Math.max(1, entry.qty - 1);
+  if (act === 'rm')  CART.delete(id); else CART.set(id, entry);
+  renderCart();
+});
+
 truckIcon.addEventListener('click', () => {
   renderCart();
   overlay.style.display = 'block';
