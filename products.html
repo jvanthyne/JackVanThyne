@@ -21,9 +21,8 @@
     --gap:12px;
     --footer-h:100px;
 
-    --tile:190px;           /* grid tile width */
-    --tile-title-h:40px;    /* reserved height for title inside the square */
-    --pad:8px;              /* inner padding */
+    --tile:190px;           /* grid tile width/height (square) */
+    --pad:8px;              /* uniform inner padding */
     --carousel-h:380px;
     --img-inset:14px;       /* featured image top/bottom inset */
 
@@ -94,7 +93,7 @@
     display:flex; flex-direction:column; gap:.6rem;
   }
   .cat{ color:var(--fg); transition:color .2s ease; }
-  .cat:hover, .cat.active{ color:#fff; }
+  .cat:hover, .cat.active{ color:#fff; } /* active stays white */
 
   /* Content (2 columns) */
   .content{
@@ -103,7 +102,9 @@
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* GRID — true uniform squares: title lives inside the square, so tile never grows */
+  /* GRID — TRUE UNIFORM SQUARES.
+     Icon fills the whole square (minus padding). Title overlays at bottom (no height reservation),
+     so icon always scales within the same square area. */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -114,38 +115,39 @@
 
   .tile{
     position:relative;
-    aspect-ratio:1 / 1;                 /* lock full tile to a square */
+    aspect-ratio:1 / 1;                 /* lock each tile to a perfect square */
     background:#fff; border:1px solid #000; box-sizing:border-box;
     color:var(--fg);
     transition:background .15s ease, color .15s ease, border-color .15s ease;
-    overflow:hidden;                    /* ensure contents never expand the square */
+    overflow:hidden;                    /* contents never change the square */
   }
   .tile:hover{ background:#000; color:#fff; }
 
-  /* Fixed inner layout: icon region + fixed-height title region, both INSIDE the square */
+  /* ICON fills the square minus uniform padding */
   .tile-img{
     position:absolute;
-    left:var(--pad); right:var(--pad); top:var(--pad);
-    bottom:calc(var(--pad) + var(--tile-title-h)); /* reserve room for title */
+    left:var(--pad); right:var(--pad); top:var(--pad); bottom:var(--pad);
     display:grid; place-items:center;
+    pointer-events:none; /* let clicks go to tile */
   }
   .tile-img img{
     width:100%; height:100%;
-    object-fit:contain; /* SCALE PNG FULLY INTO BOX */
+    object-fit:contain;                 /* SCALE PNG TO FIT WHOLE SQUARE */
+    background:transparent;             /* respect PNG transparency */
     filter:none;
     transition:filter .15s ease;
-    background:transparent; /* PNG transparency respected */
   }
   .tile:hover .tile-img img{
-    /* flip transparent PNG icon to white when tile is black */
+    /* invert transparent PNG to white when hovering a black tile */
     filter:invert(1) brightness(2) saturate(0);
   }
 
+  /* TITLE overlays at the bottom, clamped, without reducing icon area */
   .tile .t{
     position:absolute; left:var(--pad); right:var(--pad); bottom:var(--pad);
-    height:var(--tile-title-h);
     text-align:center; line-height:1.1;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    pointer-events:none; /* text overlay shouldn't block clicks */
   }
 
   /* FEATURED — fixed, uniform white frame; image scales with inset */
