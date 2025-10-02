@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
-<!-- Favicon: show VT_logo.png as-is -->
+<!-- Favicon: use your PNG as-is -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
@@ -22,21 +22,21 @@
     --header-h:72px;
     --sidebar-w:180px;
     --gap:12px;
-    --footer-h:60px;
+    --footer-h:100px; /* extra room for stacked links */
 
     /* grid / featured */
-    --tile:190px;             /* perfect square tiles */
+    --tile:190px;             /* min tile width */
     --carousel-h:380px;
 
     /* icons */
     --logo-size:46px;         /* smaller logo above sidebar */
-    --truck-size:100px;       /* bigger truck top-right */
+    --truck-size:110px;       /* bigger truck top-right */
 
     /* custom cursor (smaller triangle) */
     --cursor:16px;
 
-    /* truck flash duration */
-    --flash-ms:250ms;
+    /* truck flash duration (longer) */
+    --flash-ms:800ms;
   }
 
   html, body{
@@ -61,25 +61,26 @@
     background:#fff; mix-blend-mode:difference;
   }
 
-  /* header only holds truck on the right */
+  /* header (truck on the right) */
   .header{
     position:fixed; left:0; right:0; top:0; height:var(--header-h);
     display:flex; align-items:center; justify-content:flex-end;
     padding:0 8px; box-sizing:border-box;
   }
-
-  /* truck top-right: only color change on hover + flash on add */
   .truck-icon{
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
     transition:filter .2s ease;
-    filter:none;
+    filter:none;                 /* base */
   }
   .truck-icon:hover{ filter:invert(1) brightness(2); }
   .truck-icon.flash{ animation:truckflash var(--flash-ms) ease; }
-  @keyframes truckflash{ 0%{ filter:invert(1) brightness(2);} 100%{filter:none;} }
+  @keyframes truckflash{
+    0% { filter:invert(1) brightness(2); }
+    100% { filter:none; }
+  }
 
-  /* sidebar same color as page; logo centered above it */
+  /* logo centered above sidebar */
   .logo-above-sidebar{
     position:fixed; top:6px; left:0; width:var(--sidebar-w);
     display:flex; justify-content:center; align-items:center;
@@ -89,6 +90,7 @@
     width:var(--logo-size); height:var(--logo-size); object-fit:contain;
   }
 
+  /* sidebar (same color as page) */
   .sidebar{
     position:fixed; left:0; top:var(--header-h); bottom:var(--footer-h);
     width:var(--sidebar-w); background:var(--bg);
@@ -96,41 +98,43 @@
     display:flex; flex-direction:column; gap:.6rem;
   }
   .cat{ color:var(--fg); transition:color .2s ease; }
-  .cat:hover{ color:#fff; }
-  .cat.active{ color:#fff; }       /* active stays white (not orange) */
+  .cat:hover, .cat.active{ color:#fff; }  /* active stays white (not orange) */
 
-  /* main content */
+  /* content area (two columns) */
   .content{
     position:fixed; left:var(--sidebar-w); right:0; top:var(--header-h); bottom:var(--footer-h);
     display:flex; gap:var(--gap); padding:var(--gap); box-sizing:border-box;
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* grid with perfect square tiles */
+  /* grid with perfect square tiles (image + title inside square) */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
     grid-template-columns:repeat(auto-fill, minmax(var(--tile), 1fr));
-    grid-auto-rows:var(--tile);              /* force square height */
-    align-items:start; align-content:start;
+    align-content:start;
   }
   .grid::-webkit-scrollbar{ display:none; }
 
   .tile{
+    aspect-ratio:1 / 1;                   /* perfect square */
     background:#fff; border:1px solid #000; box-sizing:border-box;
-    width:100%; height:100%;                 /* perfect square area */
     display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding:8px; gap:8px;
-    transition:filter .15s ease;
+    padding:8px; gap:8px; color:var(--fg);
+    transition:background .15s ease, color .15s ease;
   }
-  .tile:hover{ filter:brightness(1.1); }
+  .tile:hover{
+    background:#000; color:#fff;          /* box turns black, text white */
+  }
   .tile-img{
-    width:100%; height:calc(100% - 28px - 8px);  /* leave room for title (approx) */
+    flex:1 1 auto; width:100%; min-height:0;
     display:flex; align-items:center; justify-content:center;
   }
   .tile-img img{
     width:100%; height:100%; object-fit:cover; border:1px solid #000;
+    transition:border-color .15s ease;
   }
+  .tile:hover .tile-img img{ border-color:#fff; }
   .tile .t{
     width:100%; text-align:center; line-height:1.1;
   }
@@ -174,18 +178,17 @@
   .add:hover{ color:var(--accent); }
   .total{ background:#fff; border:1px solid #000; padding:8px; min-width:120px; text-align:center; }
 
-  /* footer left stack + small credit bottom-right */
+  /* footer: vertical stack links left; small credit bottom-right */
   .footer{
     position:fixed; left:0; right:0; bottom:0; height:var(--footer-h);
     border-top:1px solid #000; background:var(--bg);
   }
   .footer-wrap{
-    position:absolute; left:12px; bottom:8px; display:flex; flex-direction:column; gap:8px;
+    position:absolute; left:12px; bottom:12px; display:flex; flex-direction:column; gap:10px;
     font-size:13px;
   }
   .footer a{ color:#000; }
   .footer a:hover{ color:#fff; }
-  /* rainbow hover only for mystery shop */
   .footer a.mystery:hover{
     background:linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
     -webkit-background-clip:text; background-clip:text; color:transparent;
@@ -193,14 +196,33 @@
   .credit{
     position:absolute; right:12px; bottom:8px; font-size:12px;
   }
+
+  /* cart popup (reverted to boxed style) */
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:1000; }
+  .cart{
+    position:absolute; right:20px; top:calc(var(--header-h) + 12px);
+    width:360px; max-height:70vh; overflow:auto;
+    background:#fff; color:#000; border:1px solid #000; padding:12px; box-sizing:border-box;
+  }
+  .cart-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .close{ background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer; transition:color .2s ease; }
+  .close:hover{ color:var(--accent); }
+  .line{
+    display:grid; grid-template-columns:48px 1fr auto auto; align-items:center; gap:8px;
+    padding:6px 0; border-bottom:1px solid #000;
+  }
+  .line img{ width:48px; height:48px; object-fit:cover; border:1px solid #000; }
+  .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
+  .drive{ margin-top:10px; width:100%; background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
+  .drive:hover{ color:var(--accent); }
 </style>
 </head>
 <body>
 
-<!-- cursor -->
+<!-- custom cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
-<!-- header (truck only on the right) -->
+<!-- header (truck only) -->
 <header class="header">
   <div id="truckIcon" class="truck-icon" title="Open cart"></div>
 </header>
@@ -217,15 +239,16 @@
   <a class="cat" data-filter="furniture">FURNITURE</a>
   <a class="cat" data-filter="structures">STRUCTURES</a>
   <a class="cat" data-filter="art">ART</a>
-  <a class="cat" data-filter="misc">OTHERS</a>
 </nav>
 
-<!-- two-column content -->
+<!-- main content -->
 <section class="content">
+  <!-- grid -->
   <div class="left-col">
     <div class="grid" id="grid"></div>
   </div>
 
+  <!-- featured -->
   <div class="right-col">
     <div class="featured">
       <div class="carousel" id="carousel">
@@ -270,7 +293,7 @@
     </div>
     <div id="cartList"></div>
     <div class="grand">
-      <div>TOTAL</div> <!-- changed label -->
+      <div>TOTAL</div>
       <div id="grandTotal">$0.00</div>
     </div>
     <button class="drive" id="driveBtn">DRIVE AWAY</button>
@@ -285,8 +308,9 @@ document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - s/2}px, ${e.clientY - s/2}px)`;
 }, { passive:true });
 
-/* products — includes your two lighting products with icons & galleries */
+/* products (your list) */
 const PRODUCTS = [
+  /* Lighting */
   {
     id:'product001',
     cat:'lighting',
@@ -305,14 +329,91 @@ const PRODUCTS = [
     images:['product002_image001.jpg','product002_image002.jpg','product002_image003.jpg'],
     icon:'product002_icon.jpg'
   },
-  /* add more products here as needed */
+
+  /* Furniture */
+  {
+    id:'product003',
+    cat:'furniture',
+    title:'OUTDOOR TABLE',
+    price:1600,
+    desc:'BUILT FROM LOCALLY SOURCED AND MILLED REDWOOD FOR NATURAL DURABILITY AND WEATHER RESISTANCE. SEATS 4–6 AND IS DESIGNED FOR PATIOS AND GARDENS.',
+    images:['product003_image001.jpg','product003_image002.jpg','product003_image003.jpg'],
+    icon:'product003_icon.jpg'
+  },
+  {
+    id:'product004',
+    cat:'furniture',
+    title:'OUTDOOR BENCH',
+    price:425,
+    desc:'A MINIMALIST BENCH CRAFTED FROM LOCALLY SOURCED AND MILLED REDWOOD. COMFORTABLE, STURDY SEATING FOR PORCHES, ENTRIES, AND GARDEN PATHS.',
+    images:['product004_image001.jpg','product004_image002.jpg','product004_image003.jpg'],
+    icon:'product004_icon.jpg'
+  },
+  {
+    id:'product005',
+    cat:'furniture',
+    title:'OUTDOOR LOUNGE CHAIR',
+    price:1400,
+    desc:'ERGONOMIC LOUNGE CHAIR MADE FROM LOCALLY SOURCED AND MILLED REDWOOD. RELAXED RECLINE FOR LONG, COMFORTABLE SITS.',
+    images:['product005_image001.jpg','product005_image002.jpg','product005_image003.jpg'],
+    icon:'product005_icon.jpg'
+  },
+  {
+    id:'product006',
+    cat:'furniture',
+    title:'OUTDOOR LOVE SEAT',
+    price:1600,
+    desc:'TWO-SEATER LOVE SEAT IN LOCALLY SOURCED AND MILLED REDWOOD—COZY, DURABLE, AND READY FOR ALL-SEASON OUTDOOR LIVING.',
+    images:['product006_image001.jpg','product006_image002.jpg','product006_image003.jpg'],
+    icon:'product006_icon.jpg'
+  },
+
+  /* Structures */
+  {
+    id:'product007',
+    cat:'structures',
+    title:'MOBILE SAUNA',
+    price:60000,
+    desc:'A TRANSPORTABLE WOOD-FIRED SAUNA DESIGNED FOR QUICK SETUP AND OFF-GRID USE. INSULATED CONSTRUCTION, TEMPERED GLASS DOOR, AND INTERIOR BENCHING FOR 4–6.',
+    images:['product007_image001.jpg','product007_image002.jpg','product007_image003.jpg'],
+    icon:'product007_icon.jpg'
+  },
+  {
+    id:'product008',
+    cat:'structures',
+    title:'FLOATING SAUNA',
+    price:80000,
+    desc:'A BARGE-MOUNTED, WOOD-FIRED SAUNA BUILT FOR LAKES OR CALM BAYS. MARINE-SAFE DETAILS, CHANGING NOOK, AND PANORAMIC WINDOW—SEATS 6–8.',
+    images:['product008_image001.jpg','product008_image002.jpg','product008_image003.jpg'],
+    icon:'product008_icon.jpg'
+  },
+
+  /* Art */
+  {
+    id:'product009',
+    cat:'art',
+    title:'REDWOODS',
+    price:1200,
+    desc:'ACRYLIC ON WOOD.',
+    images:['product009_image001.jpg','product009_image002.jpg','product009_image003.jpg'],
+    icon:'product009_icon.jpg'
+  },
+  {
+    id:'product010',
+    cat:'art',
+    title:'WOMAN DANCING',
+    price:1300,
+    desc:'ACRYLIC ON WOOD.',
+    images:['product010_image001.jpg','product010_image002.jpg','product010_image003.jpg'],
+    icon:'product010_icon.jpg'
+  }
 ];
 
 /* state */
 let filter = 'all';
-let locked = false;       // after first click, hover no longer affects featured
-let selected = null;      // clicked item
-let hovered  = null;      // before first click
+let locked = false;   // after first click, hover no longer affects featured
+let selected = null;  // clicked item
+let hovered  = null;  // before first click
 let imgIdx   = 0;
 let qty      = 1;
 
@@ -343,7 +444,7 @@ const grandTotal = document.getElementById('grandTotal');
 const CART = new Map();
 const money = n => '$' + n.toFixed(2);
 
-/* build grid of perfect-square tiles using icons */
+/* build grid with perfect-square tiles using icons */
 function renderGrid(){
   grid.innerHTML = '';
   const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
@@ -427,7 +528,7 @@ decBtn.addEventListener('click', () => {
   totalVal.textContent = money(p.price * qty);
 });
 
-/* add to truck (flash white; no orange state) */
+/* add to truck (flash white longer; no orange state) */
 addBtn.addEventListener('click', () => {
   const p = currentProduct(); if (!p) return;
   if (CART.has(p.id)){
@@ -435,12 +536,13 @@ addBtn.addEventListener('click', () => {
   } else {
     CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.icon || p.images[0] || '') });
   }
-  // visual: flash white only
+  // visual: flash white (longer)
   truckIcon.classList.add('flash');
-  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 250);
+  setTimeout(() => truckIcon.classList.remove('flash'),
+    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
 });
 
-/* sidebar filters (active stays white) */
+/* sidebar filters */
 cats.forEach(c => {
   c.addEventListener('click', () => {
     cats.forEach(x => x.classList.remove('active'));
@@ -456,7 +558,7 @@ cats.forEach(c => {
   });
 });
 
-/* cart popup */
+/* cart popup (reverted boxed style) */
 function renderCart(){
   cartList.innerHTML = '';
   let total = 0;
@@ -487,16 +589,6 @@ document.getElementById('closeCart').addEventListener('click', () => {
   overlay.style.display = 'none';
 });
 overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
-
-/* drive away (email draft) */
-document.getElementById('driveBtn').addEventListener('click', () => {
-  let lines = []; let total = 0;
-  CART.forEach(({title, price, qty}) => { const sub = price * qty; total += sub; lines.push(`${title} — QTY ${qty} — ${money(sub)}`); });
-  lines.push(''); lines.push(`SUBTOTAL — ${money(total)}`); lines.push(''); lines.push('Best,'); lines.push('_____');
-  const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
-  const body = encodeURIComponent(lines.join('\n'));
-  window.location.href = `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
-});
 
 /* init */
 renderGrid();
