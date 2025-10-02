@@ -5,242 +5,196 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
-<!-- FAVICON: VT_logo.png over a dark-green background so the black logo is visible -->
+<!-- FAVICON: fill the alpha of VT_logo.png with WHITE so the logo shows white in the tab -->
 <link rel="icon" type="image/svg+xml"
-  href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232c4c3a'/><image href='VT_logo.png' x='10' y='10' width='80' height='80'/></svg>">
+  href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cmask id='m'%3E%3Cimage href='VT_logo.png' x='0' y='0' width='100' height='100' preserveAspectRatio='xMidYMid meet'/%3E%3C/mask%3E%3C/defs%3E%3Crect width='100' height='100' fill='white' mask='url(%23m)'/%3E%3C/svg%3E" />
+<!-- PNG fallback (will show original PNG color if SVG mask not supported) -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
   :root{
-    /* Colors & typography (match your style; one consistent size) */
     --bg:#575e52;
     --fg:#000000;
     --accent:orange;
-    --fs:16px;            /* single small size for *everything* */
+
+    /* ONE consistent text size + line height */
+    --fs:16px;
     --lh:1.2;
 
     /* Layout */
-    --sidebar-w: 140px;
-    --header-pad: 14px;
+    --header-h:68px;
+    --sidebar-w:140px;
+    --gap:12px;
 
-    /* Grid thumbs & featured media */
-    --thumb: 140px;
-    --carousel-h: 380px;
+    /* Grid & featured */
+    --thumb:140px;
+    --carousel-h:380px;
 
-    /* Truck icon */
-    --truck-size: 56px;
+    /* Icons */
+    --truck-size:56px;
+    --logo-size:60px;
 
-    /* Cargo sizing (if you later visualize stacking) */
-    --cargo-item: 48px;
-    --cargo-gap: 10px;
+    /* Cursor size (smaller) */
+    --cursor:20px;
 
-    /* Flash animation for truck */
-    --flash-duration: 250ms;
+    /* Truck flash */
+    --flash-ms:250ms;
   }
 
-  /* Base text style (ONE SIZE + UPPERCASE EVERYWHERE) */
-  html, body {
+  /* Global text (all uppercase, single size) */
+  html, body{
     margin:0; padding:0; height:100%;
     background:var(--bg); color:var(--fg);
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    font-size: var(--fs); line-height: var(--lh);
-    text-transform: uppercase;
+    font-size:var(--fs); line-height:var(--lh);
+    text-transform:uppercase;
     overflow:hidden;
   }
 
-  * { cursor:none !important; }
+  *{ cursor:none !important; }
 
-  /* Custom cursor triangle */
+  /* Smaller triangle cursor */
   #custom-cursor{
-    position:fixed; top:0; left:0; width:32px; height:32px;
+    position:fixed; top:0; left:0; width:var(--cursor); height:var(--cursor);
     pointer-events:none; z-index:9999;
     clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
     background:#fff; mix-blend-mode:difference;
   }
 
-  /* Header layer */
+  /* Header */
   .header{
-    position:fixed; top:0; left:0; right:0; height:64px;
+    position:fixed; inset:0 0 auto 0; height:var(--header-h);
     display:flex; align-items:center; justify-content:space-between;
-    padding:0 var(--header-pad);
-    pointer-events:none; /* let icons inside handle interactions */
+    padding:0 8px; box-sizing:border-box;
   }
-
-  /* Truck (cart) — top-left */
+  .header-left, .header-right{
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo{
+    width:var(--logo-size); height:var(--logo-size); object-fit:contain;
+  }
   .truck-icon{
-    position:absolute; left:8px; top:8px;
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
-    filter:none;
-    transition: filter .2s ease;
-    pointer-events:auto;
+    border:2px solid transparent;
+    transition:filter .2s ease, border-color .2s ease;
   }
-  .truck-icon.has-items{
-    /* approximate “orange” tint by overlay ring + subtle drop-shadow */
-    filter: drop-shadow(0 0 0 var(--accent));
-  }
-  .truck-icon:hover{
-    filter: invert(1) brightness(2);
-  }
+  .truck-icon:hover{ filter:invert(1) brightness(2); }
+  .truck-icon.has-items{ border-color:var(--accent); }
   .truck-icon.flash{
-    animation: truckflash var(--flash-duration) ease;
+    animation: truckflash var(--flash-ms) ease;
   }
   @keyframes truckflash {
-    0% { filter: invert(1) brightness(2); }
-    100% { filter: none; }
+    0% { filter:invert(1) brightness(2); }
+    100% { filter:none; }
   }
 
-  /* Logo — top-right */
-  .logo{
-    position:absolute; right:8px; top:8px;
-    width:60px; height:60px; object-fit:contain; pointer-events:auto;
-  }
-
-  /* Title “PRODUCTS” under the logo */
-  .page-title{
-    position:absolute; right:8px; top:72px;
-    color:var(--fg);
-  }
-
-  /* Left sidebar (categories) */
+  /* Sidebar */
   .sidebar{
-    position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
-    padding:calc(var(--header-pad) + 56px) var(--header-pad) var(--header-pad);
-    box-sizing:border-box;
+    position:fixed; left:0; top:var(--header-h); bottom:0; width:var(--sidebar-w);
     background:rgba(0,0,0,0.1);
+    padding:12px; box-sizing:border-box;
     display:flex; flex-direction:column; gap:.5rem;
   }
   .cat{
-    color:var(--fg);
-    text-decoration:none;
-    transition:color .2s ease;
+    color:var(--fg); text-decoration:none; transition:color .2s ease;
   }
   .cat:hover{ color:#fff; }
   .cat.active{ color:var(--accent); }
 
-  /* Main content: two columns */
+  /* Content */
   .content{
-    position:fixed; left:var(--sidebar-w); top:64px; right:0; bottom:0;
-    display:flex; gap:12px; padding:12px; box-sizing:border-box;
+    position:fixed; left:var(--sidebar-w); right:0; top:var(--header-h); bottom:0;
+    display:flex; gap:var(--gap); padding:var(--gap); box-sizing:border-box;
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* Grid (left) */
+  /* Grid */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
-    display:grid; grid-template-columns: repeat(auto-fill, minmax(var(--thumb), 1fr));
-    gap:12px; padding-right:4px;
+    display:grid; gap:var(--gap);
+    grid-template-columns:repeat(auto-fill, minmax(var(--thumb), 1fr));
+    grid-auto-rows:min-content;       /* prevent tall stretching */
+    align-items:start; align-content:start;
   }
   .grid::-webkit-scrollbar{ display:none; }
 
   .tile{
     background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box;
-    display:flex; flex-direction:column; align-items:center; gap:6px;
+    display:flex; flex-direction:column; gap:6px; align-items:center;
     text-decoration:none; color:var(--fg);
-    transition: filter .15s ease;
+    transition:filter .15s ease;
   }
   .tile:hover{ filter:brightness(1.1); }
   .tile img{
     width:100%; height:120px; object-fit:cover;
     border:1px solid #000;
   }
-  .tile .t{
-    text-align:center;
-  }
+  .tile .t{ text-align:center; }
 
-  /* Featured (right) */
+  /* Featured */
   .featured{
     height:100%; overflow:auto; scrollbar-width:none;
-    padding-right:4px;
     display:flex; flex-direction:column; align-items:center; gap:10px;
+    padding-right:4px;
   }
   .featured::-webkit-scrollbar{ display:none; }
 
-  /* Carousel */
   .carousel{
     position:relative; width:100%; max-width:600px; height:var(--carousel-h);
-    background:#fff; border:1px solid #000; display:grid; place-items:center;
+    background:#fff; border:1px solid #000; display:none; place-items:center;
   }
-  .carousel img{
-    width:100%; height:100%; object-fit:cover;
-  }
+  .carousel img{ width:100%; height:100%; object-fit:cover; }
   .nav-btn{
     position:absolute; top:50%; transform:translateY(-50%);
     width:28px; height:28px; background:#000; color:#fff; border:none;
-    display:grid; place-items:center; cursor:pointer;
-    transition: color .2s ease;
+    display:grid; place-items:center; cursor:pointer; transition:color .2s ease;
   }
   .nav-btn:hover{ color:var(--accent); }
   .nav-left{ left:6px; clip-path:polygon(100% 0, 0 50%, 100% 100%); }
   .nav-right{ right:6px; clip-path:polygon(0 0, 100% 50%, 0 100%); }
 
-  .title{
-    width:100%; max-width:600px; text-align:left;
-  }
+  .title{ width:100%; max-width:600px; text-align:left; }
   .desc{
-    width:100%; max-width:600px; text-align:left; background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box;
+    width:100%; max-width:600px; text-align:left;
+    background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box; display:none;
   }
 
-  /* Price & controls */
   .buy-row{
-    width:100%; max-width:600px; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    width:100%; max-width:600px; display:none; align-items:center; justify-content:space-between; gap:8px;
   }
-  .price{
-    background:#fff; border:1px solid #000; padding:8px;
-  }
-  .qty{
-    display:flex; align-items:center; gap:8px;
-  }
+  .price{ background:#fff; border:1px solid #000; padding:8px; }
+  .qty{ display:flex; align-items:center; gap:8px; }
   .step{
-    width:28px; height:28px; background:#000; color:#fff; border:none; cursor:pointer;
-    transition: color .2s ease;
+    width:28px; height:28px; background:#000; color:#fff; border:none; cursor:pointer; transition:color .2s ease;
   }
   .step:hover{ color:var(--accent); }
   .qty-val{ min-width:28px; text-align:center; }
 
   .add{
     background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer;
-    transition: color .2s ease, background .2s ease;
+    transition:color .2s ease, background .2s ease;
   }
   .add:hover{ color:var(--accent); }
+  .total{ background:#fff; border:1px solid #000; padding:8px; min-width:120px; text-align:center; }
 
-  .total{
-    background:#fff; border:1px solid #000; padding:8px; min-width:120px; text-align:center;
-  }
-
-  /* CART POPUP */
-  .overlay{
-    position:fixed; inset:0; background:rgba(0,0,0,0.35); display:none; z-index:1000;
-  }
+  /* Cart popup */
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:1000; }
   .cart{
-    position:absolute; right:20px; top:80px; width:360px; max-height:70vh; overflow:auto;
+    position:absolute; right:20px; top:calc(var(--header-h) + 12px);
+    width:360px; max-height:70vh; overflow:auto;
     background:#fff; color:#000; border:1px solid #000; padding:12px; box-sizing:border-box;
   }
-  .cart-header{
-    display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;
-  }
-  .close{
-    background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer;
-    transition: color .2s ease;
-  }
+  .cart-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .close{ background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer; transition:color .2s ease; }
   .close:hover{ color:var(--accent); }
-
   .line{
     display:grid; grid-template-columns:48px 1fr auto auto; align-items:center; gap:8px;
     padding:6px 0; border-bottom:1px solid #000;
   }
   .line img{ width:48px; height:48px; object-fit:cover; border:1px solid #000; }
-  .line .name{ }
-  .line .qty{ }
-  .line .sub{ }
-
-  .grand{
-    margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px;
-  }
-  .drive{
-    margin-top:10px; width:100%; background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer;
-    transition: color .2s ease;
-  }
+  .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
+  .drive{ margin-top:10px; width:100%; background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
   .drive:hover{ color:var(--accent); }
 </style>
 </head>
@@ -249,43 +203,47 @@
 <!-- Cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
-<!-- Header icons -->
+<!-- Header -->
 <header class="header">
-  <div id="truckIcon" class="truck-icon" title="Open cart"></div>
-  <img src="VT_logo.png" alt="VT LOGO" class="logo" />
-  <div class="page-title">PRODUCTS</div>
+  <div class="header-left">
+    <img src="VT_logo.png" alt="VT Logo" class="logo" />
+  </div>
+  <div class="header-right">
+    <div id="truckIcon" class="truck-icon" title="Open cart"></div>
+  </div>
 </header>
 
 <!-- Sidebar -->
-<nav class="sidebar" id="sidebar">
-  <a class="cat active" data-filter="all">ALL PRODUCTS</a>
+<nav class="sidebar">
+  <a class="cat active" data-filter="all">ALL</a>
   <a class="cat" data-filter="lighting">LIGHTING</a>
   <a class="cat" data-filter="furniture">FURNITURE</a>
   <a class="cat" data-filter="structures">STRUCTURES</a>
   <a class="cat" data-filter="art">ART</a>
-  <a class="cat" data-filter="misc">MISCELLANEOUS</a>
+  <a class="cat" data-filter="misc">OTHERS</a>
 </nav>
 
-<!-- Main content: two columns -->
+<!-- Content -->
 <section class="content">
-  <!-- GRID (left) -->
+  <!-- Grid (left) -->
   <div class="left-col">
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- FEATURED (right) -->
+  <!-- Featured (right) -->
   <div class="right-col">
-    <div class="featured" id="featured">
-      <div class="carousel" id="carousel" style="display:none;">
+    <div class="featured">
+      <div class="carousel" id="carousel">
         <button class="nav-btn nav-left" id="prevBtn" title="Prev"></button>
         <img id="carouselImg" alt="">
         <button class="nav-btn nav-right" id="nextBtn" title="Next"></button>
       </div>
-      <div class="title" id="featTitle"></div>
-      <div class="desc" id="featDesc" style="display:none;"></div>
 
-      <div class="buy-row" id="buyRow" style="display:none;">
-        <div class="price" id="featPrice"></div>
+      <div class="title" id="featTitle"></div>
+      <div class="desc" id="featDesc"></div>
+
+      <div class="buy-row" id="buyRow">
+        <div class="price" id="featPrice">$0.00</div>
 
         <div class="qty">
           <button class="step" id="decBtn">-</button>
@@ -300,7 +258,7 @@
   </div>
 </section>
 
-<!-- CART POPUP -->
+<!-- Cart Popup -->
 <div class="overlay" id="overlay">
   <div class="cart" role="dialog" aria-modal="true">
     <div class="cart-header">
@@ -319,68 +277,58 @@
 <script>
 /* Cursor */
 const cursor = document.getElementById('custom-cursor');
-document.addEventListener('mousemove', (e) => {
-  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+document.addEventListener('mousemove', e => {
+  cursor.style.transform = `translate(${e.clientX - (parseInt(getComputedStyle(cursor).width)/2)}px, ${e.clientY - (parseInt(getComputedStyle(cursor).height)/2)}px)`;
 }, { passive:true });
 
-/* Sample products (replace with your real data/images) */
+/* Sample data — replace with your real products */
 const PRODUCTS = [
-  { id:'L1', cat:'lighting', title:'PENDANT LIGHT', price:220, desc:'HAND-BUILT PENDANT LIGHT WITH WARM DIFFUSION.', images:['images/lighting1.jpg','images/lighting2.jpg'] },
-  { id:'L2', cat:'lighting', title:'WALL SCONCE', price:180, desc:'MINIMAL WALL SCONCE IN WOOD + BRASS.', images:['images/lighting3.jpg'] },
-  { id:'F1', cat:'furniture', title:'ADIRONDACK CHAIR', price:450, desc:'OUTDOOR CHAIR IN WEATHERED CEDAR.', images:['images/furniture1.jpg','images/furniture2.jpg'] },
-  { id:'F2', cat:'furniture', title:'LOW TABLE', price:380, desc:'SOLID OAK COFFEE TABLE.', images:['images/furniture3.jpg'] },
-  { id:'S1', cat:'structures', title:'FLOATING SAUNA', price:12000, desc:'A SERENE FLOATING SAUNA.', images:['images/structure1.jpg','images/structure2.jpg','images/structure3.jpg'] },
-  { id:'S2', cat:'structures', title:'MOBILE SAUNA', price:9800, desc:'SAUNA DESIGNED FOR TRANSPORT.', images:['images/structure4.jpg'] },
-  { id:'A1', cat:'art', title:'CIRCLE STAGE', price:2600, desc:'EVENT STAGE INSTALLATION.', images:['images/art1.jpg'] },
-  { id:'A2', cat:'art', title:'TIME MACHINE', price:3400, desc:'INTERACTIVE INSTALLATION.', images:['images/art2.jpg'] },
-  { id:'M1', cat:'misc', title:'WALL HOOK SET', price:90, desc:'SET OF 3 WOODEN WALL HOOKS.', images:['images/misc1.jpg'] },
-  { id:'M2', cat:'misc', title:'PLANTER BOX', price:150, desc:'CEDAR PLANTER BOX.', images:['images/misc2.jpg'] },
+  { id:'L1', cat:'lighting',   title:'PENDANT LIGHT',   price:220,  desc:'HAND-BUILT PENDANT LIGHT WITH WARM DIFFUSION.', images:['images/lighting1.jpg','images/lighting2.jpg'] },
+  { id:'F1', cat:'furniture',  title:'ADIRONDACK CHAIR',price:450,  desc:'OUTDOOR CHAIR IN WEATHERED CEDAR.',             images:['images/furniture1.jpg','images/furniture2.jpg'] },
+  { id:'S1', cat:'structures', title:'FLOATING SAUNA',  price:12000,desc:'A SERENE FLOATING SAUNA.',                       images:['images/structure1.jpg','images/structure2.jpg'] },
+  { id:'A1', cat:'art',        title:'CIRCLE STAGE',    price:2600, desc:'EVENT STAGE INSTALLATION.',                      images:['images/art1.jpg'] },
+  { id:'M1', cat:'misc',       title:'PLANTER BOX',     price:150,  desc:'CEDAR PLANTER BOX.',                             images:['images/misc1.jpg'] },
 ];
 
 /* State */
-let activeFilter = 'all';
-let hoveredProduct = null;
-let selectedProduct = null;
-let activeImageIdx = 0;
-let qty = 1;
+let filter = 'all';
+let lockSelection = false;    // once you click a tile, hover no longer changes featured
+let selected = null;          // the clicked/locked product
+let hovered  = null;          // only used before a click
+let imgIdx   = 0;
+let qty      = 1;
 
 /* Elements */
 const grid = document.getElementById('grid');
 const cats = document.querySelectorAll('.cat');
-const truckIcon = document.getElementById('truckIcon');
+const carousel   = document.getElementById('carousel');
+const carouselImg= document.getElementById('carouselImg');
+const prevBtn    = document.getElementById('prevBtn');
+const nextBtn    = document.getElementById('nextBtn');
+const featTitle  = document.getElementById('featTitle');
+const featDesc   = document.getElementById('featDesc');
+const featPrice  = document.getElementById('featPrice');
+const buyRow     = document.getElementById('buyRow');
+const qtyVal     = document.getElementById('qtyVal');
+const decBtn     = document.getElementById('decBtn');
+const incBtn     = document.getElementById('incBtn');
+const addBtn     = document.getElementById('addBtn');
 
-const carousel = document.getElementById('carousel');
-const carouselImg = document.getElementById('carouselImg');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+const totalVal   = document.getElementById('totalVal');
+const truckIcon  = document.getElementById('truckIcon');
+const overlay    = document.getElementById('overlay');
+const closeCart  = document.getElementById('closeCart');
+const cartList   = document.getElementById('cartList');
+const grandTotal = document.getElementById('grandTotal');
 
-const featTitle = document.getElementById('featTitle');
-const featDesc  = document.getElementById('featDesc');
-const featPrice = document.getElementById('featPrice');
-const buyRow    = document.getElementById('buyRow');
-const qtyVal    = document.getElementById('qtyVal');
-const incBtn    = document.getElementById('incBtn');
-const decBtn    = document.getElementById('decBtn');
-const addBtn    = document.getElementById('addBtn');
-const totalVal  = document.getElementById('totalVal');
-
-/* Cart */
-const overlay   = document.getElementById('overlay');
-const closeCart = document.getElementById('closeCart');
-const cartList  = document.getElementById('cartList');
-const grandTotal= document.getElementById('grandTotal');
-const driveBtn  = document.getElementById('driveBtn');
-
-/* Cart data structure: Map<id, {id, title, price, qty, thumb}> */
+/* Cart data */
 const CART = new Map();
+const money = n => '$' + n.toFixed(2);
 
-/* Utils */
-const money = v => '$' + v.toFixed(2);
-
-/* Build grid by filter */
+/* Build grid */
 function renderGrid(){
   grid.innerHTML = '';
-  const items = PRODUCTS.filter(p => activeFilter === 'all' ? true : p.cat === activeFilter);
+  const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
   items.forEach(p => {
     const a = document.createElement('a');
     a.href = 'javascript:void(0)';
@@ -398,86 +346,78 @@ function renderGrid(){
     a.appendChild(img);
     a.appendChild(t);
 
-    a.addEventListener('mouseenter', () => previewProduct(p));
-    a.addEventListener('click', () => selectProduct(p));
+    // Hover only works until the first click
+    a.addEventListener('mouseenter', () => { if (!lockSelection) preview(p); });
+    a.addEventListener('click', () => select(p));
 
     grid.appendChild(a);
   });
 }
 
-/* Preview on hover (does not lock) */
-function previewProduct(p){
-  hoveredProduct = p;
-  updateFeatured(p);
+/* Preview before any click */
+function preview(p){
+  hovered = p;
+  showFeatured(p);
 }
 
-/* Lock on click */
-function selectProduct(p){
-  selectedProduct = p;
-  hoveredProduct = null;
-  updateFeatured(p);
+/* Click to lock; subsequent hovers do nothing; clicking another tile replaces featured */
+function select(p){
+  selected = p;
+  lockSelection = true;
+  showFeatured(p);
 }
 
-/* Update featured panel for a product */
-function updateFeatured(p){
-  // Title
+/* Populate featured panel */
+function showFeatured(p){
   featTitle.textContent = p.title;
-
-  // Carousel
-  activeImageIdx = 0;
-  if (p.images && p.images.length){
-    carousel.style.display = 'grid';
-    setCarouselImage(p.images[activeImageIdx]);
-  } else {
-    carousel.style.display = 'none';
-  }
-
-  // Description, price, controls
   featDesc.style.display = 'block';
   featDesc.textContent = p.desc || '';
   featPrice.textContent = money(p.price);
   qty = 1;
-  qtyVal.textContent = qty;
+  qtyVal.textContent = '1';
   totalVal.textContent = money(p.price * qty);
   buyRow.style.display = 'flex';
+
+  imgIdx = 0;
+  if (p.images && p.images.length){
+    carousel.style.display = 'grid';
+    carouselImg.src = p.images[0];
+  } else {
+    carousel.style.display = 'none';
+    carouselImg.removeAttribute('src');
+  }
 }
 
-/* Carousel helpers */
-function setCarouselImage(src){ carouselImg.src = src; }
-
+/* Carousel nav (works for selected or hovered state) */
+function currentProduct(){
+  return selected || (!lockSelection ? hovered : null);
+}
 prevBtn.addEventListener('click', () => {
-  const p = selectedProduct || hoveredProduct;
-  if (!p || !p.images || !p.images.length) return;
-  activeImageIdx = (activeImageIdx - 1 + p.images.length) % p.images.length;
-  setCarouselImage(p.images[activeImageIdx]);
+  const p = currentProduct(); if (!p || !p.images?.length) return;
+  imgIdx = (imgIdx - 1 + p.images.length) % p.images.length;
+  carouselImg.src = p.images[imgIdx];
 });
 nextBtn.addEventListener('click', () => {
-  const p = selectedProduct || hoveredProduct;
-  if (!p || !p.images || !p.images.length) return;
-  activeImageIdx = (activeImageIdx + 1) % p.images.length;
-  setCarouselImage(p.images[activeImageIdx]);
+  const p = currentProduct(); if (!p || !p.images?.length) return;
+  imgIdx = (imgIdx + 1) % p.images.length;
+  carouselImg.src = p.images[imgIdx];
 });
 
-/* Qty controls */
+/* Qty & totals */
 incBtn.addEventListener('click', () => {
-  qty += 1;
-  qtyVal.textContent = qty;
-  const p = selectedProduct || hoveredProduct; if (!p) return;
+  qty += 1; qtyVal.textContent = String(qty);
+  const p = currentProduct(); if (!p) return;
   totalVal.textContent = money(p.price * qty);
 });
 decBtn.addEventListener('click', () => {
-  qty = Math.max(1, qty - 1);
-  qtyVal.textContent = qty;
-  const p = selectedProduct || hoveredProduct; if (!p) return;
+  qty = Math.max(1, qty - 1); qtyVal.textContent = String(qty);
+  const p = currentProduct(); if (!p) return;
   totalVal.textContent = money(p.price * qty);
 });
 
 /* Add to truck */
 addBtn.addEventListener('click', () => {
-  const p = selectedProduct || hoveredProduct;
-  if (!p) return;
-
-  // Add to CART
+  const p = currentProduct(); if (!p) return;
   if (CART.has(p.id)){
     const entry = CART.get(p.id);
     entry.qty += qty;
@@ -485,29 +425,26 @@ addBtn.addEventListener('click', () => {
   } else {
     CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.images[0]||'') });
   }
-
-  // Truck visual state
-  truckIcon.classList.add('has-items', 'flash');
-  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-duration')) || 250);
-
-  // Reset qty back to 1
-  qty = 1;
-  qtyVal.textContent = qty;
-  totalVal.textContent = money(p.price * qty);
+  // Truck visual feedback
+  truckIcon.classList.add('has-items','flash');
+  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 250);
 });
 
-/* Sidebar filtering */
+/* Sidebar filters */
 cats.forEach(c => {
   c.addEventListener('click', () => {
     cats.forEach(x => x.classList.remove('active'));
     c.classList.add('active');
-    activeFilter = c.dataset.filter;
+    filter = c.dataset.filter;
     renderGrid();
-    // Reset featured if category changed
-    featTitle.textContent = '';
-    featDesc.style.display = 'none';
-    buyRow.style.display = 'none';
-    carousel.style.display = 'none';
+    // Reset featured to empty when switching categories (keeps lock rule intact)
+    hovered = null;
+    if (!selected){ // if nothing clicked yet, clear featured
+      featTitle.textContent = '';
+      featDesc.style.display = 'none';
+      buyRow.style.display = 'none';
+      carousel.style.display = 'none';
+    }
   });
 });
 
@@ -515,7 +452,7 @@ cats.forEach(c => {
 function renderCart(){
   cartList.innerHTML = '';
   let total = 0;
-  CART.forEach(({title, price, qty, thumb, id}) => {
+  CART.forEach(({title, price, qty, thumb}) => {
     const line = document.createElement('div');
     line.className = 'line';
 
@@ -524,28 +461,26 @@ function renderCart(){
     img.alt = title;
 
     const name = document.createElement('div');
-    name.className = 'name';
     name.textContent = title;
 
     const q = document.createElement('div');
-    q.className = 'qty';
     q.textContent = '× ' + qty;
 
     const sub = document.createElement('div');
-    sub.className = 'sub';
     sub.textContent = money(price * qty);
 
-    line.appendChild(img);
-    line.appendChild(name);
-    line.appendChild(q);
-    line.appendChild(sub);
-
+    line.appendChild(img); line.appendChild(name); line.appendChild(q); line.appendChild(sub);
     cartList.appendChild(line);
     total += price * qty;
   });
   grandTotal.textContent = money(total);
+
+  // Orange border state if items exist
+  if (CART.size > 0) truckIcon.classList.add('has-items');
+  else truckIcon.classList.remove('has-items');
 }
 
+truckIcon.addEventListener('mouseenter', () => { /* visual handled by CSS :hover */ });
 truckIcon.addEventListener('click', () => {
   renderCart();
   overlay.style.display = 'block';
@@ -555,27 +490,25 @@ document.getElementById('closeCart').addEventListener('click', () => {
   overlay.style.display = 'none';
 });
 overlay.addEventListener('click', (e) => {
-  // click outside the panel closes it
   if (e.target === overlay) overlay.style.display = 'none';
 });
 
+/* Drive away (email draft) */
 document.getElementById('driveBtn').addEventListener('click', () => {
-  // Compose email body
   let lines = [];
   let total = 0;
   CART.forEach(({title, price, qty}) => {
-    const sub = price * qty;
-    total += sub;
+    const sub = price * qty; total += sub;
     lines.push(`${title} — QTY ${qty} — ${money(sub)}`);
   });
-  lines.push(``);
+  lines.push('');
   lines.push(`SUBTOTAL — ${money(total)}`);
-  lines.push(``);
-  lines.push(`Best,`);
-  lines.push(`__________`);
+  lines.push('');
+  lines.push('Best,');
+  lines.push('__________');
 
-  const body = encodeURIComponent(lines.join('\n'));
   const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
+  const body = encodeURIComponent(lines.join('\n'));
   window.location.href = `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
 });
 
