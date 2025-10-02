@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
-<!-- Favicon: use your PNG as-is -->
+<!-- Favicon -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
@@ -14,29 +14,23 @@
     --fg:#000000;
     --accent:orange;
 
-    /* one consistent text size */
     --fs:16px;
     --lh:1.2;
 
-    /* layout */
     --header-h:72px;
     --sidebar-w:180px;
     --gap:12px;
-    --footer-h:100px; /* extra room for stacked links */
+    --footer-h:100px;
 
-    /* grid / featured */
-    --tile:190px;             /* min tile width */
+    --tile:190px;
     --carousel-h:380px;
 
-    /* icons */
-    --logo-size:46px;         /* smaller logo above sidebar */
-    --truck-size:110px;       /* bigger truck top-right */
+    --logo-size:46px;
+    --truck-size:110px;
 
-    /* custom cursor (smaller triangle) */
     --cursor:16px;
 
-    /* truck flash duration (longer) */
-    --flash-ms:800ms;
+    --flash-ms:800ms; /* longer flash */
   }
 
   html, body{
@@ -53,7 +47,7 @@
   a:hover{ color:#fff; }
   button:focus, a:focus{ outline:none; }
 
-  /* smaller triangle cursor */
+  /* Cursor */
   #custom-cursor{
     position:fixed; top:0; left:0; width:var(--cursor); height:var(--cursor);
     pointer-events:none; z-index:9999;
@@ -61,7 +55,7 @@
     background:#fff; mix-blend-mode:difference;
   }
 
-  /* header (truck on the right) */
+  /* Header (truck only) */
   .header{
     position:fixed; left:0; right:0; top:0; height:var(--header-h);
     display:flex; align-items:center; justify-content:flex-end;
@@ -71,16 +65,13 @@
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
     transition:filter .2s ease;
-    filter:none;                 /* base */
+    filter:none;
   }
   .truck-icon:hover{ filter:invert(1) brightness(2); }
   .truck-icon.flash{ animation:truckflash var(--flash-ms) ease; }
-  @keyframes truckflash{
-    0% { filter:invert(1) brightness(2); }
-    100% { filter:none; }
-  }
+  @keyframes truckflash{ 0%{filter:invert(1) brightness(2);} 100%{filter:none;} }
 
-  /* logo centered above sidebar */
+  /* Logo centered above sidebar */
   .logo-above-sidebar{
     position:fixed; top:6px; left:0; width:var(--sidebar-w);
     display:flex; justify-content:center; align-items:center;
@@ -90,7 +81,7 @@
     width:var(--logo-size); height:var(--logo-size); object-fit:contain;
   }
 
-  /* sidebar (same color as page) */
+  /* Sidebar */
   .sidebar{
     position:fixed; left:0; top:var(--header-h); bottom:var(--footer-h);
     width:var(--sidebar-w); background:var(--bg);
@@ -98,16 +89,16 @@
     display:flex; flex-direction:column; gap:.6rem;
   }
   .cat{ color:var(--fg); transition:color .2s ease; }
-  .cat:hover, .cat.active{ color:#fff; }  /* active stays white (not orange) */
+  .cat:hover, .cat.active{ color:#fff; } /* active stays white */
 
-  /* content area (two columns) */
+  /* Content (2 columns) */
   .content{
     position:fixed; left:var(--sidebar-w); right:0; top:var(--header-h); bottom:var(--footer-h);
     display:flex; gap:var(--gap); padding:var(--gap); box-sizing:border-box;
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* grid with perfect square tiles (image + title inside square) */
+  /* Grid — perfect square tiles */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -117,15 +108,13 @@
   .grid::-webkit-scrollbar{ display:none; }
 
   .tile{
-    aspect-ratio:1 / 1;                   /* perfect square */
+    aspect-ratio:1 / 1;
     background:#fff; border:1px solid #000; box-sizing:border-box;
     display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
     padding:8px; gap:8px; color:var(--fg);
     transition:background .15s ease, color .15s ease;
   }
-  .tile:hover{
-    background:#000; color:#fff;          /* box turns black, text white */
-  }
+  .tile:hover{ background:#000; color:#fff; }
   .tile-img{
     flex:1 1 auto; width:100%; min-height:0;
     display:flex; align-items:center; justify-content:center;
@@ -135,11 +124,9 @@
     transition:border-color .15s ease;
   }
   .tile:hover .tile-img img{ border-color:#fff; }
-  .tile .t{
-    width:100%; text-align:center; line-height:1.1;
-  }
+  .tile .t{ width:100%; text-align:center; line-height:1.1; }
 
-  /* featured panel */
+  /* Featured */
   .featured{
     height:100%; overflow:auto; scrollbar-width:none;
     display:flex; flex-direction:column; align-items:center; gap:10px; padding-right:4px;
@@ -178,7 +165,7 @@
   .add:hover{ color:var(--accent); }
   .total{ background:#fff; border:1px solid #000; padding:8px; min-width:120px; text-align:center; }
 
-  /* footer: vertical stack links left; small credit bottom-right */
+  /* Footer (stacked links left, credit right) */
   .footer{
     position:fixed; left:0; right:0; bottom:0; height:var(--footer-h);
     border-top:1px solid #000; background:var(--bg);
@@ -197,7 +184,7 @@
     position:absolute; right:12px; bottom:8px; font-size:12px;
   }
 
-  /* cart popup (reverted to boxed style) */
+  /* Cart popup (boxed) */
   .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:1000; }
   .cart{
     position:absolute; right:20px; top:calc(var(--header-h) + 12px);
@@ -213,26 +200,27 @@
   }
   .line img{ width:48px; height:48px; object-fit:cover; border:1px solid #000; }
   .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
-  .drive{ margin-top:10px; width:100%; background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
+  .drive{ margin-top:10px; width:100%; display:inline-block; text-align:center;
+          background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
   .drive:hover{ color:var(--accent); }
 </style>
 </head>
 <body>
 
-<!-- custom cursor -->
+<!-- Cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
-<!-- header (truck only) -->
+<!-- Header -->
 <header class="header">
   <div id="truckIcon" class="truck-icon" title="Open cart"></div>
 </header>
 
-<!-- logo centered above sidebar -->
+<!-- Logo above sidebar -->
 <div class="logo-above-sidebar">
   <img src="VT_logo.png" alt="VT Logo">
 </div>
 
-<!-- sidebar -->
+<!-- Sidebar -->
 <nav class="sidebar">
   <a class="cat active" data-filter="all">ALL</a>
   <a class="cat" data-filter="lighting">LIGHTING</a>
@@ -241,14 +229,14 @@
   <a class="cat" data-filter="art">ART</a>
 </nav>
 
-<!-- main content -->
+<!-- Content -->
 <section class="content">
-  <!-- grid -->
+  <!-- Grid -->
   <div class="left-col">
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- featured -->
+  <!-- Featured -->
   <div class="right-col">
     <div class="featured">
       <div class="carousel" id="carousel">
@@ -274,7 +262,7 @@
   </div>
 </section>
 
-<!-- footer -->
+<!-- Footer -->
 <footer class="footer">
   <div class="footer-wrap">
     <a href="https://jackvanthyne.org/vt-design-build.html">HOME PAGE</a>
@@ -284,7 +272,7 @@
   <div class="credit">THIS WEBSITE WAS MADE BY <a href="https://jackvanthyne.org/index.html">JACK VAN THYNE</a></div>
 </footer>
 
-<!-- cart popup -->
+<!-- Cart popup -->
 <div class="overlay" id="overlay" style="display:none;">
   <div class="cart" role="dialog" aria-modal="true">
     <div class="cart-header">
@@ -296,19 +284,20 @@
       <div>TOTAL</div>
       <div id="grandTotal">$0.00</div>
     </div>
-    <button class="drive" id="driveBtn">DRIVE AWAY</button>
+    <!-- CHANGE: anchor link for reliable mailto -->
+    <a id="driveLink" class="drive" href="#">DRIVE AWAY</a>
   </div>
 </div>
 
 <script>
-/* cursor */
+/* Cursor */
 const cursor = document.getElementById('custom-cursor');
 document.addEventListener('mousemove', e => {
   const s = parseInt(getComputedStyle(cursor).width);
   cursor.style.transform = `translate(${e.clientX - s/2}px, ${e.clientY - s/2}px)`;
 }, { passive:true });
 
-/* products (your list) */
+/* Products (icons now .png) */
 const PRODUCTS = [
   /* Lighting */
   {
@@ -318,7 +307,7 @@ const PRODUCTS = [
     price:325,
     desc:'THIS WARM JAPANESE-INSPIRED DESK LAMP IS MADE WITH RECLAIMED OAK. IT IS DIMMABLE AND THE PRODUCT DIMENSIONS ARE H 16” W 6” L 6”. THIS PRODUCT IS UL CERTIFIED.',
     images:['product001_image001.jpg','product001_image002.jpg','product001_image003.jpg'],
-    icon:'product001_icon.jpg'
+    icon:'product001_icon.png'
   },
   {
     id:'product002',
@@ -327,7 +316,7 @@ const PRODUCTS = [
     price:650,
     desc:'THIS WARM JAPANESE-INSPIRED FLOOR LAMP IS MADE WITH RECLAIMED OAK. IT IS DIMMABLE AND THE PRODUCT DIMENSIONS ARE H 48” W 12” L 12”. THIS PRODUCT IS UL CERTIFIED.',
     images:['product002_image001.jpg','product002_image002.jpg','product002_image003.jpg'],
-    icon:'product002_icon.jpg'
+    icon:'product002_icon.png'
   },
 
   /* Furniture */
@@ -338,7 +327,7 @@ const PRODUCTS = [
     price:1600,
     desc:'BUILT FROM LOCALLY SOURCED AND MILLED REDWOOD FOR NATURAL DURABILITY AND WEATHER RESISTANCE. SEATS 4–6 AND IS DESIGNED FOR PATIOS AND GARDENS.',
     images:['product003_image001.jpg','product003_image002.jpg','product003_image003.jpg'],
-    icon:'product003_icon.jpg'
+    icon:'product003_icon.png'
   },
   {
     id:'product004',
@@ -347,7 +336,7 @@ const PRODUCTS = [
     price:425,
     desc:'A MINIMALIST BENCH CRAFTED FROM LOCALLY SOURCED AND MILLED REDWOOD. COMFORTABLE, STURDY SEATING FOR PORCHES, ENTRIES, AND GARDEN PATHS.',
     images:['product004_image001.jpg','product004_image002.jpg','product004_image003.jpg'],
-    icon:'product004_icon.jpg'
+    icon:'product004_icon.png'
   },
   {
     id:'product005',
@@ -356,7 +345,7 @@ const PRODUCTS = [
     price:1400,
     desc:'ERGONOMIC LOUNGE CHAIR MADE FROM LOCALLY SOURCED AND MILLED REDWOOD. RELAXED RECLINE FOR LONG, COMFORTABLE SITS.',
     images:['product005_image001.jpg','product005_image002.jpg','product005_image003.jpg'],
-    icon:'product005_icon.jpg'
+    icon:'product005_icon.png'
   },
   {
     id:'product006',
@@ -365,7 +354,7 @@ const PRODUCTS = [
     price:1600,
     desc:'TWO-SEATER LOVE SEAT IN LOCALLY SOURCED AND MILLED REDWOOD—COZY, DURABLE, AND READY FOR ALL-SEASON OUTDOOR LIVING.',
     images:['product006_image001.jpg','product006_image002.jpg','product006_image003.jpg'],
-    icon:'product006_icon.jpg'
+    icon:'product006_icon.png'
   },
 
   /* Structures */
@@ -376,7 +365,7 @@ const PRODUCTS = [
     price:60000,
     desc:'A TRANSPORTABLE WOOD-FIRED SAUNA DESIGNED FOR QUICK SETUP AND OFF-GRID USE. INSULATED CONSTRUCTION, TEMPERED GLASS DOOR, AND INTERIOR BENCHING FOR 4–6.',
     images:['product007_image001.jpg','product007_image002.jpg','product007_image003.jpg'],
-    icon:'product007_icon.jpg'
+    icon:'product007_icon.png'
   },
   {
     id:'product008',
@@ -385,7 +374,7 @@ const PRODUCTS = [
     price:80000,
     desc:'A BARGE-MOUNTED, WOOD-FIRED SAUNA BUILT FOR LAKES OR CALM BAYS. MARINE-SAFE DETAILS, CHANGING NOOK, AND PANORAMIC WINDOW—SEATS 6–8.',
     images:['product008_image001.jpg','product008_image002.jpg','product008_image003.jpg'],
-    icon:'product008_icon.jpg'
+    icon:'product008_icon.png'
   },
 
   /* Art */
@@ -396,7 +385,7 @@ const PRODUCTS = [
     price:1200,
     desc:'ACRYLIC ON WOOD.',
     images:['product009_image001.jpg','product009_image002.jpg','product009_image003.jpg'],
-    icon:'product009_icon.jpg'
+    icon:'product009_icon.png'
   },
   {
     id:'product010',
@@ -405,19 +394,19 @@ const PRODUCTS = [
     price:1300,
     desc:'ACRYLIC ON WOOD.',
     images:['product010_image001.jpg','product010_image002.jpg','product010_image003.jpg'],
-    icon:'product010_icon.jpg'
+    icon:'product010_icon.png'
   }
 ];
 
-/* state */
+/* State */
 let filter = 'all';
-let locked = false;   // after first click, hover no longer affects featured
-let selected = null;  // clicked item
-let hovered  = null;  // before first click
+let locked = false;
+let selected = null;
+let hovered  = null;
 let imgIdx   = 0;
 let qty      = 1;
 
-/* els */
+/* Elements */
 const grid       = document.getElementById('grid');
 const cats       = document.querySelectorAll('.cat');
 const carousel   = document.getElementById('carousel');
@@ -439,12 +428,13 @@ const overlay    = document.getElementById('overlay');
 const closeCart  = document.getElementById('closeCart');
 const cartList   = document.getElementById('cartList');
 const grandTotal = document.getElementById('grandTotal');
+const driveLink  = document.getElementById('driveLink');
 
-/* cart */
+/* Cart */
 const CART = new Map();
 const money = n => '$' + n.toFixed(2);
 
-/* build grid with perfect-square tiles using icons */
+/* Grid */
 function renderGrid(){
   grid.innerHTML = '';
   const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
@@ -468,20 +458,20 @@ function renderGrid(){
     tile.appendChild(imgWrap);
     tile.appendChild(title);
 
-    // hover only before first click
+    // Hover only before first click
     tile.addEventListener('mouseenter', () => { if (!locked) preview(p); });
-    // click locks; clicking a new tile replaces featured
+    // Click locks (clicking another replaces)
     tile.addEventListener('click', () => select(p));
 
     grid.appendChild(tile);
   });
 }
 
-/* preview vs select */
+/* Preview vs select */
 function preview(p){ hovered = p; showFeatured(p); }
 function select(p){ selected = p; locked = true; showFeatured(p); }
 
-/* featured panel content */
+/* Featured panel */
 function showFeatured(p){
   featTitle.textContent = p.title;
   featDesc.style.display = 'block';
@@ -501,10 +491,10 @@ function showFeatured(p){
   }
 }
 
-/* current product for carousel & totals */
+/* Current product */
 function currentProduct(){ return selected || (!locked ? hovered : null); }
 
-/* carousel nav */
+/* Carousel */
 prevBtn.addEventListener('click', () => {
   const p = currentProduct(); if (!p || !p.images?.length) return;
   imgIdx = (imgIdx - 1 + p.images.length) % p.images.length;
@@ -516,7 +506,7 @@ nextBtn.addEventListener('click', () => {
   carouselImg.src = p.images[imgIdx];
 });
 
-/* qty & totals */
+/* Qty & totals */
 incBtn.addEventListener('click', () => {
   qty += 1; qtyVal.textContent = String(qty);
   const p = currentProduct(); if (!p) return;
@@ -528,7 +518,7 @@ decBtn.addEventListener('click', () => {
   totalVal.textContent = money(p.price * qty);
 });
 
-/* add to truck (flash white longer; no orange state) */
+/* Add to truck (flash longer) */
 addBtn.addEventListener('click', () => {
   const p = currentProduct(); if (!p) return;
   if (CART.has(p.id)){
@@ -536,20 +526,19 @@ addBtn.addEventListener('click', () => {
   } else {
     CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.icon || p.images[0] || '') });
   }
-  // visual: flash white (longer)
   truckIcon.classList.add('flash');
   setTimeout(() => truckIcon.classList.remove('flash'),
     parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
 });
 
-/* sidebar filters */
+/* Sidebar filters */
 cats.forEach(c => {
   c.addEventListener('click', () => {
     cats.forEach(x => x.classList.remove('active'));
     c.classList.add('active');
     filter = c.dataset.filter;
     renderGrid();
-    if (!selected){ // nothing locked yet: clear featured
+    if (!selected){
       featTitle.textContent = '';
       featDesc.style.display = 'none';
       buyRow.style.display = 'none';
@@ -558,7 +547,7 @@ cats.forEach(c => {
   });
 });
 
-/* cart popup (reverted boxed style) */
+/* Cart popup */
 function renderCart(){
   cartList.innerHTML = '';
   let total = 0;
@@ -579,8 +568,31 @@ function renderCart(){
     total += price * qty;
   });
   grandTotal.textContent = money(total);
+
+  // Build mailto link here so DRIVE AWAY always reflects current cart
+  driveLink.href = buildMailto(total);
 }
 
+/* Mailto builder */
+function buildMailto(total){
+  let lines = [];
+  CART.forEach(({title, price, qty}) => {
+    const sub = price * qty;
+    lines.push(`${title} — QTY ${qty} — ${money(sub)}`);
+  });
+  lines.push('');
+  lines.push(`SUBTOTAL — ${money(total)}`);
+  lines.push('');
+  lines.push('Best,');
+  lines.push('_____');
+
+  const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
+  // Use CRLF to be extra-friendly to mail clients
+  const body = encodeURIComponent(lines.join('\r\n'));
+  return `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
+}
+
+/* Open/close cart */
 truckIcon.addEventListener('click', () => {
   renderCart();
   overlay.style.display = 'block';
@@ -590,7 +602,7 @@ document.getElementById('closeCart').addEventListener('click', () => {
 });
 overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
 
-/* init */
+/* Init */
 renderGrid();
 </script>
 </body>
