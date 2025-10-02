@@ -22,7 +22,7 @@
     --gap:12px;
     --footer-h:100px;
 
-    --tile:190px;
+    --tile:190px;          /* grid square size */
     --carousel-h:380px;
 
     --logo-size:46px;
@@ -30,7 +30,8 @@
 
     --cursor:16px;
 
-    --flash-ms:800ms; /* longer flash */
+    --flash-ms:800ms;      /* longer flash */
+    --bounce-ms:400ms;     /* tiny bounce */
   }
 
   html, body{
@@ -64,12 +65,23 @@
   .truck-icon{
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
-    transition:filter .2s ease;
+    transition:filter .2s ease, transform .2s ease;
     filter:none;
+    transform-origin:center;
   }
   .truck-icon:hover{ filter:invert(1) brightness(2); }
   .truck-icon.flash{ animation:truckflash var(--flash-ms) ease; }
-  @keyframes truckflash{ 0%{filter:invert(1) brightness(2);} 100%{filter:none;} }
+  .truck-icon.bounce{ animation:truckbounce var(--bounce-ms) cubic-bezier(.34,1.56,.64,1); }
+
+  @keyframes truckflash{
+    0% { filter:invert(1) brightness(2); }
+    100%{ filter:none; }
+  }
+  @keyframes truckbounce{
+    0%   { transform:scale(1); }
+    40%  { transform:scale(1.08); }
+    100% { transform:scale(1); }
+  }
 
   /* Logo centered above sidebar */
   .logo-above-sidebar{
@@ -98,7 +110,7 @@
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* Grid — perfect square tiles */
+  /* Grid — perfect square tiles; icon scales inside (contain) */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -112,18 +124,20 @@
     background:#fff; border:1px solid #000; box-sizing:border-box;
     display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
     padding:8px; gap:8px; color:var(--fg);
-    transition:background .15s ease, color .15s ease;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .tile:hover{ background:#000; color:#fff; }
   .tile-img{
     flex:1 1 auto; width:100%; min-height:0;
     display:flex; align-items:center; justify-content:center;
+    background:#fff;
+    border:1px solid #000;           /* frame around icon area */
   }
   .tile-img img{
-    width:100%; height:100%; object-fit:cover; border:1px solid #000;
-    transition:border-color .15s ease;
+    width:100%; height:100%; object-fit:contain;   /* SEE FULL ICON */
+    background:#fff;
   }
-  .tile:hover .tile-img img{ border-color:#fff; }
+  .tile:hover .tile-img{ border-color:#fff; }
   .tile .t{ width:100%; text-align:center; line-height:1.1; }
 
   /* Featured */
@@ -135,9 +149,18 @@
 
   .carousel{
     position:relative; width:100%; max-width:640px; height:var(--carousel-h);
-    background:#fff; border:1px solid #000; display:none; place-items:center;
+    background:#fff; border:1px solid #000; display:none;
   }
-  .carousel img{ width:100%; height:100%; object-fit:cover; }
+  /* Inner adds tiny top/bottom inset inside the white frame */
+  .carousel-inner{
+    position:absolute; inset:0; padding:6px 0;   /* slight top/bottom inset */
+    display:grid; place-items:center;
+    background:#fff;
+  }
+  .carousel-inner img{
+    width:100%; height:100%; object-fit:contain; /* SEE ENTIRE IMAGE */
+    background:#fff;
+  }
   .nav-btn{
     position:absolute; top:50%; transform:translateY(-50%);
     width:28px; height:28px; background:#000; color:#fff; border:none;
@@ -198,7 +221,10 @@
     display:grid; grid-template-columns:48px 1fr auto auto; align-items:center; gap:8px;
     padding:6px 0; border-bottom:1px solid #000;
   }
-  .line img{ width:48px; height:48px; object-fit:cover; border:1px solid #000; }
+  .line img{
+    width:48px; height:48px; object-fit:contain; /* SEE WHOLE ICON IN CART */
+    background:#fff; border:1px solid #000;
+  }
   .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
   .drive{ margin-top:10px; width:100%; display:inline-block; text-align:center;
           background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer; transition:color .2s ease; }
@@ -241,7 +267,9 @@
     <div class="featured">
       <div class="carousel" id="carousel">
         <button class="nav-btn nav-left" id="prevBtn" title="Prev"></button>
-        <img id="carouselImg" alt="">
+        <div class="carousel-inner">
+          <img id="carouselImg" alt="">
+        </div>
         <button class="nav-btn nav-right" id="nextBtn" title="Next"></button>
       </div>
 
@@ -284,7 +312,6 @@
       <div>TOTAL</div>
       <div id="grandTotal">$0.00</div>
     </div>
-    <!-- CHANGE: anchor link for reliable mailto -->
     <a id="driveLink" class="drive" href="#">DRIVE AWAY</a>
   </div>
 </div>
@@ -297,7 +324,7 @@ document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - s/2}px, ${e.clientY - s/2}px)`;
 }, { passive:true });
 
-/* Products (icons now .png) */
+/* Products (icons are .png) */
 const PRODUCTS = [
   /* Lighting */
   {
@@ -458,9 +485,9 @@ function renderGrid(){
     tile.appendChild(imgWrap);
     tile.appendChild(title);
 
-    // Hover only before first click
+    // hover only before first click
     tile.addEventListener('mouseenter', () => { if (!locked) preview(p); });
-    // Click locks (clicking another replaces)
+    // click locks; clicking another replaces
     tile.addEventListener('click', () => select(p));
 
     grid.appendChild(tile);
@@ -483,7 +510,7 @@ function showFeatured(p){
 
   imgIdx = 0;
   if (p.images && p.images.length){
-    carousel.style.display = 'grid';
+    carousel.style.display = 'block';
     carouselImg.src = p.images[0];
   } else {
     carousel.style.display = 'none';
@@ -518,7 +545,7 @@ decBtn.addEventListener('click', () => {
   totalVal.textContent = money(p.price * qty);
 });
 
-/* Add to truck (flash longer) */
+/* Add to truck (flash longer + tiny bounce) */
 addBtn.addEventListener('click', () => {
   const p = currentProduct(); if (!p) return;
   if (CART.has(p.id)){
@@ -526,9 +553,9 @@ addBtn.addEventListener('click', () => {
   } else {
     CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.icon || p.images[0] || '') });
   }
-  truckIcon.classList.add('flash');
-  setTimeout(() => truckIcon.classList.remove('flash'),
-    parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
+  truckIcon.classList.add('flash','bounce');
+  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-ms')) || 800);
+  setTimeout(() => truckIcon.classList.remove('bounce'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bounce-ms')) || 400);
 });
 
 /* Sidebar filters */
@@ -569,7 +596,7 @@ function renderCart(){
   });
   grandTotal.textContent = money(total);
 
-  // Build mailto link here so DRIVE AWAY always reflects current cart
+  // Update mailto link to reflect current cart
   driveLink.href = buildMailto(total);
 }
 
@@ -587,7 +614,6 @@ function buildMailto(total){
   lines.push('_____');
 
   const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
-  // Use CRLF to be extra-friendly to mail clients
   const body = encodeURIComponent(lines.join('\r\n'));
   return `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
 }
