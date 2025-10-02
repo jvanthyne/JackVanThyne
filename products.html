@@ -1,411 +1,586 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Van Thyne Design Build</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VT Design Build — Products</title>
 
-  <!-- Favicon: VT_logo.png centered on a WHITE square -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='white'/><image href='VT_logo.png' x='10' y='10' width='80' height='80' /></svg>">
-  <!-- Fallback (some browsers prefer png) -->
-  <link rel="icon" type="image/png" href="VT_logo.png" />
+<!-- FAVICON: VT_logo.png over a dark-green background so the black logo is visible -->
+<link rel="icon" type="image/svg+xml"
+  href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232c4c3a'/><image href='VT_logo.png' x='10' y='10' width='80' height='80'/></svg>">
+<link rel="icon" type="image/png" href="VT_logo.png" />
 
-  <style>
-    :root{
-      /* Match your index/VT design build style */
-      --bg:#575e52;           /* background */
-      --fg:#000000;           /* main text is black */
-      --fs:32px;              /* base size for key text */
-      --lh:1.2;               /* base line-height */
-      --accent:orange;        /* accent color (links/buttons text) */
+<style>
+  :root{
+    /* Colors & typography (match your style; one consistent size) */
+    --bg:#575e52;
+    --fg:#000000;
+    --accent:orange;
+    --fs:16px;            /* single small size for *everything* */
+    --lh:1.2;
 
-      /* Truck stacking + product thumb sizing */
-      --thumb:120px;
-      --cargo-item:50px;
-      --cargo-gap:10px;
+    /* Layout */
+    --sidebar-w: 140px;
+    --header-pad: 14px;
 
-      /* Cargo offset (1.5 spaces right, 1 space up) */
-      --cargo-offset-x: calc( (var(--cargo-item) + var(--cargo-gap)) * 1.5 );
-      --cargo-offset-y: calc( (var(--cargo-item) + var(--cargo-gap)) * 1 );
-    }
+    /* Grid thumbs & featured media */
+    --thumb: 140px;
+    --carousel-h: 380px;
 
-    /* Base page */
-    html, body{
-      margin:0; padding:0; height:100%; width:100%;
-      background:var(--bg); color:var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      text-transform: uppercase;
-      overflow:hidden;
-    }
+    /* Truck icon */
+    --truck-size: 56px;
 
-    *{ cursor:none !important; }
+    /* Cargo sizing (if you later visualize stacking) */
+    --cargo-item: 48px;
+    --cargo-gap: 10px;
 
-    /* Custom cursor */
-    #custom-cursor{
-      position:fixed; top:0; left:0; width:32px; height:32px;
-      pointer-events:none; z-index:9999;
-      clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
-      background:#fff; mix-blend-mode:difference;
-    }
+    /* Flash animation for truck */
+    --flash-duration: 250ms;
+  }
 
-    /* Logo (top right) */
-    .logo{
-      position:fixed; top:1rem; right:1rem; width:60px; height:60px; z-index:1000;
-    }
-    .logo img{ width:100%; height:100%; object-fit:contain; }
+  /* Base text style (ONE SIZE + UPPERCASE EVERYWHERE) */
+  html, body {
+    margin:0; padding:0; height:100%;
+    background:var(--bg); color:var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    font-size: var(--fs); line-height: var(--lh);
+    text-transform: uppercase;
+    overflow:hidden;
+  }
 
-    /* LEFT: Categories (far left) */
-    .category-sidebar{
-      position:fixed; left:0; top:0; width:100px; height:100%;
-      display:flex; flex-direction:column; gap:0.5rem;
-      padding:1rem; box-sizing:border-box;
-      background:rgba(0,0,0,0.1);
-    }
-    .category{
-      font-size:12px; line-height:1;
-      color:var(--fg); font-weight:600;
-      transition:color .2s ease;
-      user-select:none;
-    }
-    .category:hover{ color:#fff; }     /* hover → white */
+  * { cursor:none !important; }
 
-    /* LEFT: Products list column (scroll only here) */
-    .product-list{
-      position:fixed; left:100px; top:0; width:20%; height:100%;
-      display:flex; flex-direction:column; gap:1rem;
-      padding:1rem; box-sizing:border-box;
-      overflow-y:auto; scrollbar-width:none;
-    }
-    .product-list::-webkit-scrollbar{ display:none; }
+  /* Custom cursor triangle */
+  #custom-cursor{
+    position:fixed; top:0; left:0; width:32px; height:32px;
+    pointer-events:none; z-index:9999;
+    clip-path:polygon(50% 0%, 0% 100%, 100% 100%);
+    background:#fff; mix-blend-mode:difference;
+  }
 
-    .product-item{
-      display:flex; flex-direction:column; align-items:center; text-align:center;
-      user-select:none;
-    }
-    .product-item img{
-      width:100%; max-width:var(--thumb); border-radius:4px;
-      transition:filter .2s ease;
-    }
-    .product-item:hover img{ filter:brightness(120%); }  /* subtle hover lift */
+  /* Header layer */
+  .header{
+    position:fixed; top:0; left:0; right:0; height:64px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 var(--header-pad);
+    pointer-events:none; /* let icons inside handle interactions */
+  }
 
-    .product-item-title{
-      font-size:14px; line-height:1.1; margin-top:.25rem; color:var(--fg);
-      letter-spacing:.02em;
-    }
+  /* Truck (cart) — top-left */
+  .truck-icon{
+    position:absolute; left:8px; top:8px;
+    width:var(--truck-size); height:var(--truck-size);
+    background:url('flatbed_truck.png') no-repeat center/contain;
+    filter:none;
+    transition: filter .2s ease;
+    pointer-events:auto;
+  }
+  .truck-icon.has-items{
+    /* approximate “orange” tint by overlay ring + subtle drop-shadow */
+    filter: drop-shadow(0 0 0 var(--accent));
+  }
+  .truck-icon:hover{
+    filter: invert(1) brightness(2);
+  }
+  .truck-icon.flash{
+    animation: truckflash var(--flash-duration) ease;
+  }
+  @keyframes truckflash {
+    0% { filter: invert(1) brightness(2); }
+    100% { filter: none; }
+  }
 
-    /* RIGHT: Display area */
-    .product-display{
-      position:fixed; left: calc(100px + 20%); top:0; right:0; bottom:0;
-      display:flex; flex-direction:column; align-items:center; padding:2rem;
-      box-sizing:border-box;
-    }
-    .large-image{
-      max-width:50%; border-radius:8px; margin-bottom:1rem;
-      display:none;
-    }
-    .description{
-      width:50%; font-size:var(--fs); line-height:var(--lh); color:var(--fg);
-      margin-bottom:1rem;
-    }
+  /* Logo — top-right */
+  .logo{
+    position:absolute; right:8px; top:8px;
+    width:60px; height:60px; object-fit:contain; pointer-events:auto;
+  }
 
-    /* Button (perfect rectangle, black bg, orange text → white on hover) */
-    .controls{ display:none; align-items:center; gap:1rem; }
-    #addToTruck{
-      background:#000; color:var(--accent); border:none;
-      padding:.5rem 1.25rem; font-weight:700; font-size:16px;
-      letter-spacing:.02em;
-      transition:color .2s ease, background .2s ease;
-    }
-    #addToTruck:hover{ color:#fff; }
+  /* Title “PRODUCTS” under the logo */
+  .page-title{
+    position:absolute; right:8px; top:72px;
+    color:var(--fg);
+  }
 
-    /* TRUCK (bottom right) */
-    .truck{
-      position:fixed; bottom:1rem; right:1rem;
-      width:300px; height:150px;
-      background:url('flatbed_truck.png') no-repeat center/contain;
-      transition:filter .2s ease;
-      z-index:900;
-    }
-    .truck:hover{ filter:invert(1) brightness(200%); } /* white-ish on hover */
+  /* Left sidebar (categories) */
+  .sidebar{
+    position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w);
+    padding:calc(var(--header-pad) + 56px) var(--header-pad) var(--header-pad);
+    box-sizing:border-box;
+    background:rgba(0,0,0,0.1);
+    display:flex; flex-direction:column; gap:.5rem;
+  }
+  .cat{
+    color:var(--fg);
+    text-decoration:none;
+    transition:color .2s ease;
+  }
+  .cat:hover{ color:#fff; }
+  .cat.active{ color:var(--accent); }
 
-    /* Cargo items positioned INSIDE the truck container */
-    .truck .item{
-      position:absolute; width:var(--cargo-item); height:var(--cargo-item);
-      border-radius:0; transition:filter .2s ease;
-      object-fit:cover;
-    }
-    .truck .item:hover{ filter:invert(1) brightness(220%); } /* turns white */
+  /* Main content: two columns */
+  .content{
+    position:fixed; left:var(--sidebar-w); top:64px; right:0; bottom:0;
+    display:flex; gap:12px; padding:12px; box-sizing:border-box;
+  }
+  .left-col, .right-col{ flex:1; min-width:0; }
 
-    /* POPUP CART */
-    .cart-popup{
-      position:fixed; right:10px; bottom:170px; width:320px; max-height:420px;
-      display:none; flex-direction:column; gap:.75rem;
-      background:#000; color:#fff; border:1px solid #fff; padding:1rem;
-      z-index:1001; overflow:auto;
-    }
-    .cart-popup-header{
-      display:flex; align-items:center; justify-content:space-between;
-    }
-    .cart-title{ font-size:20px; line-height:1; }
-    .cart-close{
-      background:#fff; color:#000; border:none; padding:.25rem .5rem; font-weight:700;
-      cursor:pointer;
-    }
-    .cart-line{ display:flex; justify-content:space-between; gap:.5rem; font-size:16px; }
-    .cart-total{ font-weight:800; border-top:1px solid #fff; padding-top:.5rem; margin-top:.25rem; }
-    .checkout{
-      background:#fff; color:#000; border:none; padding:.5rem; font-weight:800; cursor:pointer;
-    }
-  </style>
+  /* Grid (left) */
+  .grid{
+    height:100%; overflow:auto; scrollbar-width:none;
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(var(--thumb), 1fr));
+    gap:12px; padding-right:4px;
+  }
+  .grid::-webkit-scrollbar{ display:none; }
+
+  .tile{
+    background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    text-decoration:none; color:var(--fg);
+    transition: filter .15s ease;
+  }
+  .tile:hover{ filter:brightness(1.1); }
+  .tile img{
+    width:100%; height:120px; object-fit:cover;
+    border:1px solid #000;
+  }
+  .tile .t{
+    text-align:center;
+  }
+
+  /* Featured (right) */
+  .featured{
+    height:100%; overflow:auto; scrollbar-width:none;
+    padding-right:4px;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .featured::-webkit-scrollbar{ display:none; }
+
+  /* Carousel */
+  .carousel{
+    position:relative; width:100%; max-width:600px; height:var(--carousel-h);
+    background:#fff; border:1px solid #000; display:grid; place-items:center;
+  }
+  .carousel img{
+    width:100%; height:100%; object-fit:cover;
+  }
+  .nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; background:#000; color:#fff; border:none;
+    display:grid; place-items:center; cursor:pointer;
+    transition: color .2s ease;
+  }
+  .nav-btn:hover{ color:var(--accent); }
+  .nav-left{ left:6px; clip-path:polygon(100% 0, 0 50%, 100% 100%); }
+  .nav-right{ right:6px; clip-path:polygon(0 0, 100% 50%, 0 100%); }
+
+  .title{
+    width:100%; max-width:600px; text-align:left;
+  }
+  .desc{
+    width:100%; max-width:600px; text-align:left; background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box;
+  }
+
+  /* Price & controls */
+  .buy-row{
+    width:100%; max-width:600px; display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .price{
+    background:#fff; border:1px solid #000; padding:8px;
+  }
+  .qty{
+    display:flex; align-items:center; gap:8px;
+  }
+  .step{
+    width:28px; height:28px; background:#000; color:#fff; border:none; cursor:pointer;
+    transition: color .2s ease;
+  }
+  .step:hover{ color:var(--accent); }
+  .qty-val{ min-width:28px; text-align:center; }
+
+  .add{
+    background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer;
+    transition: color .2s ease, background .2s ease;
+  }
+  .add:hover{ color:var(--accent); }
+
+  .total{
+    background:#fff; border:1px solid #000; padding:8px; min-width:120px; text-align:center;
+  }
+
+  /* CART POPUP */
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.35); display:none; z-index:1000;
+  }
+  .cart{
+    position:absolute; right:20px; top:80px; width:360px; max-height:70vh; overflow:auto;
+    background:#fff; color:#000; border:1px solid #000; padding:12px; box-sizing:border-box;
+  }
+  .cart-header{
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;
+  }
+  .close{
+    background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer;
+    transition: color .2s ease;
+  }
+  .close:hover{ color:var(--accent); }
+
+  .line{
+    display:grid; grid-template-columns:48px 1fr auto auto; align-items:center; gap:8px;
+    padding:6px 0; border-bottom:1px solid #000;
+  }
+  .line img{ width:48px; height:48px; object-fit:cover; border:1px solid #000; }
+  .line .name{ }
+  .line .qty{ }
+  .line .sub{ }
+
+  .grand{
+    margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px;
+  }
+  .drive{
+    margin-top:10px; width:100%; background:#000; color:#fff; border:1px solid #000; padding:10px; cursor:pointer;
+    transition: color .2s ease;
+  }
+  .drive:hover{ color:var(--accent); }
+</style>
 </head>
 <body>
-  <!-- Custom Cursor -->
-  <div id="custom-cursor" aria-hidden="true"></div>
 
-  <!-- Logo -->
-  <div class="logo"><img src="VT_logo.png" alt="VT LOGO"></div>
+<!-- Cursor -->
+<div id="custom-cursor" aria-hidden="true"></div>
 
-  <!-- CATEGORY SIDEBAR -->
-  <aside class="category-sidebar" id="categorySidebar">
-    <div class="category" data-filter="all">ALL</div>
-    <div class="category" data-filter="lighting">LIGHTING</div>
-    <div class="category" data-filter="furniture">FURNITURE</div>
-    <div class="category" data-filter="structures">STRUCTURES</div>
-    <div class="category" data-filter="art">ART</div>
-  </aside>
+<!-- Header icons -->
+<header class="header">
+  <div id="truckIcon" class="truck-icon" title="Open cart"></div>
+  <img src="VT_logo.png" alt="VT LOGO" class="logo" />
+  <div class="page-title">PRODUCTS</div>
+</header>
 
-  <!-- PRODUCTS LIST -->
-  <section class="product-list" id="productList">
-    <!-- Add more items as needed; keep data-price for the popup -->
-    <div class="product-item" data-category="lighting" data-title="LIGHTING 1" data-price="120" data-image="images/lighting1.jpg">
-      <img src="images/lighting1.jpg" alt="LIGHTING 1">
-      <div class="product-item-title">LIGHTING 1</div>
-    </div>
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <a class="cat active" data-filter="all">ALL PRODUCTS</a>
+  <a class="cat" data-filter="lighting">LIGHTING</a>
+  <a class="cat" data-filter="furniture">FURNITURE</a>
+  <a class="cat" data-filter="structures">STRUCTURES</a>
+  <a class="cat" data-filter="art">ART</a>
+  <a class="cat" data-filter="misc">MISCELLANEOUS</a>
+</nav>
 
-    <div class="product-item" data-category="furniture" data-title="FURNITURE 1" data-price="380" data-image="images/furniture1.jpg">
-      <img src="images/furniture1.jpg" alt="FURNITURE 1">
-      <div class="product-item-title">FURNITURE 1</div>
-    </div>
-
-    <div class="product-item" data-category="structures" data-title="STRUCTURE 1" data-price="950" data-image="images/structure1.jpg">
-      <img src="images/structure1.jpg" alt="STRUCTURE 1">
-      <div class="product-item-title">STRUCTURE 1</div>
-    </div>
-
-    <div class="product-item" data-category="art" data-title="ART 1" data-price="220" data-image="images/art1.jpg">
-      <img src="images/art1.jpg" alt="ART 1">
-      <div class="product-item-title">ART 1</div>
-    </div>
-  </section>
-
-  <!-- RIGHT DISPLAY -->
-  <main class="product-display">
-    <img id="largeImage" class="large-image" src="" alt="">
-    <div id="description" class="description">HOVER OVER A PRODUCT TO SEE DETAILS</div>
-    <div id="controls" class="controls">
-      <button id="addToTruck">ADD TO TRUCK</button>
-    </div>
-  </main>
-
-  <!-- TRUCK -->
-  <div id="truck" class="truck" title="CLICK TO VIEW CART"></div>
-
-  <!-- POPUP CART -->
-  <div id="cartPopup" class="cart-popup">
-    <div class="cart-popup-header">
-      <div class="cart-title">CART ITEMS</div>
-      <button id="cartClose" class="cart-close">CLOSE</button>
-    </div>
-    <div id="cartList"></div>
-    <div id="cartTotal" class="cart-total"></div>
-    <button id="checkoutBtn" class="checkout">CHECKOUT</button>
+<!-- Main content: two columns -->
+<section class="content">
+  <!-- GRID (left) -->
+  <div class="left-col">
+    <div class="grid" id="grid"></div>
   </div>
 
-  <script>
-    /* Cursor */
-    const cursor = document.getElementById('custom-cursor');
-    document.addEventListener('mousemove', (e) => {
-      cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
-    }, { passive: true });
+  <!-- FEATURED (right) -->
+  <div class="right-col">
+    <div class="featured" id="featured">
+      <div class="carousel" id="carousel" style="display:none;">
+        <button class="nav-btn nav-left" id="prevBtn" title="Prev"></button>
+        <img id="carouselImg" alt="">
+        <button class="nav-btn nav-right" id="nextBtn" title="Next"></button>
+      </div>
+      <div class="title" id="featTitle"></div>
+      <div class="desc" id="featDesc" style="display:none;"></div>
 
-    /* Elements */
-    const productItems = document.querySelectorAll('.product-item');
-    const largeImage   = document.getElementById('largeImage');
-    const description  = document.getElementById('description');
-    const controls     = document.getElementById('controls');
-    const addBtn       = document.getElementById('addToTruck');
-    const truck        = document.getElementById('truck');
+      <div class="buy-row" id="buyRow" style="display:none;">
+        <div class="price" id="featPrice"></div>
 
-    const cartPopup    = document.getElementById('cartPopup');
-    const cartClose    = document.getElementById('cartClose');
-    const cartList     = document.getElementById('cartList');
-    const cartTotal    = document.getElementById('cartTotal');
-    const checkoutBtn  = document.getElementById('checkoutBtn');
+        <div class="qty">
+          <button class="step" id="decBtn">-</button>
+          <div class="qty-val" id="qtyVal">1</div>
+          <button class="step" id="incBtn">+</button>
+        </div>
 
-    /* State */
-    let selectedProduct = null;
-    // Cart as map: title -> { title, price, qty }
-    const cart = new Map();
+        <button class="add" id="addBtn">ADD TO TRUCK</button>
+        <div class="total" id="totalVal">$0.00</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    /* Hover products → set selection */
-    productItems.forEach(item => {
-      item.addEventListener('mouseenter', () => {
-        selectedProduct = {
-          title: item.dataset.title,
-          price: parseFloat(item.dataset.price || '0'),
-          image: item.dataset.image
-        };
-        largeImage.src = selectedProduct.image;
-        largeImage.style.display = 'block';
-        description.textContent = `${selectedProduct.title} — $${selectedProduct.price.toFixed(2)}`;
-        controls.style.display = 'flex';
-      });
-    });
+<!-- CART POPUP -->
+<div class="overlay" id="overlay">
+  <div class="cart" role="dialog" aria-modal="true">
+    <div class="cart-header">
+      <div>CART</div>
+      <button class="close" id="closeCart">CLOSE</button>
+    </div>
+    <div id="cartList"></div>
+    <div class="grand">
+      <div>GRAND TOTAL</div>
+      <div id="grandTotal">$0.00</div>
+    </div>
+    <button class="drive" id="driveBtn">DRIVE AWAY</button>
+  </div>
+</div>
 
-    /* Helper: update popup content */
-    function renderCartPopup(){
-      cartList.innerHTML = '';
-      let total = 0;
-      for (const {title, price, qty} of cart.values()){
-        const line = document.createElement('div');
-        line.className = 'cart-line';
-        line.textContent = `${title}  ×  ${qty}`;
-        const priceEl = document.createElement('div');
-        priceEl.textContent = `$${(price * qty).toFixed(2)}`;
-        line.appendChild(priceEl);
-        cartList.appendChild(line);
-        total += price * qty;
-      }
-      cartTotal.textContent = `TOTAL — $${total.toFixed(2)}`;
-    }
+<script>
+/* Cursor */
+const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 8}px)`;
+}, { passive:true });
 
-    /* Helper: set up hover/click removal on cargo item */
-    function attachCargoEvents(imgEl){
-      imgEl.addEventListener('mouseenter', () => {
-        imgEl.style.filter = 'invert(1) brightness(220%)';
-      });
-      imgEl.addEventListener('mouseleave', () => {
-        imgEl.style.filter = '';
-      });
-      imgEl.addEventListener('click', () => {
-        // Remove one unit of this title from cart
-        const t = imgEl.dataset.title;
-        if (cart.has(t)){
-          const entry = cart.get(t);
-          entry.qty -= 1;
-          if (entry.qty <= 0){ cart.delete(t); }
-          else { cart.set(t, entry); }
-        }
-        imgEl.remove();
-        renderCartPopup();
-      });
-    }
+/* Sample products (replace with your real data/images) */
+const PRODUCTS = [
+  { id:'L1', cat:'lighting', title:'PENDANT LIGHT', price:220, desc:'HAND-BUILT PENDANT LIGHT WITH WARM DIFFUSION.', images:['images/lighting1.jpg','images/lighting2.jpg'] },
+  { id:'L2', cat:'lighting', title:'WALL SCONCE', price:180, desc:'MINIMAL WALL SCONCE IN WOOD + BRASS.', images:['images/lighting3.jpg'] },
+  { id:'F1', cat:'furniture', title:'ADIRONDACK CHAIR', price:450, desc:'OUTDOOR CHAIR IN WEATHERED CEDAR.', images:['images/furniture1.jpg','images/furniture2.jpg'] },
+  { id:'F2', cat:'furniture', title:'LOW TABLE', price:380, desc:'SOLID OAK COFFEE TABLE.', images:['images/furniture3.jpg'] },
+  { id:'S1', cat:'structures', title:'FLOATING SAUNA', price:12000, desc:'A SERENE FLOATING SAUNA.', images:['images/structure1.jpg','images/structure2.jpg','images/structure3.jpg'] },
+  { id:'S2', cat:'structures', title:'MOBILE SAUNA', price:9800, desc:'SAUNA DESIGNED FOR TRANSPORT.', images:['images/structure4.jpg'] },
+  { id:'A1', cat:'art', title:'CIRCLE STAGE', price:2600, desc:'EVENT STAGE INSTALLATION.', images:['images/art1.jpg'] },
+  { id:'A2', cat:'art', title:'TIME MACHINE', price:3400, desc:'INTERACTIVE INSTALLATION.', images:['images/art2.jpg'] },
+  { id:'M1', cat:'misc', title:'WALL HOOK SET', price:90, desc:'SET OF 3 WOODEN WALL HOOKS.', images:['images/misc1.jpg'] },
+  { id:'M2', cat:'misc', title:'PLANTER BOX', price:150, desc:'CEDAR PLANTER BOX.', images:['images/misc2.jpg'] },
+];
 
-    /* Add to Truck: animate drop from above, stack inside bed */
-    addBtn.addEventListener('click', () => {
-      if (!selectedProduct) return;
+/* State */
+let activeFilter = 'all';
+let hoveredProduct = null;
+let selectedProduct = null;
+let activeImageIdx = 0;
+let qty = 1;
 
-      // 1) Create a floating clone to animate
-      const drop = document.createElement('img');
-      drop.src = selectedProduct.image;
-      drop.style.position = 'fixed';
-      drop.style.width = getComputedStyle(document.documentElement).getPropertyValue('--cargo-item');
-      drop.style.height = getComputedStyle(document.documentElement).getPropertyValue('--cargo-item');
-      drop.style.objectFit = 'cover';
-      drop.style.transition = 'left .55s ease, top .55s ease';
+/* Elements */
+const grid = document.getElementById('grid');
+const cats = document.querySelectorAll('.cat');
+const truckIcon = document.getElementById('truckIcon');
 
-      // Start above the truck center
-      const tRect = truck.getBoundingClientRect();
-      const size = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-item'));
-      drop.style.left = `${tRect.left + (tRect.width/2) - (size/2)}px`;
-      drop.style.top  = `${tRect.top  - size - 12}px`;
-      document.body.appendChild(drop);
+const carousel = document.getElementById('carousel');
+const carouselImg = document.getElementById('carouselImg');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 
-      // 2) Compute target stacking position (grid in truck)
-      const existing = truck.querySelectorAll('.item').length;
-      const cols = 5; // grid columns inside bed
-      const gap  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-gap'));
+const featTitle = document.getElementById('featTitle');
+const featDesc  = document.getElementById('featDesc');
+const featPrice = document.getElementById('featPrice');
+const buyRow    = document.getElementById('buyRow');
+const qtyVal    = document.getElementById('qtyVal');
+const incBtn    = document.getElementById('incBtn');
+const decBtn    = document.getElementById('decBtn');
+const addBtn    = document.getElementById('addBtn');
+const totalVal  = document.getElementById('totalVal');
 
-      // cargo origin offsets
-      const offX = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-offset-x'));
-      const offY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cargo-offset-y'));
+/* Cart */
+const overlay   = document.getElementById('overlay');
+const closeCart = document.getElementById('closeCart');
+const cartList  = document.getElementById('cartList');
+const grandTotal= document.getElementById('grandTotal');
+const driveBtn  = document.getElementById('driveBtn');
 
-      const col = existing % cols;
-      const row = Math.floor(existing / cols);
+/* Cart data structure: Map<id, {id, title, price, qty, thumb}> */
+const CART = new Map();
 
-      const targetLeftInTruck  = offX + col * (size + gap);
-      const targetBottomInTruck= offY + row * (size + gap);
+/* Utils */
+const money = v => '$' + v.toFixed(2);
 
-      const targetLeft = tRect.left + targetLeftInTruck;
-      const targetTop  = tRect.bottom - targetBottomInTruck - size;
+/* Build grid by filter */
+function renderGrid(){
+  grid.innerHTML = '';
+  const items = PRODUCTS.filter(p => activeFilter === 'all' ? true : p.cat === activeFilter);
+  items.forEach(p => {
+    const a = document.createElement('a');
+    a.href = 'javascript:void(0)';
+    a.className = 'tile';
+    a.dataset.id = p.id;
 
-      // 3) Animate
-      requestAnimationFrame(() => {
-        drop.style.left = `${targetLeft}px`;
-        drop.style.top  = `${targetTop}px`;
-      });
+    const img = document.createElement('img');
+    img.src = p.images[0] || '';
+    img.alt = p.title;
 
-      // 4) On arrival: move into truck container, absolute coords (left/bottom)
-      drop.addEventListener('transitionend', () => {
-        const cargo = document.createElement('img');
-        cargo.src = selectedProduct.image;
-        cargo.className = 'item';
-        cargo.dataset.title = selectedProduct.title;
-        cargo.dataset.price = selectedProduct.price.toFixed(2);
-        cargo.style.left   = `${targetLeftInTruck}px`;
-        cargo.style.bottom = `${targetBottomInTruck}px`;
-        attachCargoEvents(cargo);
-        truck.appendChild(cargo);
-        drop.remove();
+    const t = document.createElement('div');
+    t.className = 't';
+    t.textContent = p.title;
 
-        // Update cart quantities
-        if (cart.has(selectedProduct.title)){
-          const entry = cart.get(selectedProduct.title);
-          entry.qty += 1;
-          cart.set(selectedProduct.title, entry);
-        } else {
-          cart.set(selectedProduct.title, {title:selectedProduct.title, price:selectedProduct.price, qty:1});
-        }
-        renderCartPopup();
-      });
-    });
+    a.appendChild(img);
+    a.appendChild(t);
 
-    /* Truck: hover visual already in CSS; click toggles popup */
-    truck.addEventListener('click', () => {
-      const showing = cartPopup.style.display === 'flex';
-      cartPopup.style.display = showing ? 'none' : 'flex';
-    });
+    a.addEventListener('mouseenter', () => previewProduct(p));
+    a.addEventListener('click', () => selectProduct(p));
 
-    /* Close popup */
-    cartClose.addEventListener('click', () => {
-      cartPopup.style.display = 'none';
-    });
+    grid.appendChild(a);
+  });
+}
 
-    /* Checkout: draft email with cart lines */
-    checkoutBtn.addEventListener('click', () => {
-      if (cart.size === 0) return;
-      let lines = [];
-      let total = 0;
-      for (const {title, price, qty} of cart.values()){
-        const sub = price * qty;
-        total += sub;
-        lines.push(`${title} — QTY ${qty} — $${sub.toFixed(2)}`);
-      }
-      lines.push(`TOTAL — $${total.toFixed(2)}`);
-      const body = encodeURIComponent(lines.join('\n'));
-      location.href = `mailto:info@vtdesignbuild.com?subject=VT%20DESIGN%20BUILD%20—%20CART%20CHECKOUT&body=${body}`;
-    });
+/* Preview on hover (does not lock) */
+function previewProduct(p){
+  hoveredProduct = p;
+  updateFeatured(p);
+}
 
-    /* Category filter */
-    document.querySelectorAll('.category').forEach(cat => {
-      cat.addEventListener('click', () => {
-        const filter = cat.dataset.filter;
-        document.querySelectorAll('.product-item').forEach(it => {
-          it.style.display = (filter === 'all' || it.dataset.category === filter) ? 'flex' : 'none';
-        });
-      });
-    });
-  </script>
+/* Lock on click */
+function selectProduct(p){
+  selectedProduct = p;
+  hoveredProduct = null;
+  updateFeatured(p);
+}
+
+/* Update featured panel for a product */
+function updateFeatured(p){
+  // Title
+  featTitle.textContent = p.title;
+
+  // Carousel
+  activeImageIdx = 0;
+  if (p.images && p.images.length){
+    carousel.style.display = 'grid';
+    setCarouselImage(p.images[activeImageIdx]);
+  } else {
+    carousel.style.display = 'none';
+  }
+
+  // Description, price, controls
+  featDesc.style.display = 'block';
+  featDesc.textContent = p.desc || '';
+  featPrice.textContent = money(p.price);
+  qty = 1;
+  qtyVal.textContent = qty;
+  totalVal.textContent = money(p.price * qty);
+  buyRow.style.display = 'flex';
+}
+
+/* Carousel helpers */
+function setCarouselImage(src){ carouselImg.src = src; }
+
+prevBtn.addEventListener('click', () => {
+  const p = selectedProduct || hoveredProduct;
+  if (!p || !p.images || !p.images.length) return;
+  activeImageIdx = (activeImageIdx - 1 + p.images.length) % p.images.length;
+  setCarouselImage(p.images[activeImageIdx]);
+});
+nextBtn.addEventListener('click', () => {
+  const p = selectedProduct || hoveredProduct;
+  if (!p || !p.images || !p.images.length) return;
+  activeImageIdx = (activeImageIdx + 1) % p.images.length;
+  setCarouselImage(p.images[activeImageIdx]);
+});
+
+/* Qty controls */
+incBtn.addEventListener('click', () => {
+  qty += 1;
+  qtyVal.textContent = qty;
+  const p = selectedProduct || hoveredProduct; if (!p) return;
+  totalVal.textContent = money(p.price * qty);
+});
+decBtn.addEventListener('click', () => {
+  qty = Math.max(1, qty - 1);
+  qtyVal.textContent = qty;
+  const p = selectedProduct || hoveredProduct; if (!p) return;
+  totalVal.textContent = money(p.price * qty);
+});
+
+/* Add to truck */
+addBtn.addEventListener('click', () => {
+  const p = selectedProduct || hoveredProduct;
+  if (!p) return;
+
+  // Add to CART
+  if (CART.has(p.id)){
+    const entry = CART.get(p.id);
+    entry.qty += qty;
+    CART.set(p.id, entry);
+  } else {
+    CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.images[0]||'') });
+  }
+
+  // Truck visual state
+  truckIcon.classList.add('has-items', 'flash');
+  setTimeout(() => truckIcon.classList.remove('flash'), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--flash-duration')) || 250);
+
+  // Reset qty back to 1
+  qty = 1;
+  qtyVal.textContent = qty;
+  totalVal.textContent = money(p.price * qty);
+});
+
+/* Sidebar filtering */
+cats.forEach(c => {
+  c.addEventListener('click', () => {
+    cats.forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    activeFilter = c.dataset.filter;
+    renderGrid();
+    // Reset featured if category changed
+    featTitle.textContent = '';
+    featDesc.style.display = 'none';
+    buyRow.style.display = 'none';
+    carousel.style.display = 'none';
+  });
+});
+
+/* Cart popup */
+function renderCart(){
+  cartList.innerHTML = '';
+  let total = 0;
+  CART.forEach(({title, price, qty, thumb, id}) => {
+    const line = document.createElement('div');
+    line.className = 'line';
+
+    const img = document.createElement('img');
+    img.src = thumb || '';
+    img.alt = title;
+
+    const name = document.createElement('div');
+    name.className = 'name';
+    name.textContent = title;
+
+    const q = document.createElement('div');
+    q.className = 'qty';
+    q.textContent = '× ' + qty;
+
+    const sub = document.createElement('div');
+    sub.className = 'sub';
+    sub.textContent = money(price * qty);
+
+    line.appendChild(img);
+    line.appendChild(name);
+    line.appendChild(q);
+    line.appendChild(sub);
+
+    cartList.appendChild(line);
+    total += price * qty;
+  });
+  grandTotal.textContent = money(total);
+}
+
+truckIcon.addEventListener('click', () => {
+  renderCart();
+  overlay.style.display = 'block';
+});
+
+document.getElementById('closeCart').addEventListener('click', () => {
+  overlay.style.display = 'none';
+});
+overlay.addEventListener('click', (e) => {
+  // click outside the panel closes it
+  if (e.target === overlay) overlay.style.display = 'none';
+});
+
+document.getElementById('driveBtn').addEventListener('click', () => {
+  // Compose email body
+  let lines = [];
+  let total = 0;
+  CART.forEach(({title, price, qty}) => {
+    const sub = price * qty;
+    total += sub;
+    lines.push(`${title} — QTY ${qty} — ${money(sub)}`);
+  });
+  lines.push(``);
+  lines.push(`SUBTOTAL — ${money(total)}`);
+  lines.push(``);
+  lines.push(`Best,`);
+  lines.push(`__________`);
+
+  const body = encodeURIComponent(lines.join('\n'));
+  const subject = encodeURIComponent('VT DESIGN BUILD — CART CHECKOUT');
+  window.location.href = `mailto:info@vtdesignbuild.com?subject=${subject}&body=${body}`;
+});
+
+/* Init */
+renderGrid();
+</script>
 </body>
 </html>
