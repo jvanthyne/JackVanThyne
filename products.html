@@ -21,10 +21,12 @@
     --gap:12px;
     --footer-h:100px;
 
-    --tile:190px;           /* grid tile width/height (square) */
-    --pad:8px;              /* uniform inner padding */
+    --tile:190px;            /* grid square min width */
+    --pad:8px;               /* inner padding on each tile */
+    --title-band:44px;       /* fixed height for title band inside square */
+
     --carousel-h:380px;
-    --img-inset:14px;       /* featured image top/bottom inset */
+    --img-inset:14px;        /* featured image top/bottom inset */
 
     --logo-size:46px;
     --truck-size:110px;
@@ -92,7 +94,7 @@
     padding:12px; box-sizing:border-box;
     display:flex; flex-direction:column; gap:.6rem;
   }
-  .cat{ color:var(--fg); transition:color .2s ease; }
+  .cat{ color:var(--fg); transition:color .2s ease; cursor:pointer; }
   .cat:hover, .cat.active{ color:#fff; } /* active stays white */
 
   /* Content (2 columns) */
@@ -102,9 +104,7 @@
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* GRID — TRUE UNIFORM SQUARES.
-     Icon fills the whole square (minus padding). Title overlays at bottom (no height reservation),
-     so icon always scales within the same square area. */
+  /* GRID — uniform squares with internal two-part layout (icon area + fixed title band) */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -114,40 +114,40 @@
   .grid::-webkit-scrollbar{ display:none; }
 
   .tile{
-    position:relative;
-    aspect-ratio:1 / 1;                 /* lock each tile to a perfect square */
+    aspect-ratio:1 / 1;                   /* every tile is a perfect square */
     background:#fff; border:1px solid #000; box-sizing:border-box;
     color:var(--fg);
+    padding:var(--pad);
+    display:grid;
+    grid-template-rows: 1fr var(--title-band); /* icon zone (flex) + fixed title band */
+    gap:6px;
     transition:background .15s ease, color .15s ease, border-color .15s ease;
-    overflow:hidden;                    /* contents never change the square */
+    overflow:hidden;                      /* contents never change the square */
   }
   .tile:hover{ background:#000; color:#fff; }
 
-  /* ICON fills the square minus uniform padding */
+  /* ICON ZONE: PNG scales to fit without cropping */
   .tile-img{
-    position:absolute;
-    left:var(--pad); right:var(--pad); top:var(--pad); bottom:var(--pad);
+    width:100%; height:100%;
     display:grid; place-items:center;
-    pointer-events:none; /* let clicks go to tile */
   }
   .tile-img img{
     width:100%; height:100%;
-    object-fit:contain;                 /* SCALE PNG TO FIT WHOLE SQUARE */
-    background:transparent;             /* respect PNG transparency */
+    object-fit:contain;                   /* SCALE TO FIT ICON AREA */
+    background:transparent;               /* keep PNG transparent */
     filter:none;
     transition:filter .15s ease;
   }
   .tile:hover .tile-img img{
-    /* invert transparent PNG to white when hovering a black tile */
+    /* invert transparent PNG to white on hover (black tile background) */
     filter:invert(1) brightness(2) saturate(0);
   }
 
-  /* TITLE overlays at the bottom, clamped, without reducing icon area */
+  /* TITLE BAND: fixed height, 2-line clamp */
   .tile .t{
-    position:absolute; left:var(--pad); right:var(--pad); bottom:var(--pad);
-    text-align:center; line-height:1.1;
+    width:100%; text-align:center; line-height:1.1;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-    pointer-events:none; /* text overlay shouldn't block clicks */
+    align-self:end;
   }
 
   /* FEATURED — fixed, uniform white frame; image scales with inset */
@@ -159,25 +159,20 @@
 
   .carousel{
     position:relative; width:100%; max-width:640px; height:var(--carousel-h);
-    background:#fff; border:1px solid #000; display:none;
-    overflow:hidden; /* enforce the fixed frame */
+    background:#fff; border:1px solid #000; display:none; overflow:hidden;
   }
   .carousel-inner{
-    position:absolute; inset:0; padding:var(--img-inset) 0; /* top/bottom white inset */
-    display:flex; align-items:center; justify-content:center;
-    background:#fff; z-index:1;
+    position:absolute; inset:0; padding:var(--img-inset) 0; /* top/bottom inset */
+    display:flex; align-items:center; justify-content:center; background:#fff; z-index:1;
   }
   .carousel-inner img{
     max-width:100%; max-height:100%;
-    width:auto; height:auto;
-    object-fit:contain; /* SCALE IMAGE FULLY INTO FRAME */
-    background:#fff;
+    width:auto; height:auto; object-fit:contain; background:#fff;
   }
   .nav-btn{
     position:absolute; top:50%; transform:translateY(-50%);
     width:28px; height:28px; background:#000; color:#fff; border:none;
-    display:grid; place-items:center; cursor:pointer; transition:color .2s ease;
-    z-index:3;
+    display:grid; place-items:center; cursor:pointer; transition:color .2s ease; z-index:3;
   }
   .nav-btn:hover{ color:var(--accent); }
   .nav-left{ left:6px; clip-path:polygon(100% 0, 0 50%, 100% 100%); }
@@ -438,18 +433,20 @@ function renderGrid(){
     tile.className = 'tile';
     tile.dataset.id = p.id;
 
+    // ICON ZONE
     const imgWrap = document.createElement('div');
     imgWrap.className = 'tile-img';
     const img = document.createElement('img');
     img.src = p.icon || (p.images[0] || '');
     img.alt = p.title;
+    imgWrap.appendChild(img);
 
+    // TITLE BAND
     const title = document.createElement('div');
     title.className = 't';
     title.textContent = p.title;
 
     tile.appendChild(imgWrap);
-    imgWrap.appendChild(img);
     tile.appendChild(title);
 
     // Hover only before first click
