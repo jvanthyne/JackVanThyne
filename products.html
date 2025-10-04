@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
+<!-- Favicon (use your VT_logo.png) -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
@@ -21,12 +22,12 @@
     --gap:12px;
     --footer-h:100px;
 
-    --tile:190px;            /* grid square min width */
-    --pad:8px;               /* inner padding on each tile */
-    --title-band:44px;       /* fixed height for title band inside square */
+    --tile:190px;            /* square tile min width */
+    --pad:8px;               /* inner padding */
+    --title-band:44px;       /* fixed title band inside square */
 
-    --carousel-h:380px;
-    --img-inset:14px;        /* featured image top/bottom inset */
+    --carousel-h:380px;      /* featured image frame (unchanged) */
+    --img-inset:14px;
 
     --logo-size:46px;
     --truck-size:110px;
@@ -59,7 +60,7 @@
     background:#fff; mix-blend-mode:difference;
   }
 
-  /* Header (truck only) */
+  /* Header (truck icon retained) */
   .header{
     position:fixed; left:0; right:0; top:0; height:var(--header-h);
     display:flex; align-items:center; justify-content:flex-end;
@@ -87,7 +88,7 @@
     width:var(--logo-size); height:var(--logo-size); object-fit:contain;
   }
 
-  /* Sidebar */
+  /* Sidebar (categories) */
   .sidebar{
     position:fixed; left:0; top:var(--header-h); bottom:var(--footer-h);
     width:var(--sidebar-w); background:var(--bg);
@@ -95,16 +96,16 @@
     display:flex; flex-direction:column; gap:.6rem;
   }
   .cat{ color:var(--fg); transition:color .2s ease; cursor:pointer; }
-  .cat:hover, .cat.active{ color:#fff; } /* active stays white */
+  .cat:hover, .cat.active{ color:#fff; }
 
-  /* Content (2 columns) */
+  /* Two columns */
   .content{
     position:fixed; left:var(--sidebar-w); right:0; top:var(--header-h); bottom:var(--footer-h);
     display:flex; gap:var(--gap); padding:var(--gap); box-sizing:border-box;
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* GRID — uniform squares with internal two-part layout (icon area + fixed title band) */
+  /* GRID — EVENLY SPACED, TRUE SQUARES, TITLE IN FIXED BOTTOM BAND */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -114,43 +115,26 @@
   .grid::-webkit-scrollbar{ display:none; }
 
   .tile{
-    aspect-ratio:1 / 1;                   /* every tile is a perfect square */
+    aspect-ratio:1 / 1;                /* perfect square */
     background:#fff; border:1px solid #000; box-sizing:border-box;
     color:var(--fg);
     padding:var(--pad);
     display:grid;
-    grid-template-rows: 1fr var(--title-band); /* icon zone (flex) + fixed title band */
+    grid-template-rows: 1fr var(--title-band); /* empty top area + fixed title band */
     gap:6px;
     transition:background .15s ease, color .15s ease, border-color .15s ease;
-    overflow:hidden;                      /* contents never change the square */
+    overflow:hidden;
   }
   .tile:hover{ background:#000; color:#fff; }
 
-  /* ICON ZONE: PNG scales to fit without cropping */
-  .tile-img{
-    width:100%; height:100%;
-    display:grid; place-items:center;
-  }
-  .tile-img img{
-    width:100%; height:100%;
-    object-fit:contain;                   /* SCALE TO FIT ICON AREA */
-    background:transparent;               /* keep PNG transparent */
-    filter:none;
-    transition:filter .15s ease;
-  }
-  .tile:hover .tile-img img{
-    /* invert transparent PNG to white on hover (black tile background) */
-    filter:invert(1) brightness(2) saturate(0);
-  }
-
-  /* TITLE BAND: fixed height, 2-line clamp */
+  /* (No icon area yet — we’re ignoring PNGs for now) */
   .tile .t{
     width:100%; text-align:center; line-height:1.1;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     align-self:end;
   }
 
-  /* FEATURED — fixed, uniform white frame; image scales with inset */
+  /* FEATURED AREA (unchanged; works when you click a tile) */
   .featured{
     height:100%; overflow:auto; scrollbar-width:none;
     display:flex; flex-direction:column; align-items:center; gap:10px; padding-right:4px;
@@ -162,7 +146,7 @@
     background:#fff; border:1px solid #000; display:none; overflow:hidden;
   }
   .carousel-inner{
-    position:absolute; inset:0; padding:var(--img-inset) 0; /* top/bottom inset */
+    position:absolute; inset:0; padding:var(--img-inset) 0;
     display:flex; align-items:center; justify-content:center; background:#fff; z-index:1;
   }
   .carousel-inner img{
@@ -215,7 +199,7 @@
     position:absolute; right:12px; bottom:8px; font-size:12px;
   }
 
-  /* Truck popup (boxed) */
+  /* Truck popup */
   .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:1000; }
   .cart{
     position:absolute; right:20px; top:calc(var(--header-h) + 12px);
@@ -226,26 +210,16 @@
   .close{ background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer; transition:color .2s ease; }
   .close:hover{ color:var(--accent); }
 
-  /* Cart line: thumb | name | qty-ctrl | subtotal | remove */
   .line{
     display:grid; grid-template-columns:56px 1fr auto auto auto; align-items:center; gap:8px;
     padding:6px 0; border-bottom:1px solid #000;
   }
-  .line img{
-    width:56px; height:56px; object-fit:contain; background:#fff; border:1px solid #000;
-  }
-  .qtymini{
-    display:flex; align-items:center; gap:6px;
-    background:#fff; border:1px solid #000; padding:2px 4px;
-  }
-  .qbtn{
-    width:22px; height:22px; background:#000; color:#fff; border:none; cursor:pointer; transition:color .2s ease;
-  }
+  .line img{ width:56px; height:56px; object-fit:contain; background:#fff; border:1px solid #000; }
+  .qtymini{ display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #000; padding:2px 4px; }
+  .qbtn{ width:22px; height:22px; background:#000; color:#fff; border:none; cursor:pointer; transition:color .2s ease; }
   .qbtn:hover{ color:var(--accent); }
   .qval{ min-width:18px; text-align:center; }
-  .rm{
-    background:#000; color:#fff; border:1px solid #000; padding:4px 6px; cursor:pointer; transition:color .2s ease;
-  }
+  .rm{ background:#000; color:#fff; border:1px solid #000; padding:4px 6px; cursor:pointer; transition:color .2s ease; }
   .rm:hover{ color:var(--accent); }
 
   .grand{ margin-top:8px; display:flex; justify-content:space-between; border-top:1px solid #000; padding-top:8px; }
@@ -259,7 +233,7 @@
 </head>
 <body>
 
-<!-- Cursor -->
+<!-- Custom cursor -->
 <div id="custom-cursor" aria-hidden="true"></div>
 
 <!-- Header -->
@@ -283,12 +257,12 @@
 
 <!-- Content -->
 <section class="content">
-  <!-- Grid -->
+  <!-- GRID: white squares with titles only -->
   <div class="left-col">
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- Featured -->
+  <!-- FEATURED: kept for later; functions as before -->
   <div class="right-col">
     <div class="featured">
       <div class="carousel" id="carousel">
@@ -350,41 +324,41 @@ document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - s/2}px, ${e.clientY - s/2}px)`;
 }, { passive:true });
 
-/* Products (icons are .png) */
+/* Product data (unchanged) */
 const PRODUCTS = [
   { id:'product001', cat:'lighting',  title:'JAPANESE JOINT DESK LAMP', price:325,
     desc:'THIS WARM JAPANESE-INSPIRED DESK LAMP IS MADE WITH RECLAIMED OAK. IT IS DIMMABLE AND THE PRODUCT DIMENSIONS ARE H 16” W 6” L 6”. THIS PRODUCT IS UL CERTIFIED.',
-    images:['product001_image001.jpg','product001_image002.jpg','product001_image003.jpg'], icon:'product001_icon.png' },
+    images:['product001_image001.jpg','product001_image002.jpg','product001_image003.jpg'] },
   { id:'product002', cat:'lighting',  title:'JAPANESE JOINT DESK LAMP', price:650,
     desc:'THIS WARM JAPANESE-INSPIRED FLOOR LAMP IS MADE WITH RECLAIMED OAK. IT IS DIMMABLE AND THE PRODUCT DIMENSIONS ARE H 48” W 12” L 12”. THIS PRODUCT IS UL CERTIFIED.',
-    images:['product002_image001.jpg','product002_image002.jpg','product002_image003.jpg'], icon:'product002_icon.png' },
+    images:['product002_image001.jpg','product002_image002.jpg','product002_image003.jpg'] },
 
   { id:'product003', cat:'furniture', title:'OUTDOOR TABLE', price:1600,
     desc:'BUILT FROM LOCALLY SOURCED AND MILLED REDWOOD FOR NATURAL DURABILITY AND WEATHER RESISTANCE. SEATS 4–6 AND IS DESIGNED FOR PATIOS AND GARDENS.',
-    images:['product003_image001.jpg','product003_image002.jpg','product003_image003.jpg'], icon:'product003_icon.png' },
+    images:['product003_image001.jpg','product003_image002.jpg','product003_image003.jpg'] },
   { id:'product004', cat:'furniture', title:'OUTDOOR BENCH', price:425,
     desc:'A MINIMALIST BENCH CRAFTED FROM LOCALLY SOURCED AND MILLED REDWOOD. COMFORTABLE, STURDY SEATING FOR PORCHES, ENTRIES, AND GARDEN PATHS.',
-    images:['product004_image001.jpg','product004_image002.jpg','product004_image003.jpg'], icon:'product004_icon.png' },
+    images:['product004_image001.jpg','product004_image002.jpg','product004_image003.jpg'] },
   { id:'product005', cat:'furniture', title:'OUTDOOR LOUNGE CHAIR', price:1400,
     desc:'ERGONOMIC LOUNGE CHAIR MADE FROM LOCALLY SOURCED AND MILLED REDWOOD. RELAXED RECLINE FOR LONG, COMFORTABLE SITS.',
-    images:['product005_image001.jpg','product005_image002.jpg','product005_image003.jpg'], icon:'product005_icon.png' },
+    images:['product005_image001.jpg','product005_image002.jpg','product005_image003.jpg'] },
   { id:'product006', cat:'furniture', title:'OUTDOOR LOVE SEAT', price:1600,
     desc:'TWO-SEATER LOVE SEAT IN LOCALLY SOURCED AND MILLED REDWOOD—COZY, DURABLE, AND READY FOR ALL-SEASON OUTDOOR LIVING.',
-    images:['product006_image001.jpg','product006_image002.jpg','product006_image003.jpg'], icon:'product006_icon.png' },
+    images:['product006_image001.jpg','product006_image002.jpg','product006_image003.jpg'] },
 
   { id:'product007', cat:'structures', title:'MOBILE SAUNA', price:60000,
     desc:'A TRANSPORTABLE WOOD-FIRED SAUNA DESIGNED FOR QUICK SETUP AND OFF-GRID USE. INSULATED CONSTRUCTION, TEMPERED GLASS DOOR, AND INTERIOR BENCHING FOR 4–6.',
-    images:['product007_image001.jpg','product007_image002.jpg','product007_image003.jpg'], icon:'product007_icon.png' },
+    images:['product007_image001.jpg','product007_image002.jpg','product007_image003.jpg'] },
   { id:'product008', cat:'structures', title:'FLOATING SAUNA', price:80000,
     desc:'A BARGE-MOUNTED, WOOD-FIRED SAUNA BUILT FOR LAKES OR CALM BAYS. MARINE-SAFE DETAILS, CHANGING NOOK, AND PANORAMIC WINDOW—SEATS 6–8.',
-    images:['product008_image001.jpg','product008_image002.jpg','product008_image003.jpg'], icon:'product008_icon.png' },
+    images:['product008_image001.jpg','product008_image002.jpg','product008_image003.jpg'] },
 
   { id:'product009', cat:'art',       title:'REDWOODS', price:1200,
     desc:'ACRYLIC ON WOOD.',
-    images:['product009_image001.jpg','product009_image002.jpg','product009_image003.jpg'], icon:'product009_icon.png' },
+    images:['product009_image001.jpg','product009_image002.jpg','product009_image003.jpg'] },
   { id:'product010', cat:'art',       title:'WOMAN DANCING', price:1300,
     desc:'ACRYLIC ON WOOD.',
-    images:['product010_image001.jpg','product010_image002.jpg','product010_image003.jpg'], icon:'product010_icon.png' }
+    images:['product010_image001.jpg','product010_image002.jpg','product010_image003.jpg'] }
 ];
 
 /* State */
@@ -419,11 +393,10 @@ const cartList   = document.getElementById('cartList');
 const grandTotal = document.getElementById('grandTotal');
 const driveLink  = document.getElementById('driveLink');
 
-/* Cart */
-const CART = new Map();
+/* Helpers */
 const money = n => '$' + n.toFixed(2);
 
-/* Grid */
+/* GRID: white squares with titles only */
 function renderGrid(){
   grid.innerHTML = '';
   const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
@@ -433,25 +406,14 @@ function renderGrid(){
     tile.className = 'tile';
     tile.dataset.id = p.id;
 
-    // ICON ZONE
-    const imgWrap = document.createElement('div');
-    imgWrap.className = 'tile-img';
-    const img = document.createElement('img');
-    img.src = p.icon || (p.images[0] || '');
-    img.alt = p.title;
-    imgWrap.appendChild(img);
-
-    // TITLE BAND
+    // empty top zone is implicit (grid row 1fr)
     const title = document.createElement('div');
     title.className = 't';
     title.textContent = p.title;
 
-    tile.appendChild(imgWrap);
     tile.appendChild(title);
 
-    // Hover only before first click
     tile.addEventListener('mouseenter', () => { if (!locked) preview(p); });
-    // Click locks (clicking another replaces)
     tile.addEventListener('click', () => select(p));
 
     grid.appendChild(tile);
@@ -462,7 +424,7 @@ function renderGrid(){
 function preview(p){ hovered = p; showFeatured(p); }
 function select(p){ selected = p; locked = true; showFeatured(p); }
 
-/* Featured panel */
+/* Featured panel (unchanged) */
 function showFeatured(p){
   featTitle.textContent = p.title;
   featDesc.style.display = 'block';
@@ -509,13 +471,14 @@ decBtn.addEventListener('click', () => {
   totalVal.textContent = money(p.price * qty);
 });
 
-/* Add to truck (flash longer + tiny bounce) */
+/* Add to truck */
+const CART = new Map();
 addBtn.addEventListener('click', () => {
   const p = currentProduct(); if (!p) return;
   if (CART.has(p.id)){
     const e = CART.get(p.id); e.qty += qty; CART.set(p.id, e);
   } else {
-    CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:(p.icon || p.images[0] || '') });
+    CART.set(p.id, { id:p.id, title:p.title, price:p.price, qty:qty, thumb:'' });
   }
   truckIcon.classList.add('flash','bounce');
   setTimeout(() => truckIcon.classList.remove('flash'),
@@ -567,7 +530,7 @@ function renderCart(){
     line.dataset.id = id;
 
     const img = document.createElement('img');
-    img.src = thumb || '';
+    img.src = thumb || '';  /* no icons for now */
     img.alt = title;
 
     const name = document.createElement('div');
@@ -599,7 +562,6 @@ function renderCart(){
   });
   grandTotal.textContent = money(total);
 
-  // Enable/disable DRIVE AWAY depending on cart content
   if (CART.size === 0){
     driveLink.classList.add('disabled');
     driveLink.href = '#';
@@ -608,8 +570,6 @@ function renderCart(){
     driveLink.href = buildMailto(total);
   }
 }
-
-/* Qty/Remove within cart (event delegation) */
 cartList.addEventListener('click', (e) => {
   const btn = e.target.closest('button');
   if (!btn) return;
@@ -627,13 +587,8 @@ cartList.addEventListener('click', (e) => {
 });
 
 /* Open/close truck */
-truckIcon.addEventListener('click', () => {
-  renderCart();
-  overlay.style.display = 'block';
-});
-document.getElementById('closeCart').addEventListener('click', () => {
-  overlay.style.display = 'none';
-});
+truckIcon.addEventListener('click', () => { renderCart(); overlay.style.display = 'block'; });
+document.getElementById('closeCart').addEventListener('click', () => { overlay.style.display = 'none'; });
 overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
 
 /* Prevent clicking disabled drive link */
