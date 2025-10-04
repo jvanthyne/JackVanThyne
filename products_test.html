@@ -3,122 +3,173 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>VT — Icon Fit Test (V2)</title>
+<title>VT — Icon Fit Test (V3)</title>
 <style>
   :root{
     --bg:#5a6155;
     --fg:#000;
-    --tile-size: 320px;   /* overall square size */
-    --inset: 10px;        /* inner padding */
-    --title-band: 56px;   /* reserved bottom band for title */
-    --font: 16px;
+    --tile:320px;      /* white square size for demo */
+    --inset:10px;      /* padding inside the square */
+    --title:56px;      /* fixed title band height */
+    --font:16px;
   }
 
   html, body {
     margin:0; height:100%;
     background:var(--bg); color:var(--fg);
     font: var(--font)/1.2 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
-    text-transform: uppercase;
+    text-transform:uppercase;
     display:grid; place-items:center;
   }
 
   .wrap { display:flex; flex-direction:column; align-items:center; gap:16px; }
 
-  /* Fixed white square */
+  /* White square */
   .tile {
     position:relative;
-    width:var(--tile-size);
-    height:var(--tile-size);
+    width:var(--tile);
+    height:var(--tile);
     background:#fff;
     border:1px solid #000;
     box-sizing:border-box;
   }
 
   /* Icon area (everything above the title band) */
-  .icon-box {
+  .icon-box{
     position:absolute;
     left:var(--inset);
     right:var(--inset);
     top:var(--inset);
-    bottom: calc(var(--inset) + var(--title-band));
-    display:grid;
-    place-items:center;
-    overflow:hidden;  /* hard clip — nothing can spill */
+    bottom:calc(var(--inset) + var(--title));
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;               /* hard clip: nothing can spill */
   }
 
-  /* ✅ Robust scaling for ALL aspect ratios */
+  /* We’ll size the IMG with JS (width/height in px), so keep it neutral here */
   .icon-box img{
-    width:100%;
-    height:100%;
-    object-fit:contain;   /* keeps aspect; fully fits inside box */
     display:block;
     background:transparent;
+    image-rendering:auto;
   }
 
-  /* Title band pinned at bottom */
-  .title {
+  /* Title band pinned to bottom */
+  .title{
     position:absolute;
     left:var(--inset);
     right:var(--inset);
     bottom:var(--inset);
-    height:var(--title-band);
+    height:var(--title);
     display:grid; place-items:center;
-    text-align:center; line-height:1.1;
-    padding:0 6px; box-sizing:border-box; overflow:hidden;
+    text-align:center;
+    padding:0 6px; box-sizing:border-box;
+    line-height:1.1; overflow:hidden;
   }
 
-  /* Controls */
-  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
-  .btn { background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer; }
-  .btn:hover { color:orange; }
-  .hint { font-size:12px; opacity:.9; text-align:center; }
+  .controls{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .btn{ background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer; }
+  .btn:hover{ color:orange; }
+  input[type="file"]{ display:none; }
+  label[for="file"]{ cursor:pointer; text-decoration:underline; }
+  .hint{ font-size:12px; opacity:.9; text-align:center; }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="tile" aria-label="White square with icon area and title">
       <div class="icon-box">
-        <img id="icon" alt="Icon preview"
-             src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 160'><rect x='1' y='1' width='298' height='158' rx='6' ry='6' fill='none' stroke='black' stroke-width='2'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18'>LOAD A SAMPLE</text></svg>">
+        <img id="icon" alt="Icon preview" />
       </div>
       <div class="title" id="title">PROJECT TITLE</div>
     </div>
 
     <div class="controls">
-      <button class="btn" id="wide">Wide</button>
-      <button class="btn" id="tall">Tall</button>
-      <button class="btn" id="square">Square</button>
+      <label for="file" class="btn">Upload PNG</label>
+      <input id="file" type="file" accept="image/png" />
+      <button class="btn" id="wide">Wide sample</button>
+      <button class="btn" id="tall">Tall sample</button>
+      <button class="btn" id="square">Square sample</button>
     </div>
 
     <div class="hint">
-      The PNG/SVG always fits entirely in the white square, above the title band, with no overlap.
+      JS computes exact scale so the PNG fully fits the icon area (no overlap with title; no overhang).
     </div>
   </div>
 
 <script>
-  const iconImg = document.getElementById('icon');
+  const icon = document.getElementById('icon');
 
+  // Safety margin so strokes at the edges never appear clipped.
+  const SAFE_PAD = 2; // px inside the icon area
+
+  // Measure the icon-box and the image's natural size, then scale to fit.
+  function fitIcon(img){
+    const box = img.parentElement.getBoundingClientRect();
+    const boxW = Math.max(0, box.width  - SAFE_PAD*2);
+    const boxH = Math.max(0, box.height - SAFE_PAD*2);
+
+    // Some browsers need natural sizes after load
+    const iw = img.naturalWidth  || 1;
+    const ih = img.naturalHeight || 1;
+
+    // Scale so BOTH dimensions fit
+    const scale = Math.min(boxW / iw, boxH / ih);
+
+    // Final target size (integer px to avoid subpixel fuzz)
+    const W = Math.floor(iw * scale);
+    const H = Math.floor(ih * scale);
+
+    // Apply explicit size; let flexbox centering do the rest
+    img.style.width  = W + 'px';
+    img.style.height = H + 'px';
+  }
+
+  function loadSample(dataUrl){
+    icon.onload = () => fitIcon(icon);
+    icon.src = dataUrl;
+  }
+
+  // Demo samples (SVG so you can see wide/tall/square clearly)
   const SAMPLES = {
     wide: "data:image/svg+xml;utf8," + encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 220'>
-        <rect x='5' y='5' width='590' height='210' fill='none' stroke='black' stroke-width='10'/>
-        <line x1='50' y1='110' x2='550' y2='110' stroke='black' stroke-width='14' stroke-linecap='round'/>
+        <rect x='8' y='8' width='584' height='204' fill='none' stroke='black' stroke-width='12' />
+        <line x1='40' y1='110' x2='560' y2='110' stroke='black' stroke-width='20' stroke-linecap='round'/>
       </svg>`),
     tall: "data:image/svg+xml;utf8," + encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 600'>
-        <rect x='5' y='5' width='210' height='590' fill='none' stroke='black' stroke-width='10'/>
-        <line x1='110' y1='50' x2='110' y2='550' stroke='black' stroke-width='14' stroke-linecap='round'/>
+        <rect x='8' y='8' width='204' height='584' fill='none' stroke='black' stroke-width='12' />
+        <line x1='110' y1='40' x2='110' y2='560' stroke='black' stroke-width='20' stroke-linecap='round'/>
       </svg>`),
     square: "data:image/svg+xml;utf8," + encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'>
-        <rect x='8' y='8' width='384' height='384' fill='none' stroke='black' stroke-width='16' rx='22' ry='22'/>
-        <circle cx='200' cy='200' r='80' fill='none' stroke='black' stroke-width='16'/>
+        <rect x='10' y='10' width='380' height='380' fill='none' stroke='black' stroke-width='20' rx='30' ry='30'/>
+        <circle cx='200' cy='200' r='100' fill='none' stroke='black' stroke-width='20'/>
       </svg>`)
   };
 
-  document.getElementById('wide').addEventListener('click',   () => iconImg.src = SAMPLES.wide);
-  document.getElementById('tall').addEventListener('click',   () => iconImg.src = SAMPLES.tall);
-  document.getElementById('square').addEventListener('click', () => iconImg.src = SAMPLES.square);
+  // Hook up demo buttons
+  document.getElementById('wide').addEventListener('click',   () => loadSample(SAMPLES.wide));
+  document.getElementById('tall').addEventListener('click',   () => loadSample(SAMPLES.tall));
+  document.getElementById('square').addEventListener('click', () => loadSample(SAMPLES.square));
+
+  // Upload your own PNG
+  document.getElementById('file').addEventListener('change', (e)=>{
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    icon.onload = () => { fitIcon(icon); URL.revokeObjectURL(url); };
+    icon.src = url;
+  });
+
+  // Re-fit on resize
+  let raf;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => icon.complete && fitIcon(icon));
+  });
+
+  // Start with a wide sample for quick visual
+  loadSample(SAMPLES.wide);
 </script>
 </body>
 </html>
