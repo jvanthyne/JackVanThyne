@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VT Design Build — Products</title>
 
-<!-- Favicon (use your VT_logo.png) -->
 <link rel="icon" type="image/png" href="VT_logo.png" />
 
 <style>
   :root{
-    --bg:#575e52;
+    --bg:#4e522b;           /* changed background */
     --fg:#000000;
     --accent:orange;
 
@@ -22,11 +21,11 @@
     --gap:12px;
     --footer-h:100px;
 
-    --tile:190px;            /* square tile min width */
-    --pad:8px;               /* inner padding */
-    --title-band:44px;       /* fixed title band inside square */
+    --tile:190px;           /* min width of each square in the grid */
+    --pad:8px;              /* inner padding in a tile */
+    --title-band:44px;      /* fixed title band inside the square */
 
-    --carousel-h:380px;      /* featured image frame (unchanged) */
+    --carousel-h:380px;     /* (featured area unchanged) */
     --img-inset:14px;
 
     --logo-size:46px;
@@ -47,7 +46,9 @@
     overflow:hidden;
   }
 
-  *{ cursor:none !important; }
+  /* ensure consistent sizing math everywhere (helps prevent layout weirdness) */
+  *, *::before, *::after{ box-sizing:border-box; cursor:none !important; }
+
   a{ color:#000; text-decoration:none; }
   a:hover{ color:#fff; }
   button:focus, a:focus{ outline:none; }
@@ -60,17 +61,16 @@
     background:#fff; mix-blend-mode:difference;
   }
 
-  /* Header (truck icon retained) */
+  /* Header (truck icon retained for later) */
   .header{
     position:fixed; left:0; right:0; top:0; height:var(--header-h);
     display:flex; align-items:center; justify-content:flex-end;
-    padding:0 8px; box-sizing:border-box;
+    padding:0 8px;
   }
   .truck-icon{
     width:var(--truck-size); height:var(--truck-size);
     background:url('flatbed_truck.png') no-repeat center/contain;
     transition:filter .2s ease, transform .2s ease;
-    filter:none; transform-origin:center;
   }
   .truck-icon:hover{ filter:invert(1) brightness(2); }
   .truck-icon.flash{ animation:truckflash var(--flash-ms) ease; }
@@ -92,7 +92,7 @@
   .sidebar{
     position:fixed; left:0; top:var(--header-h); bottom:var(--footer-h);
     width:var(--sidebar-w); background:var(--bg);
-    padding:12px; box-sizing:border-box;
+    padding:12px;
     display:flex; flex-direction:column; gap:.6rem;
   }
   .cat{ color:var(--fg); transition:color .2s ease; cursor:pointer; }
@@ -101,11 +101,12 @@
   /* Two columns */
   .content{
     position:fixed; left:var(--sidebar-w); right:0; top:var(--header-h); bottom:var(--footer-h);
-    display:flex; gap:var(--gap); padding:var(--gap); box-sizing:border-box;
+    display:flex; gap:var(--gap); padding:var(--gap);
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* GRID — EVENLY SPACED, TRUE SQUARES, TITLE IN FIXED BOTTOM BAND */
+  /* GRID — EVEN GAPS, TRUE SQUARES.
+     No aspect-ratio: we use a ::before with padding-top:100% so layout never collapses/overlaps. */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -114,27 +115,34 @@
   }
   .grid::-webkit-scrollbar{ display:none; }
 
+  /* Each tile is a square: the pseudo element defines height; inner content is absolutely positioned */
   .tile{
-    aspect-ratio:1 / 1;                /* perfect square */
-    background:#fff; border:1px solid #000; box-sizing:border-box;
-    color:var(--fg);
-    padding:var(--pad);
-    display:grid;
-    grid-template-rows: 1fr var(--title-band); /* empty top area + fixed title band */
-    gap:6px;
+    position:relative;
+    background:#fff; border:1px solid #000; color:var(--fg);
     transition:background .15s ease, color .15s ease, border-color .15s ease;
-    overflow:hidden;
+  }
+  .tile::before{
+    content:"";
+    display:block;
+    padding-top:100%; /* forces a perfect square footprint */
   }
   .tile:hover{ background:#000; color:#fff; }
 
-  /* (No icon area yet — we’re ignoring PNGs for now) */
-  .tile .t{
-    width:100%; text-align:center; line-height:1.1;
+  /* Inner layout: icon area (for future) + fixed title band, both inside the square */
+  .tile-inner{
+    position:absolute; inset:var(--pad);
+    display:grid;
+    grid-template-rows: 1fr var(--title-band); /* top free zone (future icon), bottom title band */
+    gap:6px;
+  }
+  /* Title band only (we're ignoring PNGs for now) */
+  .tile-title{
+    text-align:center; line-height:1.1;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     align-self:end;
   }
 
-  /* FEATURED AREA (unchanged; works when you click a tile) */
+  /* FEATURED AREA (unchanged, kept for when an item is clicked) */
   .featured{
     height:100%; overflow:auto; scrollbar-width:none;
     display:flex; flex-direction:column; align-items:center; gap:10px; padding-right:4px;
@@ -149,10 +157,7 @@
     position:absolute; inset:0; padding:var(--img-inset) 0;
     display:flex; align-items:center; justify-content:center; background:#fff; z-index:1;
   }
-  .carousel-inner img{
-    max-width:100%; max-height:100%;
-    width:auto; height:auto; object-fit:contain; background:#fff;
-  }
+  .carousel-inner img{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; background:#fff; }
   .nav-btn{
     position:absolute; top:50%; transform:translateY(-50%);
     width:28px; height:28px; background:#000; color:#fff; border:none;
@@ -165,7 +170,7 @@
   .title{ width:100%; max-width:640px; text-align:left; }
   .desc{
     width:100%; max-width:640px; text-align:left;
-    background:#fff; border:1px solid #000; padding:8px; box-sizing:border-box; display:none;
+    background:#fff; border:1px solid #000; padding:8px; display:none;
   }
 
   .buy-row{
@@ -204,7 +209,7 @@
   .cart{
     position:absolute; right:20px; top:calc(var(--header-h) + 12px);
     width:400px; max-height:70vh; overflow:auto;
-    background:#fff; color:#000; border:1px solid #000; padding:12px; box-sizing:border-box;
+    background:#fff; color:#000; border:1px solid #000; padding:12px;
   }
   .cart-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .close{ background:#000; color:#fff; border:none; padding:6px 10px; cursor:pointer; transition:color .2s ease; }
@@ -257,12 +262,12 @@
 
 <!-- Content -->
 <section class="content">
-  <!-- GRID: white squares with titles only -->
+  <!-- GRID: uniform white squares with titles only -->
   <div class="left-col">
     <div class="grid" id="grid"></div>
   </div>
 
-  <!-- FEATURED: kept for later; functions as before -->
+  <!-- FEATURED (unchanged) -->
   <div class="right-col">
     <div class="featured">
       <div class="carousel" id="carousel">
@@ -324,7 +329,7 @@ document.addEventListener('mousemove', e => {
   cursor.style.transform = `translate(${e.clientX - s/2}px, ${e.clientY - s/2}px)`;
 }, { passive:true });
 
-/* Product data (unchanged) */
+/* Product data (same as before) */
 const PRODUCTS = [
   { id:'product001', cat:'lighting',  title:'JAPANESE JOINT DESK LAMP', price:325,
     desc:'THIS WARM JAPANESE-INSPIRED DESK LAMP IS MADE WITH RECLAIMED OAK. IT IS DIMMABLE AND THE PRODUCT DIMENSIONS ARE H 16” W 6” L 6”. THIS PRODUCT IS UL CERTIFIED.',
@@ -396,7 +401,7 @@ const driveLink  = document.getElementById('driveLink');
 /* Helpers */
 const money = n => '$' + n.toFixed(2);
 
-/* GRID: white squares with titles only */
+/* GRID: white squares with title in bottom band */
 function renderGrid(){
   grid.innerHTML = '';
   const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
@@ -406,13 +411,19 @@ function renderGrid(){
     tile.className = 'tile';
     tile.dataset.id = p.id;
 
-    // empty top zone is implicit (grid row 1fr)
+    const inner = document.createElement('div');
+    inner.className = 'tile-inner';
+
+    // top zone reserved for future PNG icon (left empty for now)
+
     const title = document.createElement('div');
-    title.className = 't';
+    title.className = 'tile-title';
     title.textContent = p.title;
 
-    tile.appendChild(title);
+    inner.appendChild(title);
+    tile.appendChild(inner);
 
+    // Hover preview (before first lock), click to lock/select
     tile.addEventListener('mouseenter', () => { if (!locked) preview(p); });
     tile.addEventListener('click', () => select(p));
 
@@ -530,7 +541,7 @@ function renderCart(){
     line.dataset.id = id;
 
     const img = document.createElement('img');
-    img.src = thumb || '';  /* no icons for now */
+    img.src = thumb || '';
     img.alt = title;
 
     const name = document.createElement('div');
