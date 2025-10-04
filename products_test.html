@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VT — Icon Fit Test</title>
+
+<style>
+  :root{
+    --bg:#5a6155;         /* your new green */
+    --fg:#000;
+    --tile-size: 320px;   /* square size for this test */
+    --inset: 10px;        /* inner padding all around */
+    --title-band: 56px;   /* fixed title band height */
+    --font: 16px;
+  }
+
+  html, body {
+    margin:0; height:100%;
+    background:var(--bg); color:var(--fg);
+    font: var(--font)/1.2 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+    text-transform: uppercase;
+    display:grid; place-items:center;
+  }
+
+  .wrap {
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+
+  /* The white square (fixed W/H so the math is crystal clear) */
+  .tile {
+    position:relative;
+    width:var(--tile-size);
+    height:var(--tile-size);
+    background:#fff;
+    border:1px solid #000;
+    box-sizing:border-box;
+  }
+
+  /* Inside the square, reserve the bottom for the title band.
+     The icon area is everything above that band. */
+  .icon-box {
+    position:absolute;
+    left:var(--inset);
+    right:var(--inset);
+    top:var(--inset);
+    bottom: calc(var(--inset) + var(--title-band));
+    display:grid;
+    place-items:center;
+    overflow:hidden;                 /* hard clip — nothing can spill */
+  }
+
+  /* The PNG itself:
+     - never larger than the icon-box
+     - aspect ratio preserved
+     - no overlap with title (because title has its own reserved space) */
+  .icon-box img {
+    max-width:100%;
+    max-height:100%;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    display:block;
+    background:transparent;
+  }
+
+  /* Title band (fixed height, pinned to the bottom) */
+  .title {
+    position:absolute;
+    left:var(--inset);
+    right:var(--inset);
+    bottom:var(--inset);
+    height:var(--title-band);
+    display:grid;
+    place-items:center;
+    text-align:center;
+    line-height:1.1;
+    padding:0 6px;
+    box-sizing:border-box;
+    overflow:hidden;
+  }
+
+  /* Page controls */
+  .controls {
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;
+  }
+
+  .btn {
+    background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer;
+  }
+  .btn:hover { color:orange; }
+
+  .hint { font-size:12px; opacity:.9; text-align:center; }
+  input[type="file"] { display:none; }
+  label[for="file"] { cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="tile" aria-label="White square with icon area and title">
+      <div class="icon-box">
+        <!-- Start with a harmless placeholder; replace via upload -->
+        <img id="icon" alt="Icon preview" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 160'><rect x='1' y='1' width='298' height='158' rx='6' ry='6' fill='none' stroke='black' stroke-width='2'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18'>UPLOAD PNG</text></svg>">
+      </div>
+      <div class="title" id="title">PROJECT TITLE</div>
+    </div>
+
+    <div class="controls">
+      <label for="file" class="btn">Upload PNG</label>
+      <input id="file" type="file" accept="image/png" />
+      <button class="btn" id="wide">Load Wide Sample</button>
+      <button class="btn" id="tall">Load Tall Sample</button>
+      <button class="btn" id="square">Load Square Sample</button>
+    </div>
+
+    <div class="hint">
+      Rules enforced here:<br>
+      – PNG always fits fully inside the white square (no overhang).<br>
+      – PNG never overlaps the title band at the bottom.<br>
+      – Aspect ratio preserved; scaling uses <code>object-fit: contain</code> + <code>max-width/height:100%</code>.
+    </div>
+  </div>
+
+<script>
+  const fileInput = document.getElementById('file');
+  const iconImg   = document.getElementById('icon');
+  const titleEl   = document.getElementById('title');
+
+  // Load a user PNG
+  fileInput.addEventListener('change', (e)=>{
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    iconImg.src = url;
+    // Keep title text; you can edit it here if you like:
+    // titleEl.textContent = f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
+  });
+
+  // Handy SVG samples to prove wide, tall, square all fit.
+  const SAMPLES = {
+    wide: "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 220'>
+        <rect x='5' y='5' width='590' height='210' fill='none' stroke='black' stroke-width='10'/>
+        <line x1='50' y1='110' x2='550' y2='110' stroke='black' stroke-width='14' stroke-linecap='round'/>
+      </svg>`),
+    tall: "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 600'>
+        <rect x='5' y='5' width='210' height='590' fill='none' stroke='black' stroke-width='10'/>
+        <line x1='110' y1='50' x2='110' y2='550' stroke='black' stroke-width='14' stroke-linecap='round'/>
+      </svg>`),
+    square: "data:image/svg+xml;utf8," + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'>
+        <rect x='8' y='8' width='384' height='384' fill='none' stroke='black' stroke-width='16' rx='22' ry='22'/>
+        <circle cx='200' cy='200' r='80' fill='none' stroke='black' stroke-width='16'/>
+      </svg>`)
+  };
+
+  document.getElementById('wide').addEventListener('click',   () => iconImg.src = SAMPLES.wide);
+  document.getElementById('tall').addEventListener('click',   () => iconImg.src = SAMPLES.tall);
+  document.getElementById('square').addEventListener('click', () => iconImg.src = SAMPLES.square);
+</script>
+</body>
+</html>
