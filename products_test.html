@@ -3,15 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>VT — Icon Fit Test</title>
-
+<title>VT — Icon Fit Test (V2)</title>
 <style>
   :root{
-    --bg:#5a6155;         /* your new green */
+    --bg:#5a6155;
     --fg:#000;
-    --tile-size: 320px;   /* square size for this test */
-    --inset: 10px;        /* inner padding all around */
-    --title-band: 56px;   /* fixed title band height */
+    --tile-size: 320px;   /* overall square size */
+    --inset: 10px;        /* inner padding */
+    --title-band: 56px;   /* reserved bottom band for title */
     --font: 16px;
   }
 
@@ -23,11 +22,9 @@
     display:grid; place-items:center;
   }
 
-  .wrap {
-    display:flex; flex-direction:column; align-items:center; gap:16px;
-  }
+  .wrap { display:flex; flex-direction:column; align-items:center; gap:16px; }
 
-  /* The white square (fixed W/H so the math is crystal clear) */
+  /* Fixed white square */
   .tile {
     position:relative;
     width:var(--tile-size);
@@ -37,8 +34,7 @@
     box-sizing:border-box;
   }
 
-  /* Inside the square, reserve the bottom for the title band.
-     The icon area is everything above that band. */
+  /* Icon area (everything above the title band) */
   .icon-box {
     position:absolute;
     left:var(--inset);
@@ -47,96 +43,61 @@
     bottom: calc(var(--inset) + var(--title-band));
     display:grid;
     place-items:center;
-    overflow:hidden;                 /* hard clip — nothing can spill */
+    overflow:hidden;  /* hard clip — nothing can spill */
   }
 
-  /* The PNG itself:
-     - never larger than the icon-box
-     - aspect ratio preserved
-     - no overlap with title (because title has its own reserved space) */
-  .icon-box img {
-    max-width:100%;
-    max-height:100%;
-    width:auto;
-    height:auto;
-    object-fit:contain;
+  /* ✅ Robust scaling for ALL aspect ratios */
+  .icon-box img{
+    width:100%;
+    height:100%;
+    object-fit:contain;   /* keeps aspect; fully fits inside box */
     display:block;
     background:transparent;
   }
 
-  /* Title band (fixed height, pinned to the bottom) */
+  /* Title band pinned at bottom */
   .title {
     position:absolute;
     left:var(--inset);
     right:var(--inset);
     bottom:var(--inset);
     height:var(--title-band);
-    display:grid;
-    place-items:center;
-    text-align:center;
-    line-height:1.1;
-    padding:0 6px;
-    box-sizing:border-box;
-    overflow:hidden;
+    display:grid; place-items:center;
+    text-align:center; line-height:1.1;
+    padding:0 6px; box-sizing:border-box; overflow:hidden;
   }
 
-  /* Page controls */
-  .controls {
-    display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;
-  }
-
-  .btn {
-    background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer;
-  }
+  /* Controls */
+  .controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .btn { background:#000; color:#fff; border:1px solid #000; padding:8px 12px; cursor:pointer; }
   .btn:hover { color:orange; }
-
   .hint { font-size:12px; opacity:.9; text-align:center; }
-  input[type="file"] { display:none; }
-  label[for="file"] { cursor:pointer; text-decoration:underline; }
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="tile" aria-label="White square with icon area and title">
       <div class="icon-box">
-        <!-- Start with a harmless placeholder; replace via upload -->
-        <img id="icon" alt="Icon preview" src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 160'><rect x='1' y='1' width='298' height='158' rx='6' ry='6' fill='none' stroke='black' stroke-width='2'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18'>UPLOAD PNG</text></svg>">
+        <img id="icon" alt="Icon preview"
+             src="data:image/svg+xml;utf8,<?xml version='1.0' encoding='UTF-8'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 160'><rect x='1' y='1' width='298' height='158' rx='6' ry='6' fill='none' stroke='black' stroke-width='2'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='18'>LOAD A SAMPLE</text></svg>">
       </div>
       <div class="title" id="title">PROJECT TITLE</div>
     </div>
 
     <div class="controls">
-      <label for="file" class="btn">Upload PNG</label>
-      <input id="file" type="file" accept="image/png" />
-      <button class="btn" id="wide">Load Wide Sample</button>
-      <button class="btn" id="tall">Load Tall Sample</button>
-      <button class="btn" id="square">Load Square Sample</button>
+      <button class="btn" id="wide">Wide</button>
+      <button class="btn" id="tall">Tall</button>
+      <button class="btn" id="square">Square</button>
     </div>
 
     <div class="hint">
-      Rules enforced here:<br>
-      – PNG always fits fully inside the white square (no overhang).<br>
-      – PNG never overlaps the title band at the bottom.<br>
-      – Aspect ratio preserved; scaling uses <code>object-fit: contain</code> + <code>max-width/height:100%</code>.
+      The PNG/SVG always fits entirely in the white square, above the title band, with no overlap.
     </div>
   </div>
 
 <script>
-  const fileInput = document.getElementById('file');
-  const iconImg   = document.getElementById('icon');
-  const titleEl   = document.getElementById('title');
+  const iconImg = document.getElementById('icon');
 
-  // Load a user PNG
-  fileInput.addEventListener('change', (e)=>{
-    const f = e.target.files?.[0];
-    if (!f) return;
-    const url = URL.createObjectURL(f);
-    iconImg.src = url;
-    // Keep title text; you can edit it here if you like:
-    // titleEl.textContent = f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ');
-  });
-
-  // Handy SVG samples to prove wide, tall, square all fit.
   const SAMPLES = {
     wide: "data:image/svg+xml;utf8," + encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 220'>
