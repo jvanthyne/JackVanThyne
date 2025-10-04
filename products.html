@@ -9,7 +9,7 @@
 
 <style>
   :root{
-    --bg:#747a3b;           /* updated background */
+    --bg:#5a6155;           /* updated background */
     --fg:#000000;
     --accent:orange;
 
@@ -23,8 +23,9 @@
 
     --tile:190px;           /* min width of square tiles */
     --pad:8px;              /* inner pad */
-    --pad-bot:4px;          /* tighter bottom inset to seat title closer to bottom */
-    --title-band:44px;      /* fixed title band height */
+    --pad-bot:4px;          /* seats title very close to bottom */
+    --title-band:44px;      /* fixed title band */
+    --icon-max:72%;         /* << make icons smaller inside icon zone */
 
     --carousel-h:380px;
     --img-inset:14px;
@@ -101,7 +102,7 @@
   }
   .left-col, .right-col{ flex:1; min-width:0; }
 
-  /* GRID — true squares via ::before; even gaps */
+  /* GRID — true squares, even gaps */
   .grid{
     height:100%; overflow:auto; scrollbar-width:none;
     display:grid; gap:var(--gap);
@@ -116,34 +117,35 @@
     transition:background .15s ease, color .15s ease, border-color .15s ease;
   }
   .tile::before{
-    content:"";
-    display:block; padding-top:100%; /* perfect square footprint */
+    content:""; display:block; padding-top:100%; /* perfect square footprint */
   }
   .tile:hover{ background:#000; color:#fff; }
 
-  /* Inner square layout: icon area + bottom title band */
+  /* Inner square: icon area + bottom title band */
   .tile-inner{
     position:absolute; left:var(--pad); right:var(--pad); top:var(--pad); bottom:var(--pad-bot);
     display:grid; grid-template-rows: 1fr var(--title-band); gap:6px;
   }
-  /* ICON boundary (fits entire top area). Image will fully fit inside without cropping */
+
+  /* ICON boundary — center the PNG and keep it SMALLER than the zone */
   .icon-box{
     width:100%; height:100%;
     display:grid; place-items:center;
   }
   .icon-box img{
-    width:100%; height:100%;
-    object-fit:contain;          /* scale to fully fit within icon boundary */
-    image-rendering:auto;
+    width:auto; height:auto;
+    max-width:var(--icon-max);     /* << key: limit size */
+    max-height:var(--icon-max);    /* << key: limit size */
+    object-fit:contain;            /* protect aspect ratio */
     background:transparent;
     filter:none; transition:filter .15s ease;
+    display:block;
   }
   .tile:hover .icon-box img{
-    /* invert transparent PNG to white against black hover tile */
     filter:invert(1) brightness(2) saturate(0);
   }
 
-  /* Title band sits slightly above the bottom edge (controlled by --pad-bot) */
+  /* Title band very near the bottom edge */
   .tile-title{
     text-align:center; line-height:1.1;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
@@ -403,7 +405,7 @@ const driveLink  = document.getElementById('driveLink');
 /* Helpers */
 const money = n => '$' + n.toFixed(2);
 
-/* GRID render — icon area (object-fit:contain) + title band */
+/* GRID render — scaled-down icon (max 72% of icon area) + title band */
 function renderGrid(){
   grid.innerHTML = '';
   const items = PRODUCTS.filter(p => filter === 'all' ? true : p.cat === filter);
