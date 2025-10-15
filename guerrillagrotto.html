@@ -31,11 +31,13 @@
     .something{
       color:#e6e6e6;
       cursor:pointer;
-      transition:color .12s ease, text-shadow .12s ease;
+      transition:color .12s ease;
       outline:none;
     }
-    /* JS sets inline color/textShadow on hover; keep focus ring for a11y */
-    .something:focus-visible{outline:2px dashed #fff;outline-offset:2px}
+    .something:hover{color:#ff2b2b}          /* red hover */
+    .something:focus-visible{
+      outline:2px dashed #ff2b2b;outline-offset:2px; /* keep keyboard access */
+    }
 
     /* overlays for win-sequence */
     .flash{
@@ -45,7 +47,6 @@
     .flash.on{opacity:1}
     .crt{
       position:fixed;inset:0;display:none;background:#fff;transform-origin:center;
-      filter:blur(.2px);
     }
     .crt.on{display:block;animation:tvOff 600ms ease-in forwards}
     @keyframes tvOff{
@@ -129,33 +130,6 @@
       };
       tick();
     }
-
-    /* random bright hover color for "something" words */
-    function randomBright() {
-      const h = Math.floor(Math.random()*360);
-      const s = 92;  // bright
-      const l = 55;  // readable on black
-      return `hsl(${h} ${s}% ${l}%)`;
-    }
-    function wireRandomHover(el){
-      el.addEventListener('mouseenter', ()=>{
-        const c = randomBright();
-        el.style.color = c;
-        el.style.textShadow = `0 0 6px ${c}`;
-      });
-      el.addEventListener('mouseleave', ()=>{
-        el.style.color = '#e6e6e6';
-        el.style.textShadow = 'none';
-      });
-      // For touch, give a brief flash of color
-      el.addEventListener('touchstart', ()=>{
-        const c = randomBright();
-        el.style.color = c;
-        el.style.textShadow = `0 0 6px ${c}`;
-        setTimeout(()=>{ el.style.color='#e6e6e6'; el.style.textShadow='none'; }, 250);
-      }, {passive:true});
-    }
-    document.querySelectorAll('.something').forEach(wireRandomHover);
 
     /* MAKE: toggle something <-> anything (glitching to the new word) */
     (function(){
