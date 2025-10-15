@@ -2,249 +2,190 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>guerrilla grotto</title>
   <link rel="icon" type="image/png" href="guerrillagrottowine.png" />
-
   <style>
-    /* Reset + base */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      background: #000;
-      color: #fff;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      display: grid;
-      place-items: center;
-      overflow: hidden; /* no scrolling */
+    /* base */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      background:#000;color:#e6e6e6;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      display:grid;place-items:center;overflow:hidden;
     }
-
-    /* Layout */
-    .wrap {
-      text-align: center;
-      line-height: 1.35;
-      user-select: none;
-      padding: 4vh 5vw;
-      width: min(900px, 100%);
+    .wrap{width:min(1000px,92vw);padding:4vh 4vw;text-align:left}
+    .code-line{
+      font-size:clamp(10px,2.4vw,18px);
+      line-height:1.5;
+      white-space:nowrap;
+      user-select:none;
     }
+    .code-line + .code-line{margin-top:2.6vh}
 
-    /* Code-like lines */
-    .code-line {
-      display: inline-flex;
-      align-items: baseline;
-      gap: .5ch;
-      font-size: clamp(18px, 7vw, 48px);
-      text-transform: lowercase;
-      letter-spacing: .02em;
-      cursor: pointer;
-      transition: color .15s ease;
-      white-space: nowrap;
+    /* "syntax highlighting" */
+    .kw{color:#7aa2f7}          /* const, return */
+    .fn{color:#c0caf5}          /* function name */
+    .str{color:#9ece6a}         /* "strings" */
+    .op{color:#6b7280}          /* operators , + => { } ( ) ; */
+    .id{color:#e5e7eb}          /* identifiers/vars */
+    .cm{color:#6b7280}          /* comments */
+
+    /* interactive ONLY on the word "something" */
+    .something{
+      color:#e5e7eb;
+      cursor:pointer;
+      transition:color .12s ease, text-shadow .12s ease;
+      outline:none;
     }
-    .code-line + .code-line { margin-top: 3vh; }
+    .something:hover{color:#ff2b2b;text-shadow:0 0 6px rgba(255,43,43,.45)}
+    .something:focus-visible{outline:2px dashed #ff2b2b;outline-offset:2px}
 
-    .code-line .tag { color: #8b8b8b; }       /* angle bracket “code” vibe */
-    .code-line .name { color: currentColor; } /* the part that changes */
-    .code-line:hover { color: #ff2b2b; }      /* hover => red */
-
-    /* Subtle focus outline for accessibility (keyboard users) */
-    .code-line:focus-visible {
-      outline: 2px dashed #ff2b2b;
-      outline-offset: .25rem;
+    /* full-screen flashes + glitch overlay */
+    .flash{
+      position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;
+      transition:opacity 90ms linear;
     }
-
-    /* Fullscreen glitch layer for WIN */
-    .glitch-screen {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: #000;
-      opacity: 0;
-      mix-blend-mode: normal;
-    }
-
-    @keyframes crtShake {
-      0%   { transform: translate(0,0)    skewX(0deg);         }
-      20%  { transform: translate(3px,-2px) skewX(2deg);       }
-      40%  { transform: translate(-3px,2px) skewX(-2deg);      }
-      60%  { transform: translate(2px,3px)  skewX(1deg);       }
-      80%  { transform: translate(-2px,-3px) skewX(-1deg);     }
-      100% { transform: translate(0,0)    skewX(0deg);         }
-    }
-
-    @keyframes scanline {
-      0%   { background-position: 0 -100vh; }
-      100% { background-position: 0 100vh;  }
-    }
-
-    .glitch-on {
-      opacity: 1 !important;
-      animation: crtShake 160ms steps(2, end) 6,
-                 scanline 480ms linear 1;
-      background-image:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.04) 0 2px,
-          rgba(0,0,0,0) 2px 4px
-        );
-    }
-
-    /* Mobile tweaks: keep things tidy on very small screens */
-    @media (max-width: 380px) {
-      .code-line { font-size: clamp(16px, 8vw, 22px); }
-    }
+    .flash.on{opacity:1}
   </style>
 </head>
-
 <body>
   <div class="wrap" aria-live="polite">
-    <!-- make something -->
-    <span class="code-line" id="make" role="button" tabindex="0" aria-label="make something">
-      <span class="tag">&lt;button&gt;</span>
-      <span class="name">make something</span>
-      <span class="tag">&lt;/button&gt;</span>
-    </span>
+    <!-- const make = () => { return "make " + something; } -->
+    <div class="code-line" id="line-make" data-glitchable="true">
+      <span class="kw">const</span> <span class="id">make</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+      <span class="kw">return</span> <span class="str">"make "</span> <span class="op">+</span>
+      <span id="make-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
+      <span class="op">}</span>
+    </div>
 
-    <!-- submit something -->
-    <span class="code-line" id="submit" role="button" tabindex="0" aria-label="submit something">
-      <span class="tag">&lt;button&gt;</span>
-      <span class="name">submit something</span>
-      <span class="tag">&lt;/button&gt;</span>
-    </span>
+    <!-- const submit = () => { return "submit " + something; } -->
+    <div class="code-line" id="line-submit" data-glitchable="true">
+      <span class="kw">const</span> <span class="id">submit</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+      <span class="kw">return</span> <span class="str">"submit "</span> <span class="op">+</span>
+      <span id="submit-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
+      <span class="op">}</span>
+    </div>
 
-    <!-- win something -->
-    <span class="code-line" id="win" role="button" tabindex="0" aria-label="win something">
-      <span class="tag">&lt;button&gt;</span>
-      <span class="name">win something</span>
-      <span class="tag">&lt;/button&gt;</span>
-    </span>
+    <!-- const win = () => { return "win " + something; } -->
+    <div class="code-line" id="line-win" data-glitchable="true">
+      <span class="kw">const</span> <span class="id">win</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
+      <span class="kw">return</span> <span class="str">"win "</span> <span class="op">+</span>
+      <span id="win-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
+      <span class="op">}</span>
+    </div>
+
+    <!-- // accepted files: mp3, mp4, png -->
+    <div class="code-line cm" data-glitchable="true">// accepted files: mp3, mp4, png</div>
   </div>
 
-  <!-- fullscreen glitch overlay -->
-  <div class="glitch-screen" id="glitch"></div>
+  <div class="flash" id="flash"></div>
 
   <script>
-    /* Utility: text scramble/glitch to target phrase */
+    /* letter-by-letter scrambler */
     class Scrambler {
-      constructor(el) {
-        this.el = el;
-        this.chars = "!<>-_\\/[]{}—=+*^?#________abcdefghijklmnopqrstuvwxyz";
-        this.frameRequest = null;
-        this.queue = [];
-        this.frame = 0;
+      constructor(el, charset='!<>-_\\/[]{}—=+*^?#abcdefghijklmnopqrstuvwxyz0123456789'){
+        this.el = el; this.charset = charset; this.frame = 0; this.req = null; this.queue = [];
       }
-      setText(newText) {
-        const oldText = this.el.textContent;
-        const length = Math.max(oldText.length, newText.length);
+      to(text) {
+        const from = this.el.textContent;
+        const len = Math.max(from.length, text.length);
         this.queue = [];
-        for (let i = 0; i < length; i++) {
-          const from = oldText[i] || "";
-          const to = newText[i] || "";
-          const start = Math.floor(Math.random() * 8);
-          const end = start + Math.floor(Math.random() * 8) + 6;
-          this.queue.push({ from, to, start, end, char: "" });
+        for (let i=0;i<len;i++){
+          const a = from[i] || '';
+          const b = text[i] || '';
+          const start = Math.floor(Math.random()*6);
+          const end   = start + 6 + Math.floor(Math.random()*6);
+          this.queue.push({a,b,start,end,ch:''});
         }
-        cancelAnimationFrame(this.frameRequest);
-        this.frame = 0;
-        return new Promise(resolve => {
-          const update = () => {
-            let output = "";
-            let complete = 0;
-            for (let i = 0, n = this.queue.length; i < n; i++) {
-              let { from, to, start, end, char } = this.queue[i];
-              if (this.frame >= end) {
-                complete++;
-                output += to;
-              } else if (this.frame >= start) {
-                if (!char || Math.random() < 0.28) {
-                  char = this.randomChar();
-                  this.queue[i].char = char;
-                }
-                output += char;
-              } else {
-                output += from;
-              }
+        cancelAnimationFrame(this.req); this.frame=0;
+        return new Promise(res=>{
+          const step = ()=>{
+            let out='', done=0;
+            for (let i=0;i<this.queue.length;i++){
+              let q=this.queue[i];
+              if (this.frame >= q.end){ done++; out += q.b; }
+              else if (this.frame >= q.start){
+                if (!q.ch || Math.random()<0.3){ q.ch = this.charset[Math.floor(Math.random()*this.charset.length)]; }
+                out += q.ch;
+              } else out += q.a;
             }
-            this.el.textContent = output;
-            if (complete === this.queue.length) {
-              resolve();
-            } else {
-              this.frame++;
-              this.frameRequest = requestAnimationFrame(update);
-            }
+            this.el.textContent = out;
+            if (done === this.queue.length) res(); else { this.frame++; this.req=requestAnimationFrame(step); }
           };
-          update();
+          step();
         });
-      }
-      randomChar() {
-        return this.chars[Math.floor(Math.random() * this.chars.length)];
       }
     }
 
-    // MAKE: toggle “something” <-> “anything” on click with scramble
-    (function setupMake() {
-      const line = document.querySelector('#make .name');
-      const scrambler = new Scrambler(line);
-      let toAnything = true;
-      const toggle = () => {
-        const next = toAnything ? 'make anything' : 'make something';
-        toAnything = !toAnything;
-        scrambler.setText(next);
+    /* random static-style glitch (no convergence) for an element */
+    function glitchNoise(el, duration=400){
+      const original = el.textContent;
+      const chars = '!<>-_\\/[]{}—=+*^?#abcdefghijklmnopqrstuvwxyz0123456789';
+      let t = 0;
+      const tick = ()=>{
+        const len = original.length;
+        let out = '';
+        for (let i=0;i<len;i++){
+          out += Math.random()<0.5 ? original[i] : chars[Math.floor(Math.random()*chars.length)];
+        }
+        el.textContent = out;
+        t += 30;
+        if (t < duration) setTimeout(tick, 30);
+        else el.textContent = original; // restore (will soon flash/close on WIN)
       };
-      document.getElementById('make').addEventListener('click', toggle);
-      document.getElementById('make').addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-      });
+      tick();
+    }
+
+    /* MAKE: toggle something <-> anything on the word only */
+    (function(){
+      const tgt = document.getElementById('make-something');
+      const scr = new Scrambler(tgt);
+      let any = false;
+      const toggle = ()=>{ any=!any; scr.to(any?'anything':'something'); };
+      tgt.addEventListener('click', toggle);
+      tgt.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
     })();
 
-    // SUBMIT: hover red (handled in CSS) + open draft email (mailto)
-    (function setupSubmit() {
-      const el = document.getElementById('submit');
-      const go = () => {
-        const email = 'guerrillagrotto@gmail.com'; // corrected address
-        const subject = encodeURIComponent('submission');
-        const body = encodeURIComponent('accepted file types: mp3, mp4, png');
-        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    /* SUBMIT: open a draft email (mailto), hover/click only on "something" */
+    (function(){
+      const tgt = document.getElementById('submit-something');
+      const draft = ()=>{
+        const email='guerrillagrotto@gmail.com';        /* corrected address */
+        const subject=encodeURIComponent('submission');
+        const body=encodeURIComponent('accepted file types: mp3, mp4, png');
+        window.location.href=`mailto:${email}?subject=${subject}&body=${body}`;
       };
-      el.addEventListener('click', go);
-      el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
-      });
+      tgt.addEventListener('click', draft);
+      tgt.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();draft();} });
     })();
 
-    // WIN: hover red + screen glitches, flash white then black, then attempt to close
-    (function setupWin() {
-      const el = document.getElementById('win');
-      const overlay = document.getElementById('glitch');
+    /* WIN: clicking the word "something" glitches ALL text, white flash -> black -> close */
+    (function(){
+      const winWord = document.getElementById('win-something');
+      const flash = document.getElementById('flash');
 
-      function flashSequence() {
-        // Step 1: overlay glitch
-        overlay.classList.add('glitch-on');
+      function glitchAllThenExit(){
+        // 1) glitch all visible code lines
+        const lines = Array.from(document.querySelectorAll('[data-glitchable="true"]'));
+        lines.forEach(el => glitchNoise(el, 600));
 
-        // Step 2: white flash -> black flash
-        setTimeout(() => {
-          document.body.style.transition = 'background-color 80ms linear';
-          document.body.style.backgroundColor = '#fff';
-          setTimeout(() => {
-            document.body.style.backgroundColor = '#000';
-            overlay.classList.remove('glitch-on');
-
-            // Step 3: try to close (may be blocked if not user-opened)
-            setTimeout(() => {
-              window.close();
-            }, 140);
+        // 2) after a beat, white flash
+        setTimeout(()=>{
+          flash.classList.add('on');                       // white
+          // 3) snap to black
+          setTimeout(()=>{
+            flash.classList.remove('on');                  // remove white
+            document.body.style.background='#000';         // ensure black
+            // 4) attempt to close
+            setTimeout(()=>{ window.close(); }, 160);
           }, 140);
-        }, 520);
+        }, 620);
       }
 
-      el.addEventListener('click', flashSequence);
-      el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flashSequence(); }
-      });
+      winWord.addEventListener('click', glitchAllThenExit);
+      winWord.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();glitchAllThenExit();} });
     })();
   </script>
 </body>
 </html>
-
