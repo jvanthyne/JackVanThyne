@@ -6,34 +6,33 @@
   <title>guerrilla grotto</title>
   <link rel="icon" type="image/png" href="guerrillagrottowine.png" />
   <style>
-    /* base */
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{
       background:#000;color:#e6e6e6;
       font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-      display:grid;place-items:center;overflow:hidden;
+      display:grid;place-items:center;overflow:hidden; /* no scrolling */
     }
-    .wrap{width:min(1000px,92vw);padding:4vh 4vw;text-align:left}
-    .code-line{
-      font-size:clamp(10px,2.4vw,18px);
-      line-height:1.5;
-      white-space:nowrap;
+
+    .wrap{
+      display:flex;flex-direction:column;align-items:center;gap:2.4vh;
+      padding:6vh 6vw;text-align:center;
+    }
+
+    /* text size: smaller, responsive */
+    .line{
+      font-size:clamp(14px,3.5vw,22px);
+      letter-spacing:.02em;
+      text-transform:lowercase;
       user-select:none;
+      white-space:nowrap;
     }
-    .code-line + .code-line{margin-top:2.6vh}
 
-    /* "syntax highlighting" */
-    .kw{color:#7aa2f7}          /* const, return */
-    .fn{color:#c0caf5}          /* function name */
-    .str{color:#9ece6a}         /* "strings" */
-    .op{color:#6b7280}          /* operators , + => { } ( ) ; */
-    .id{color:#e5e7eb}          /* identifiers/vars */
-    .cm{color:#6b7280}          /* comments */
-
-    /* interactive ONLY on the word "something" */
+    /* code-ish look with subtle syntax color accents */
+    .kw{color:#7aa2f7}
+    .txt{color:#e6e6e6}
     .something{
-      color:#e5e7eb;
+      color:#e6e6e6;
       cursor:pointer;
       transition:color .12s ease, text-shadow .12s ease;
       outline:none;
@@ -41,45 +40,48 @@
     .something:hover{color:#ff2b2b;text-shadow:0 0 6px rgba(255,43,43,.45)}
     .something:focus-visible{outline:2px dashed #ff2b2b;outline-offset:2px}
 
-    /* full-screen flashes + glitch overlay */
+    /* overlays */
     .flash{
       position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;
-      transition:opacity 90ms linear;
+      transition:opacity 120ms linear;
     }
     .flash.on{opacity:1}
+
+    .crt{
+      position:fixed;inset:0;display:none;
+      background:#fff; /* starts white, collapses */
+      transform-origin:center center;
+      filter:blur(.2px);
+    }
+    .crt.on{display:block;animation:tvOff 600ms ease-in forwards}
+
+    @keyframes tvOff{
+      0%   {transform:scaleY(1); opacity:1;}
+      75%  {transform:scaleY(0.02); opacity:1; box-shadow:0 0 18px 6px rgba(255,255,255,.9) inset, 0 0 24px rgba(255,255,255,.9);}
+      100% {transform:scaleY(0); opacity:0;}
+    }
+
+    /* tiny screens still tidy */
+    @media (max-width:380px){
+      .line{font-size:clamp(12px,4.2vw,18px)}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap" aria-live="polite">
-    <!-- const make = () => { return "make " + something; } -->
-    <div class="code-line" id="line-make" data-glitchable="true">
-      <span class="kw">const</span> <span class="id">make</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
-      <span class="kw">return</span> <span class="str">"make "</span> <span class="op">+</span>
-      <span id="make-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
-      <span class="op">}</span>
+  <div class="wrap" id="content">
+    <div class="line">
+      <span class="kw"></span><span class="txt">make </span><span id="make" class="something" role="button" tabindex="0">something</span>
     </div>
-
-    <!-- const submit = () => { return "submit " + something; } -->
-    <div class="code-line" id="line-submit" data-glitchable="true">
-      <span class="kw">const</span> <span class="id">submit</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
-      <span class="kw">return</span> <span class="str">"submit "</span> <span class="op">+</span>
-      <span id="submit-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
-      <span class="op">}</span>
+    <div class="line">
+      <span class="kw"></span><span class="txt">submit </span><span id="submit" class="something" role="button" tabindex="0">something</span>
     </div>
-
-    <!-- const win = () => { return "win " + something; } -->
-    <div class="code-line" id="line-win" data-glitchable="true">
-      <span class="kw">const</span> <span class="id">win</span> <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> <span class="op">{</span>
-      <span class="kw">return</span> <span class="str">"win "</span> <span class="op">+</span>
-      <span id="win-something" class="something" role="button" tabindex="0">something</span><span class="op">;</span>
-      <span class="op">}</span>
+    <div class="line">
+      <span class="kw"></span><span class="txt">win </span><span id="win" class="something" role="button" tabindex="0">something</span>
     </div>
-
-    <!-- // accepted files: mp3, mp4, png -->
-    <div class="code-line cm" data-glitchable="true">// accepted files: mp3, mp4, png</div>
   </div>
 
   <div class="flash" id="flash"></div>
+  <div class="crt" id="crt"></div>
 
   <script>
     /* letter-by-letter scrambler */
@@ -118,73 +120,89 @@
       }
     }
 
-    /* random static-style glitch (no convergence) for an element */
-    function glitchNoise(el, duration=400){
-      const original = el.textContent;
-      const chars = '!<>-_\\/[]{}—=+*^?#abcdefghijklmnopqrstuvwxyz0123456789';
-      let t = 0;
-      const tick = ()=>{
-        const len = original.length;
-        let out = '';
-        for (let i=0;i<len;i++){
-          out += Math.random()<0.5 ? original[i] : chars[Math.floor(Math.random()*chars.length)];
+    /* noise glitch (scramble but don't converge) */
+    function glitchNoiseOnce(el, duration=420){
+      const base = el.textContent;
+      const chars='!<>-_\\/[]{}—=+*^?#abcdefghijklmnopqrstuvwxyz0123456789';
+      let t=0;
+      const hop=30;
+      const tick=()=>{
+        let out='';
+        for (let i=0;i<base.length;i++){
+          out += Math.random()<0.55 ? chars[Math.floor(Math.random()*chars.length)] : base[i];
         }
         el.textContent = out;
-        t += 30;
-        if (t < duration) setTimeout(tick, 30);
-        else el.textContent = original; // restore (will soon flash/close on WIN)
+        t+=hop;
+        if (t<duration) setTimeout(tick, hop);
+        else el.textContent = base;
       };
       tick();
     }
 
-    /* MAKE: toggle something <-> anything on the word only */
+    /* MAKE: toggle something <-> anything */
     (function(){
-      const tgt = document.getElementById('make-something');
-      const scr = new Scrambler(tgt);
-      let any = false;
-      const toggle = ()=>{ any=!any; scr.to(any?'anything':'something'); };
-      tgt.addEventListener('click', toggle);
-      tgt.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+      const el = document.getElementById('make');
+      const scr = new Scrambler(el);
+      let any=false;
+      const toggle=()=>{ any=!any; scr.to(any?'anything':'something'); };
+      el.addEventListener('click', toggle);
+      el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
     })();
 
-    /* SUBMIT: open a draft email (mailto), hover/click only on "something" */
+    /* SUBMIT: open mailto draft */
     (function(){
-      const tgt = document.getElementById('submit-something');
-      const draft = ()=>{
-        const email='guerrillagrotto@gmail.com';        /* corrected address */
+      const el = document.getElementById('submit');
+      const go=()=>{
+        const email='guerrillagrotto@gmail.com';
         const subject=encodeURIComponent('submission');
         const body=encodeURIComponent('accepted file types: mp3, mp4, png');
         window.location.href=`mailto:${email}?subject=${subject}&body=${body}`;
       };
-      tgt.addEventListener('click', draft);
-      tgt.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();draft();} });
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
     })();
 
-    /* WIN: clicking the word "something" glitches ALL text, white flash -> black -> close */
+    /* WIN: each line’s text individually glitches → white flash → CRT off → empty black page */
     (function(){
-      const winWord = document.getElementById('win-something');
+      const winWord = document.getElementById('win');
       const flash = document.getElementById('flash');
+      const crt = document.getElementById('crt');
+      const content = document.getElementById('content');
 
-      function glitchAllThenExit(){
-        // 1) glitch all visible code lines
-        const lines = Array.from(document.querySelectorAll('[data-glitchable="true"]'));
-        lines.forEach(el => glitchNoise(el, 600));
-
-        // 2) after a beat, white flash
-        setTimeout(()=>{
-          flash.classList.add('on');                       // white
-          // 3) snap to black
+      function glitchAllIndividually(){
+        const nodes = Array.from(content.querySelectorAll('.line'));
+        nodes.forEach((line, idx)=>{
+          const spans = Array.from(line.querySelectorAll('.txt, .something'));
           setTimeout(()=>{
-            flash.classList.remove('on');                  // remove white
-            document.body.style.background='#000';         // ensure black
-            // 4) attempt to close
-            setTimeout(()=>{ window.close(); }, 160);
-          }, 140);
-        }, 620);
+            spans.forEach(s => glitchNoiseOnce(s, 500));
+          }, idx * 120); // stagger each line a bit
+        });
       }
 
-      winWord.addEventListener('click', glitchAllThenExit);
-      winWord.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();glitchAllThenExit();} });
+      function sequence(){
+        glitchAllIndividually();
+
+        // white flash
+        setTimeout(()=>{
+          flash.classList.add('on');
+
+          // CRT collapse (analog TV turn-off)
+          setTimeout(()=>{
+            flash.classList.remove('on');
+            crt.classList.add('on');
+
+            crt.addEventListener('animationend', ()=>{
+              // clear everything to pure black
+              document.body.style.background='#000';
+              document.body.innerHTML=''; // nothing on the page
+            }, { once:true });
+
+          }, 180); // after quick flash
+        }, 650); // after glitches finish
+      }
+
+      winWord.addEventListener('click', sequence);
+      winWord.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();sequence();} });
     })();
   </script>
 </body>
