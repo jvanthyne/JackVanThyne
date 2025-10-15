@@ -19,7 +19,6 @@
       padding:6vh 6vw;text-align:center;
     }
 
-    /* text size: smaller, responsive */
     .line{
       font-size:clamp(14px,3.5vw,22px);
       letter-spacing:.02em;
@@ -28,40 +27,33 @@
       white-space:nowrap;
     }
 
-    /* code-ish look with subtle syntax color accents */
-    .kw{color:#7aa2f7}
-    .txt{color:#e6e6e6}
+    /* interactive ONLY on the word "something" */
     .something{
       color:#e6e6e6;
       cursor:pointer;
       transition:color .12s ease, text-shadow .12s ease;
       outline:none;
     }
-    .something:hover{color:#ff2b2b;text-shadow:0 0 6px rgba(255,43,43,.45)}
-    .something:focus-visible{outline:2px dashed #ff2b2b;outline-offset:2px}
+    /* JS sets inline color/textShadow on hover; keep focus ring for a11y */
+    .something:focus-visible{outline:2px dashed #fff;outline-offset:2px}
 
-    /* overlays */
+    /* overlays for win-sequence */
     .flash{
       position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;
       transition:opacity 120ms linear;
     }
     .flash.on{opacity:1}
-
     .crt{
-      position:fixed;inset:0;display:none;
-      background:#fff; /* starts white, collapses */
-      transform-origin:center center;
+      position:fixed;inset:0;display:none;background:#fff;transform-origin:center;
       filter:blur(.2px);
     }
     .crt.on{display:block;animation:tvOff 600ms ease-in forwards}
-
     @keyframes tvOff{
       0%   {transform:scaleY(1); opacity:1;}
       75%  {transform:scaleY(0.02); opacity:1; box-shadow:0 0 18px 6px rgba(255,255,255,.9) inset, 0 0 24px rgba(255,255,255,.9);}
       100% {transform:scaleY(0); opacity:0;}
     }
 
-    /* tiny screens still tidy */
     @media (max-width:380px){
       .line{font-size:clamp(12px,4.2vw,18px)}
     }
@@ -70,13 +62,13 @@
 <body>
   <div class="wrap" id="content">
     <div class="line">
-      <span class="kw"></span><span class="txt">make </span><span id="make" class="something" role="button" tabindex="0">something</span>
+      <span class="txt">make </span><span id="make" class="something" role="button" tabindex="0">something</span>
     </div>
     <div class="line">
-      <span class="kw"></span><span class="txt">submit </span><span id="submit" class="something" role="button" tabindex="0">something</span>
+      <span class="txt">submit </span><span id="submit" class="something" role="button" tabindex="0">something</span>
     </div>
     <div class="line">
-      <span class="kw"></span><span class="txt">win </span><span id="win" class="something" role="button" tabindex="0">something</span>
+      <span class="txt">win </span><span id="win" class="something" role="button" tabindex="0">something</span>
     </div>
   </div>
 
@@ -120,12 +112,11 @@
       }
     }
 
-    /* noise glitch (scramble but don't converge) */
+    /* quick noise glitch (scramble but don't converge) */
     function glitchNoiseOnce(el, duration=420){
       const base = el.textContent;
       const chars='!<>-_\\/[]{}—=+*^?#abcdefghijklmnopqrstuvwxyz0123456789';
-      let t=0;
-      const hop=30;
+      let t=0; const hop=30;
       const tick=()=>{
         let out='';
         for (let i=0;i<base.length;i++){
@@ -139,7 +130,34 @@
       tick();
     }
 
-    /* MAKE: toggle something <-> anything */
+    /* random bright hover color for "something" words */
+    function randomBright() {
+      const h = Math.floor(Math.random()*360);
+      const s = 92;  // bright
+      const l = 55;  // readable on black
+      return `hsl(${h} ${s}% ${l}%)`;
+    }
+    function wireRandomHover(el){
+      el.addEventListener('mouseenter', ()=>{
+        const c = randomBright();
+        el.style.color = c;
+        el.style.textShadow = `0 0 6px ${c}`;
+      });
+      el.addEventListener('mouseleave', ()=>{
+        el.style.color = '#e6e6e6';
+        el.style.textShadow = 'none';
+      });
+      // For touch, give a brief flash of color
+      el.addEventListener('touchstart', ()=>{
+        const c = randomBright();
+        el.style.color = c;
+        el.style.textShadow = `0 0 6px ${c}`;
+        setTimeout(()=>{ el.style.color='#e6e6e6'; el.style.textShadow='none'; }, 250);
+      }, {passive:true});
+    }
+    document.querySelectorAll('.something').forEach(wireRandomHover);
+
+    /* MAKE: toggle something <-> anything (glitching to the new word) */
     (function(){
       const el = document.getElementById('make');
       const scr = new Scrambler(el);
@@ -149,20 +167,23 @@
       el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
     })();
 
-    /* SUBMIT: open mailto draft */
+    /* SUBMIT: first glitch the word, then open mailto draft */
     (function(){
       const el = document.getElementById('submit');
       const go=()=>{
-        const email='guerrillagrotto@gmail.com';
-        const subject=encodeURIComponent('submission');
-        const body=encodeURIComponent('accepted file types: mp3, mp4, png');
-        window.location.href=`mailto:${email}?subject=${subject}&body=${body}`;
+        glitchNoiseOnce(el, 420);                 // quick glitch before draft
+        setTimeout(()=>{
+          const email='guerrillagrotto@gmail.com';
+          const subject=encodeURIComponent('submission');
+          const body=encodeURIComponent('accepted file types: mp3, mp4, png');
+          window.location.href=`mailto:${email}?subject=${subject}&body=${body}`;
+        }, 440);
       };
       el.addEventListener('click', go);
       el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();go();} });
     })();
 
-    /* WIN: each line’s text individually glitches → white flash → CRT off → empty black page */
+    /* WIN: individually glitch all text -> white flash -> analog TV off -> empty black page */
     (function(){
       const winWord = document.getElementById('win');
       const flash = document.getElementById('flash');
@@ -170,12 +191,10 @@
       const content = document.getElementById('content');
 
       function glitchAllIndividually(){
-        const nodes = Array.from(content.querySelectorAll('.line'));
-        nodes.forEach((line, idx)=>{
+        const lines = Array.from(content.querySelectorAll('.line'));
+        lines.forEach((line, idx)=>{
           const spans = Array.from(line.querySelectorAll('.txt, .something'));
-          setTimeout(()=>{
-            spans.forEach(s => glitchNoiseOnce(s, 500));
-          }, idx * 120); // stagger each line a bit
+          setTimeout(()=>{ spans.forEach(s => glitchNoiseOnce(s, 500)); }, idx * 120);
         });
       }
 
@@ -186,19 +205,16 @@
         setTimeout(()=>{
           flash.classList.add('on');
 
-          // CRT collapse (analog TV turn-off)
+          // CRT collapse to black, then blank page
           setTimeout(()=>{
             flash.classList.remove('on');
             crt.classList.add('on');
-
             crt.addEventListener('animationend', ()=>{
-              // clear everything to pure black
               document.body.style.background='#000';
-              document.body.innerHTML=''; // nothing on the page
+              document.body.innerHTML=''; // empty black page
             }, { once:true });
-
-          }, 180); // after quick flash
-        }, 650); // after glitches finish
+          }, 180);
+        }, 650);
       }
 
       winWord.addEventListener('click', sequence);
@@ -207,5 +223,3 @@
   </script>
 </body>
 </html>
-
-
