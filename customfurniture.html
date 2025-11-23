@@ -207,7 +207,7 @@
       padding: 2px 4px;
       border: 1px solid #000;
       background: #f0f0f0;
-      min-width: 120px;
+      min-width: 160px;
       max-width: 50vw;
     }
 
@@ -355,11 +355,11 @@
       </p>
       <hr>
       <p class="small-text">
-        for a project with a code from a past piece or proposal, enter the code here and click
-        <strong>reach out</strong> to open a project window:
+        if a project has an associated code, it can be entered here. clicking
+        <strong>reach out</strong> will open a project window:
       </p>
       <div class="input-row">
-        <input type="text" id="projectCodeInput" placeholder="e.g. TABLE01, CHAIR01, LIGHT01">
+        <input type="text" id="projectCodeInput" placeholder="enter project code (if applicable)">
         <button class="retro-button" id="projectCodeButton">reach out</button>
       </div>
     </div>
@@ -386,25 +386,31 @@
   </div>
 
   <script>
-    // Example project codes (can be renamed or expanded)
+    // Project codes and preset popup content
     const PROJECTS = {
-      "TABLE01": {
-        title: "reclaimed redwood dining table",
-        code: "TABLE01",
-        image: "table01.jpg",
-        text: "a custom dining table built from reclaimed redwood, designed to carry daily use and long-term stories."
+      "thehiddencafe": {
+        title: "TheHiddenCafe",
+        code: "TheHiddenCafe",
+        image: "TheHiddenCafe.jpg",
+        text: "TheHiddenCafe is a compact built-in cafe corner, combining seating, storage, and shelving to create a quiet place for coffee inside a larger space."
       },
-      "CHAIR01": {
-        title: "laminated lounge chair",
-        code: "CHAIR01",
-        image: "chair01.jpg",
-        text: "an experimental lounge chair exploring laminated curves, structure, and grounded seating."
+      "fava": {
+        title: "FAVA",
+        code: "FAVA",
+        image: "FAVA.jpg",
+        text: "FAVA is a flexible table and bench system developed for shared meals and gatherings, using simple joinery and durable finishes for everyday use."
       },
-      "LIGHT01": {
-        title: "steel + paper pendant light",
-        code: "LIGHT01",
-        image: "light01.jpg",
-        text: "a pendant fixture made from scrap steel and translucent paper, casting a soft, warm light."
+      "lucindasdeli": {
+        title: "LucindasDeli",
+        code: "LucindasDeli",
+        image: "LucindasDeli.jpg",
+        text: "LucindasDeli features custom shelving and counter elements designed to frame food, light, and circulation within a small neighborhood deli setting."
+      },
+      "thelaundromat": {
+        title: "TheLaundromat",
+        code: "TheLaundromat",
+        image: "TheLaundromat.jpg",
+        text: "TheLaundromat is a series of benches, folding surfaces, and partitions that organize waiting, working, and conversation in a laundromat environment."
       }
     };
 
@@ -519,12 +525,14 @@
 
     function openProjectFromCode(codeRaw) {
       if (!codeRaw) return;
-      const code = codeRaw.trim().toUpperCase();
-      if (!code) return;
+      const key = codeRaw.trim().toLowerCase();
+      if (!key) return;
 
-      const project = PROJECTS[code];
+      const project = PROJECTS[key];
       if (!project) {
-        window.alert("unknown project code.\n\ntry TABLE01, CHAIR01, LIGHT01, or update PROJECTS in the script.");
+        window.alert(
+          "unknown project code.\n\nrecognized codes include: TheHiddenCafe, FAVA, LucindasDeli, TheLaundromat."
+        );
         return;
       }
 
@@ -547,7 +555,7 @@
 
       noteEl.textContent = "project code: " + project.code;
 
-      // mailto with code, no first-person language in template
+      // mailto with code, third-person friendly template
       btnEl.onclick = function () {
         const email = "jjvanthyne";
         const subject = encodeURIComponent("preliminary design consultation – " + project.code);
