@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Van Thyne Custom Furniture</title>
+  <title>van thyne custom furniture</title>
   <style>
     body {
       margin: 0;
       font-family: "MS Sans Serif", system-ui, sans-serif;
-      background: #008080; /* Windows 95 teal */
+      background: #808080; /* mostly gray */
       color: #000;
     }
 
@@ -23,6 +23,7 @@
       flex-direction: column;
     }
 
+    /* Top banner */
     .menu-bar {
       background: #000080;
       color: #fff;
@@ -31,45 +32,65 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-shadow: 0 2px 0 #000;
     }
 
-    .menu-bar span {
+    .menu-bar span.title {
       font-weight: bold;
+      text-transform: none; /* keep lowercase */
     }
 
-    .menu-bar .menu-items span {
-      margin-left: 12px;
+    .menu-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .home-button {
+      border: 2px solid #000;
+      background: #c0c0c0;
+      padding: 2px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+      text-transform: lowercase;
+    }
+
+    .home-button:active {
+      box-shadow: 1px 1px 0 #000;
+      transform: translate(1px, 1px);
     }
 
     .content {
       flex: 1;
-      padding: 24px;
+      padding: 16px;
       background-image:
-        repeating-linear-gradient(45deg, #007070 0, #007070 1px, #008080 1px, #008080 3px);
-      /* gives a subtle grainy/mosaic vibe */
+        repeating-linear-gradient(45deg, #7a7a7a 0, #7a7a7a 1px, #808080 1px, #808080 3px);
+      font-size: 12px;
     }
 
-    .content-inner {
+    /* Simple link area in the “desktop” */
+    .link-panel {
       background: #c0c0c0;
       border: 2px solid #000;
-      padding: 16px;
-      max-width: 480px;
       box-shadow: 3px 3px 0 #000;
+      display: inline-block;
+      padding: 8px 12px;
     }
 
-    .content-inner h1 {
-      font-size: 16px;
-      margin-top: 0;
+    .link-panel-title {
+      font-weight: bold;
+      margin-bottom: 4px;
     }
 
     .link-list {
       list-style: none;
       padding-left: 16px;
-      margin-top: 12px;
+      margin: 4px 0 0 0;
     }
 
     .link-list li {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     /* Window / popup styles */
@@ -81,7 +102,7 @@
       border: 2px solid #000;
       box-shadow: 4px 4px 0 #000;
       min-width: 260px;
-      max-width: 420px;
+      max-width: min(420px, 90vw);
       font-size: 12px;
       z-index: 10;
     }
@@ -98,6 +119,7 @@
       align-items: center;
       justify-content: space-between;
       box-sizing: border-box;
+      cursor: move; /* drag handle */
     }
 
     .title-bar .title {
@@ -115,8 +137,9 @@
     .title-bar button {
       width: 18px;
       height: 18px;
-      border: 1px solid #000;
-      background: #c0c0c0;
+      border: 1px solid #800000;
+      background: #ff0000; /* red X */
+      color: #fff;
       font-size: 10px;
       line-height: 1;
       padding: 0;
@@ -127,7 +150,6 @@
       padding: 8px;
       background-image:
         repeating-linear-gradient(0deg, #c0c0c0 0, #c0c0c0 2px, #b8b8b8 2px, #b8b8b8 3px);
-      /* grainy/mosaic interior */
     }
 
     .window-body p {
@@ -137,7 +159,7 @@
 
     .window-body img {
       max-width: 100%;
-      image-rendering: pixelated; /* extra-retro feel */
+      image-rendering: pixelated;
       border: 1px solid #000;
       display: block;
       margin-bottom: 8px;
@@ -149,12 +171,13 @@
     }
 
     .retro-button {
-      border: 2px solid #000;
+      border: 2px solid #000080; /* blue accent */
       background: #e0e0e0;
       padding: 2px 10px;
       font-size: 11px;
       cursor: pointer;
       box-shadow: 2px 2px 0 #000;
+      text-transform: lowercase;
     }
 
     .retro-button:active {
@@ -170,89 +193,70 @@
 <body>
   <div class="desktop">
     <div class="menu-bar">
-      <span>VAN THYNE CUSTOM FURNITURE</span>
-      <div class="menu-items small-text">
-        <span>File</span>
-        <span>Edit</span>
-        <span>Help</span>
+      <span class="title">van thyne custom furniture</span>
+      <div class="menu-right">
+        <button class="home-button" onclick="window.location.href='index.html'">
+          home
+        </button>
       </div>
     </div>
 
     <div class="content">
-      <div class="content-inner">
-        <h1>Van Thyne Custom Furniture</h1>
-        <p class="small-text">
-          Simple, functional, and thoughtful furniture design in the Bay Area.
-        </p>
-
-        <ul class="link-list small-text">
-          <li>
-            <a href="index.html">Jack VanThyne</a> &mdash; go back to the main index page.
-          </li>
-          <li>
-            <a href="#" id="designPhilosophyLink">Design Philosophy</a> &mdash; how we think about wood, craft, and place.
-          </li>
-          <li>
-            <a href="#" id="pastWorksLink">Past Works</a> &mdash; sample project codes and descriptions.
-          </li>
-          <li>
-            <a href="#" id="consultationLink">Schedule a Free Consultation</a> &mdash; general inquiry.
-          </li>
-          <li>
-            <a href="#" id="reachOutLink">Reach Out (with project code)</a> &mdash; open a specific project window.
-          </li>
+      <!-- small “launcher” panel for all popups -->
+      <div class="link-panel">
+        <div class="link-panel-title">open windows</div>
+        <ul class="link-list">
+          <li><a href="#" id="aboutLink">about</a></li>
+          <li><a href="#" id="designPhilosophyLink">design philosophy</a></li>
+          <li><a href="#" id="pastWorksLink">past works</a></li>
+          <li><a href="#" id="consultationLink">schedule a free consultation</a></li>
+          <li><a href="#" id="reachOutLink">reach out (project code)</a></li>
         </ul>
       </div>
     </div>
   </div>
 
-  <!-- Welcome window -->
-  <div class="window" id="welcomeWindow">
+  <!-- About window -->
+  <div class="window hidden" id="aboutWindow">
     <div class="title-bar">
-      <div class="title">Welcome</div>
+      <div class="title">about – van thyne custom furniture</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
     </div>
     <div class="window-body">
       <p>
-        Welcome to <strong>Van Thyne Custom Furniture</strong>. I am a student at UC Berkeley
-        studying landscape architecture with a focus on furniture design and research in
-        wood construction and forest management.
+        i’m jack van thyne, a student at uc berkeley studying landscape architecture
+        with a focus on furniture design and research in wood construction and forest management.
       </p>
       <p>
-        I design and build custom furniture in the Bay Area, working closely with clients to
-        create pieces that feel rooted, durable, and personal.
+        i design and build custom furniture in the bay area, often working with reclaimed or
+        locally sourced lumber. each project is a small collaboration between you, the site,
+        and the material.
       </p>
-      <div class="button-row">
-        <button class="retro-button close-btn">OK</button>
-      </div>
     </div>
   </div>
 
   <!-- Design Philosophy window -->
   <div class="window hidden" id="designPhilosophyWindow">
     <div class="title-bar">
-      <div class="title">Design Philosophy.txt</div>
+      <div class="title">design_philosophy.txt</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
     </div>
     <div class="window-body">
       <p>
-        My work lives somewhere between architecture, furniture, and landscape.
-        I like pieces that feel honest about their structure: you can read
-        how they’re built and where the wood came from.
+        my work sits between architecture, furniture, and landscape. i like pieces that feel
+        honest about their structure: you can read how they’re built and where the wood came from.
       </p>
       <p>
-        Whenever possible, I use reclaimed or locally sourced material and treat every project
-        as a collaboration between client, site, and wood. The goal is furniture that can be
-        lived with, repaired, and passed on.
+        materials are treated as a record of place and use. dents, grain shifts, and repairs
+        are part of the design language, not flaws to hide.
       </p>
       <p>
-        Every project starts with a conversation about how you actually use a space:
-        sitting, eating, working, gathering. From there we sketch, model, and iterate
-        until the form feels inevitable.
+        every project starts with how you actually live in a space — sitting, eating, working,
+        gathering — and grows from there.
       </p>
     </div>
   </div>
@@ -260,21 +264,20 @@
   <!-- Past Works window -->
   <div class="window hidden" id="pastWorksWindow">
     <div class="title-bar">
-      <div class="title">Past Works</div>
+      <div class="title">past_works</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
     </div>
     <div class="window-body">
-      <p>Here are a few example project codes you can use with the “Reach Out” link:</p>
+      <p>example project codes:</p>
       <ul class="small-text">
-        <li><strong>TABLE01</strong> &mdash; Reclaimed redwood dining table.</li>
-        <li><strong>CHAIR01</strong> &mdash; Laminated lounge chair experiment.</li>
-        <li><strong>LIGHT01</strong> &mdash; Custom steel + paper pendant light.</li>
+        <li><strong>TABLE01</strong> – reclaimed redwood dining table.</li>
+        <li><strong>CHAIR01</strong> – laminated lounge chair experiment.</li>
+        <li><strong>LIGHT01</strong> – custom steel + paper pendant light.</li>
       </ul>
       <p class="small-text">
-        Use these codes (or your own future codes) with the
-        <em>Reach Out (with project code)</em> link to open a project-specific window.
+        use these with the <em>reach out (project code)</em> link to open a project-specific window.
       </p>
     </div>
   </div>
@@ -282,41 +285,41 @@
   <!-- General consultation window -->
   <div class="window hidden" id="consultationWindow">
     <div class="title-bar">
-      <div class="title">Schedule a Free Consultation</div>
+      <div class="title">schedule_consultation.exe</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
     </div>
     <div class="window-body">
       <p>
-        I offer a free preliminary design consultation for new projects. Share a bit about
-        what you’re imagining and we can talk through options, budget, and timeline.
+        i offer a free preliminary design consultation for new projects. share a bit about
+        the piece, where it will live, and your timeline, and we can sketch ideas together.
       </p>
       <p class="small-text">
-        Replace the email below with your own:
+        replace this email with your own:
       </p>
       <p class="small-text">
-        <a href="mailto:your-email@domain.com?subject=Custom%20Furniture%20Consultation">
-          Email to schedule a consultation
+        <a href="mailto:your-email@domain.com?subject=custom%20furniture%20consultation">
+          email to schedule a consultation
         </a>
       </p>
     </div>
   </div>
 
-  <!-- Project window (created/updated dynamically) -->
+  <!-- Project window (dynamic) -->
   <div class="window hidden" id="projectWindow">
     <div class="title-bar">
-      <div class="title" id="projectWindowTitle">Project</div>
+      <div class="title" id="projectWindowTitle">project</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
     </div>
     <div class="window-body">
-      <img id="projectImage" src="" alt="Project image" style="display:none;">
+      <img id="projectImage" src="" alt="project image" style="display:none;">
       <p id="projectText"></p>
       <div class="button-row">
         <button class="retro-button" id="projectConsultButton">
-          Schedule Free Preliminary Design Consultation
+          schedule preliminary consultation
         </button>
       </div>
       <p class="small-text" id="projectCodeNote"></p>
@@ -324,37 +327,50 @@
   </div>
 
   <script>
-    // Simple in-memory project code map.
-    // You can replace image paths and text with real content later.
+    // Simple project code data
     const PROJECTS = {
       "TABLE01": {
-        title: "Reclaimed Redwood Dining Table",
+        title: "reclaimed redwood dining table",
         code: "TABLE01",
-        image: "table01.jpg", // replace with real path or leave blank
-        text: "A custom dining table built from reclaimed redwood, designed to weather over time and hold a lot of stories."
+        image: "table01.jpg", // replace with real paths or leave blank
+        text: "a custom dining table built from reclaimed redwood, designed to hold a lot of meals and stories."
       },
       "CHAIR01": {
-        title: "Laminated Lounge Chair",
+        title: "laminated lounge chair",
         code: "CHAIR01",
         image: "chair01.jpg",
-        text: "An experimental lounge chair exploring laminated curves and comfortable, grounded seating."
+        text: "an experimental lounge chair exploring laminated curves, structure, and comfort."
       },
       "LIGHT01": {
-        title: "Steel + Paper Pendant Light",
+        title: "steel + paper pendant light",
         code: "LIGHT01",
         image: "light01.jpg",
-        text: "A pendant fixture made from scrap steel and translucent paper, casting a soft, warm light."
+        text: "a pendant fixture made from scrap steel and translucent paper, casting a soft, warm light."
       }
     };
 
-    function showWindow(id) {
+    // bring window to front
+    function bringToFront(win) {
+      const maxZ = Array.from(document.querySelectorAll(".window"))
+        .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
+      win.style.zIndex = maxZ + 1;
+    }
+
+    // show / hide windows
+    function showWindow(id, center = false) {
       const el = document.getElementById(id);
-      if (el) {
-        el.classList.remove("hidden");
-        // Bring to front by bumping z-index
-        const maxZ = Array.from(document.querySelectorAll(".window"))
-          .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
-        el.style.zIndex = maxZ + 1;
+      if (!el) return;
+      el.classList.remove("hidden");
+      bringToFront(el);
+
+      if (center) {
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const rect = el.getBoundingClientRect();
+        const left = Math.max(8, (viewportWidth - rect.width) / 2);
+        const top = Math.max(32, (viewportHeight - rect.height) / 3);
+        el.style.left = left + "px";
+        el.style.top = top + "px";
       }
     }
 
@@ -362,11 +378,59 @@
       el.classList.add("hidden");
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      // Show welcome window on load
-      showWindow("welcomeWindow");
+    // basic drag logic for all windows
+    function makeWindowsDraggable() {
+      let activeWindow = null;
+      let offsetX = 0;
+      let offsetY = 0;
 
-      // Close buttons
+      document.querySelectorAll(".window .title-bar").forEach(bar => {
+        bar.addEventListener("mousedown", function (e) {
+          const win = this.closest(".window");
+          if (!win) return;
+          activeWindow = win;
+          bringToFront(activeWindow);
+
+          const rect = win.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+
+          e.preventDefault();
+        });
+      });
+
+      document.addEventListener("mousemove", function (e) {
+        if (!activeWindow) return;
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const rect = activeWindow.getBoundingClientRect();
+        let newLeft = e.clientX - offsetX;
+        let newTop = e.clientY - offsetY;
+
+        // keep windows roughly on-screen
+        const maxLeft = viewportWidth - rect.width - 4;
+        const maxTop = viewportHeight - rect.height - 4;
+
+        if (newLeft < 0) newLeft = 0;
+        if (newTop < 0) newTop = 0;
+        if (newLeft > maxLeft) newLeft = maxLeft;
+        if (newTop > maxTop) newTop = maxTop;
+
+        activeWindow.style.left = newLeft + "px";
+        activeWindow.style.top = newTop + "px";
+      });
+
+      document.addEventListener("mouseup", function () {
+        activeWindow = null;
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // enable dragging
+      makeWindowsDraggable();
+
+      // close buttons
       document.querySelectorAll(".close-btn").forEach(btn => {
         btn.addEventListener("click", function () {
           const win = this.closest(".window");
@@ -374,34 +438,37 @@
         });
       });
 
-      // Design philosophy link
+      // launcher links
+      document.getElementById("aboutLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        showWindow("aboutWindow", true);
+      });
+
       document.getElementById("designPhilosophyLink").addEventListener("click", function (e) {
         e.preventDefault();
-        showWindow("designPhilosophyWindow");
+        showWindow("designPhilosophyWindow", true);
       });
 
-      // Past works link
       document.getElementById("pastWorksLink").addEventListener("click", function (e) {
         e.preventDefault();
-        showWindow("pastWorksWindow");
+        showWindow("pastWorksWindow", true);
       });
 
-      // General consultation link
       document.getElementById("consultationLink").addEventListener("click", function (e) {
         e.preventDefault();
-        showWindow("consultationWindow");
+        showWindow("consultationWindow", true);
       });
 
-      // Reach out with project code
+      // reach out with project code
       document.getElementById("reachOutLink").addEventListener("click", function (e) {
         e.preventDefault();
-        const codeRaw = window.prompt("Enter project code (e.g. TABLE01, CHAIR01, LIGHT01):");
+        const codeRaw = window.prompt("enter project code (e.g. TABLE01, CHAIR01, LIGHT01):");
         if (!codeRaw) return;
         const code = codeRaw.trim().toUpperCase();
 
         const project = PROJECTS[code];
         if (!project) {
-          window.alert("Unknown project code.\n\nUse one of the example codes from Past Works, or email directly.");
+          window.alert("unknown project code.\n\ntry one from 'past works' or email directly.");
           return;
         }
 
@@ -422,18 +489,17 @@
           imgEl.style.display = "none";
         }
 
-        noteEl.textContent = "Project code: " + project.code;
+        noteEl.textContent = "project code: " + project.code;
 
-        // Update consultation button to include code in email subject
+        // update mailto with project code
         btnEl.onclick = function () {
-          // Replace with your real email address:
-          const email = "your-email@domain.com";
-          const subject = encodeURIComponent("Preliminary Design Consultation – " + project.code);
-          const body = encodeURIComponent("Hi Jack,\n\nI’m interested in learning more about project " + project.code + ".\n\nBest,\n");
+          const email = "your-email@domain.com"; // change to your real email
+          const subject = encodeURIComponent("preliminary design consultation – " + project.code);
+          const body = encodeURIComponent("hi jack,\n\ni’m interested in project " + project.code + ".\n\nbest,\n");
           window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
         };
 
-        showWindow("projectWindow");
+        showWindow("projectWindow", true);
       });
     });
   </script>
