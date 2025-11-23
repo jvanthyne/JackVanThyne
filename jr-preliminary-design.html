@@ -26,7 +26,7 @@
       flex-direction: column;
     }
 
-    /* --- TOP RIGHT TITLE BLOCK --- */
+    /* --- TOP RIGHT TITLE + PANELS --- */
     .firm-block {
       position: fixed;
       top: 24px;
@@ -49,12 +49,11 @@
     .firm-block p {
       font-size: 0.75rem;
       line-height: 1.35;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
-    /* Shared panel style inside the firm block */
+    /* Shared panel styling */
     .firm-panel {
-      display: block;
       background: #111;
       color: #f7f7f5;
       border: 1px solid #222;
@@ -62,10 +61,10 @@
       padding: 10px 12px;
       font-size: 0.75rem;
       letter-spacing: 0.04em;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
-    /* FOCUS PANEL */
+    /* Focus panel */
     .firm-focus-title {
       text-transform: uppercase;
       font-size: 0.7rem;
@@ -73,24 +72,30 @@
       opacity: 0.85;
     }
 
-    .firm-focus-body {
-      font-size: 0.75rem;
-      line-height: 1.4;
-    }
-
-    /* CONSULTATION BUTTON PANEL */
+    /* --- RED CONSULTATION BUTTON --- */
     .firm-consult {
+      display: block;
+      background: #C44336;     /* RED */
+      border-color: #A5352A;
+      margin-top: 16px;
       text-decoration: none;
+      color: #fff;
       cursor: pointer;
-      text-align: left;
       transition: 0.15s;
+      padding: 12px 14px;
+      font-size: 0.76rem;
+      border-radius: 3px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
     }
 
     .firm-consult:hover {
-      background: #222;
+      background: #A5352A;     /* Darker red */
     }
 
-    /* --- CENTER SPLIT LAYOUT --- */
+    /* --- SPLIT PROFILES --- */
     .profiles {
       flex: 1;
       display: flex;
@@ -139,12 +144,8 @@
       height: 96px;
       border-radius: 2px;
       border: 1px solid #c2c2c0;
-      display: block;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      background: #f0f0ee;
       object-fit: cover;
+      background: #f0f0ee;
     }
 
     .profile-section {
@@ -179,11 +180,7 @@
       content: "— ";
     }
 
-    /* --- PROFILE PROJECT GALLERIES --- */
-    .profile-gallery {
-      padding-bottom: 4px;
-    }
-
+    /* --- PROJECT GALLERIES --- */
     .profile-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -231,10 +228,6 @@
       .profile {
         padding: 28px 0;
       }
-
-      .profile-header {
-        flex-direction: row;
-      }
     }
   </style>
 </head>
@@ -242,7 +235,7 @@
 <body>
   <div class="page">
 
-    <!-- TOP RIGHT FIRM BLOCK -->
+    <!-- TOP RIGHT PANEL -->
     <aside class="firm-block">
       <h1 class="firm-title">J+R Preliminary Design</h1>
       <p>
@@ -250,38 +243,35 @@
         site analysis, and spatial studies for projects of any scale.
       </p>
 
-      <!-- STUDIO FOCUS (MOVED UP HERE) -->
+      <!-- FOCUS -->
       <div class="firm-panel">
         <div class="firm-focus-title">Focus</div>
         <div class="firm-focus-body">
-          Preliminary design packages for additions and full rebuilds:
-          form-finding, site analysis, and clear drawings to guide next steps
-          with architects and engineers.
+          Preliminary design packages for additions and full rebuilds: form-finding,
+          site analysis, and clear drawings to guide next steps with architects
+          and engineers.
         </div>
       </div>
 
-      <!-- SEPARATE BUTTON BLOCK: CONSULTATION / SITE VISIT -->
+      <!-- RED CONSULTATION BUTTON -->
       <a
-        class="firm-panel firm-consult"
+        class="firm-consult"
         href="mailto:jvanthyne@berkeley.edu,jpreeves@berkeley.edu?subject=Consultation%20Request&body=Hi%20J+R%2C%0A%0AI%20would%20like%20to%20schedule%20a%20free%20consultation%20or%20site%20visit.%20Here%20are%20the%20project%20details%3A%0A%0A-%20Project%20location%3A%0A-%20Scope%20of%20work%3A%0A-%20Timeline%3A%0A-%20Notes%3A%0A%0AThank%20you!"
       >
         Schedule a Free Consultation / Site Visit
       </a>
     </aside>
 
-    <!-- CENTER SPLIT: JACK / JACOB -->
+    <!-- MAIN SPLIT -->
     <main class="profiles">
 
-      <!-- JACK VAN THYNE -->
+      <!-- JACK -->
       <section class="profile profile-jack">
         <header class="profile-header">
           <div>
             <div class="profile-name">Jack Van Thyne</div>
             <div class="profile-role">Landscape & Spatial Design</div>
           </div>
-
-          <!-- Replace with your actual headshot file -->
-          <!-- e.g. /images/jack_headshot.jpg if you use a folder -->
           <img src="jack_headshot.jpg" class="headshot" alt="Jack Van Thyne" />
         </header>
 
@@ -299,33 +289,29 @@
         <div class="profile-section">
           <div class="section-label">Interests</div>
           <div class="section-body">
-            Material-driven design, adaptive reuse, and projects that sit
-            between architecture, landscape, and furniture.
+            Material-driven design, adaptive reuse, and projects bridging
+            architecture, landscape, and furniture.
           </div>
         </div>
 
-        <!-- JACK PROJECT GALLERY -->
-        <div class="profile-section profile-gallery">
+        <!-- JACK GALLERY -->
+        <div class="profile-section">
           <div class="section-label">Projects</div>
-          <div class="section-body">
-            <div class="profile-grid">
-              <img src="jack_project_01.jpg" alt="Jack Project 01" />
-              <img src="jack_project_02.jpg" alt="Jack Project 02" />
-              <img src="jack_project_03.jpg" alt="Jack Project 03" />
-            </div>
+          <div class="profile-grid">
+            <img src="jack_project_01.jpg" alt="Jack Project 01" />
+            <img src="jack_project_02.jpg" alt="Jack Project 02" />
+            <img src="jack_project_03.jpg" alt="Jack Project 03" />
           </div>
         </div>
       </section>
 
-      <!-- JACOB REEVES -->
+      <!-- JACOB -->
       <section class="profile profile-jacob">
         <header class="profile-header">
           <div>
             <div class="profile-name">Jacob Reeves</div>
             <div class="profile-role">Architecture & Systems</div>
           </div>
-
-          <!-- Replace with Jacob's headshot file -->
           <img src="jacob_headshot.jpg" class="headshot" alt="Jacob Reeves" />
         </header>
 
@@ -343,20 +329,17 @@
         <div class="profile-section">
           <div class="section-label">Interests</div>
           <div class="section-body">
-            Simple, buildable forms, low-tech solutions, and early-phase clarity
-            for additions and full rebuilds.
+            Simple, buildable forms, low-tech systems, and clarity in early phases.
           </div>
         </div>
 
-        <!-- JACOB PROJECT GALLERY -->
-        <div class="profile-section profile-gallery">
+        <!-- JACOB GALLERY -->
+        <div class="profile-section">
           <div class="section-label">Projects</div>
-          <div class="section-body">
-            <div class="profile-grid">
-              <img src="jacob_project_01.jpg" alt="Jacob Project 01" />
-              <img src="jacob_project_02.jpg" alt="Jacob Project 02" />
-              <img src="jacob_project_03.jpg" alt="Jacob Project 03" />
-            </div>
+          <div class="profile-grid">
+            <img src="jacob_project_01.jpg" alt="Jacob Project 01" />
+            <img src="jacob_project_02.jpg" alt="Jacob Project 02" />
+            <img src="jacob_project_03.jpg" alt="Jacob Project 03" />
           </div>
         </div>
       </section>
