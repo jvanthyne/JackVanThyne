@@ -122,7 +122,7 @@
     }
 
     .title-bar {
-      padding: 2px 4px;
+      padding: 3px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -160,7 +160,7 @@
     .window-body {
       padding: 8px;
       overflow: auto;
-      max-height: calc(80vh - 24px); /* account for title bar */
+      max-height: calc(80vh - 26px); /* account for title bar */
       box-sizing: border-box;
     }
 
@@ -291,8 +291,18 @@
         max-height: 75vh;
       }
 
+      .title-bar {
+        padding: 5px 8px;
+      }
+
+      .title-bar button {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+
       .window-body {
-        max-height: calc(75vh - 26px);
+        max-height: calc(75vh - 30px);
       }
 
       .image-grid img {
@@ -546,19 +556,23 @@
         offsetY = clientY - rect.top;
       }
 
-      document.querySelectorAll(".window .title-bar").forEach(bar => {
-        // mouse
+      // Make title bars draggable and all windows bring-to-front on tap/click
+      document.querySelectorAll(".window").forEach(win => {
+        // Bring to front when touching/clicking anywhere on the window
+        win.addEventListener("mousedown", () => bringToFront(win));
+        win.addEventListener("touchstart", () => bringToFront(win), { passive: true });
+
+        const bar = win.querySelector(".title-bar");
+        if (!bar) return;
+
+        // mouse drag
         bar.addEventListener("mousedown", function (e) {
-          const win = this.closest(".window");
-          if (!win) return;
           startDrag(win, e.clientX, e.clientY);
           e.preventDefault();
         });
 
-        // touch
+        // touch drag
         bar.addEventListener("touchstart", function (e) {
-          const win = this.closest(".window");
-          if (!win) return;
           const touch = e.touches[0];
           startDrag(win, touch.clientX, touch.clientY);
           e.preventDefault();
@@ -654,7 +668,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      // enable dragging
+      // enable dragging + bring-to-front behavior
       makeWindowsDraggable();
 
       // open all main windows in random locations on load
