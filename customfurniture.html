@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Van Thyne Custom Furniture</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "MS Sans Serif", system-ui, sans-serif;
+      background: #008080; /* Windows 95 teal */
+      color: #000;
+    }
+
+    a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .desktop {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu-bar {
+      background: #000080;
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .menu-bar span {
+      font-weight: bold;
+    }
+
+    .menu-bar .menu-items span {
+      margin-left: 12px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px;
+      background-image:
+        repeating-linear-gradient(45deg, #007070 0, #007070 1px, #008080 1px, #008080 3px);
+      /* gives a subtle grainy/mosaic vibe */
+    }
+
+    .content-inner {
+      background: #c0c0c0;
+      border: 2px solid #000;
+      padding: 16px;
+      max-width: 480px;
+      box-shadow: 3px 3px 0 #000;
+    }
+
+    .content-inner h1 {
+      font-size: 16px;
+      margin-top: 0;
+    }
+
+    .link-list {
+      list-style: none;
+      padding-left: 16px;
+      margin-top: 12px;
+    }
+
+    .link-list li {
+      margin-bottom: 6px;
+    }
+
+    /* Window / popup styles */
+    .window {
+      position: absolute;
+      top: 80px;
+      left: 80px;
+      background: #c0c0c0;
+      border: 2px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      min-width: 260px;
+      max-width: 420px;
+      font-size: 12px;
+      z-index: 10;
+    }
+
+    .window.hidden {
+      display: none;
+    }
+
+    .title-bar {
+      background: linear-gradient(to right, #000080, #0000a0);
+      color: #fff;
+      padding: 2px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+
+    .title-bar .title {
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title-bar .controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .title-bar button {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #000;
+      background: #c0c0c0;
+      font-size: 10px;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .window-body {
+      padding: 8px;
+      background-image:
+        repeating-linear-gradient(0deg, #c0c0c0 0, #c0c0c0 2px, #b8b8b8 2px, #b8b8b8 3px);
+      /* grainy/mosaic interior */
+    }
+
+    .window-body p {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .window-body img {
+      max-width: 100%;
+      image-rendering: pixelated; /* extra-retro feel */
+      border: 1px solid #000;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .button-row {
+      margin-top: 8px;
+      text-align: right;
+    }
+
+    .retro-button {
+      border: 2px solid #000;
+      background: #e0e0e0;
+      padding: 2px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .retro-button:active {
+      box-shadow: 1px 1px 0 #000;
+      transform: translate(1px, 1px);
+    }
+
+    .small-text {
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <div class="menu-bar">
+      <span>VAN THYNE CUSTOM FURNITURE</span>
+      <div class="menu-items small-text">
+        <span>File</span>
+        <span>Edit</span>
+        <span>Help</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="content-inner">
+        <h1>Van Thyne Custom Furniture</h1>
+        <p class="small-text">
+          Simple, functional, and thoughtful furniture design in the Bay Area.
+        </p>
+
+        <ul class="link-list small-text">
+          <li>
+            <a href="index.html">Jack VanThyne</a> &mdash; go back to the main index page.
+          </li>
+          <li>
+            <a href="#" id="designPhilosophyLink">Design Philosophy</a> &mdash; how we think about wood, craft, and place.
+          </li>
+          <li>
+            <a href="#" id="pastWorksLink">Past Works</a> &mdash; sample project codes and descriptions.
+          </li>
+          <li>
+            <a href="#" id="consultationLink">Schedule a Free Consultation</a> &mdash; general inquiry.
+          </li>
+          <li>
+            <a href="#" id="reachOutLink">Reach Out (with project code)</a> &mdash; open a specific project window.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome window -->
+  <div class="window" id="welcomeWindow">
+    <div class="title-bar">
+      <div class="title">Welcome</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>
+        Welcome to <strong>Van Thyne Custom Furniture</strong>. I am a student at UC Berkeley
+        studying landscape architecture with a focus on furniture design and research in
+        wood construction and forest management.
+      </p>
+      <p>
+        I design and build custom furniture in the Bay Area, working closely with clients to
+        create pieces that feel rooted, durable, and personal.
+      </p>
+      <div class="button-row">
+        <button class="retro-button close-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Design Philosophy window -->
+  <div class="window hidden" id="designPhilosophyWindow">
+    <div class="title-bar">
+      <div class="title">Design Philosophy.txt</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>
+        My work lives somewhere between architecture, furniture, and landscape.
+        I like pieces that feel honest about their structure: you can read
+        how they’re built and where the wood came from.
+      </p>
+      <p>
+        Whenever possible, I use reclaimed or locally sourced material and treat every project
+        as a collaboration between client, site, and wood. The goal is furniture that can be
+        lived with, repaired, and passed on.
+      </p>
+      <p>
+        Every project starts with a conversation about how you actually use a space:
+        sitting, eating, working, gathering. From there we sketch, model, and iterate
+        until the form feels inevitable.
+      </p>
+    </div>
+  </div>
+
+  <!-- Past Works window -->
+  <div class="window hidden" id="pastWorksWindow">
+    <div class="title-bar">
+      <div class="title">Past Works</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>Here are a few example project codes you can use with the “Reach Out” link:</p>
+      <ul class="small-text">
+        <li><strong>TABLE01</strong> &mdash; Reclaimed redwood dining table.</li>
+        <li><strong>CHAIR01</strong> &mdash; Laminated lounge chair experiment.</li>
+        <li><strong>LIGHT01</strong> &mdash; Custom steel + paper pendant light.</li>
+      </ul>
+      <p class="small-text">
+        Use these codes (or your own future codes) with the
+        <em>Reach Out (with project code)</em> link to open a project-specific window.
+      </p>
+    </div>
+  </div>
+
+  <!-- General consultation window -->
+  <div class="window hidden" id="consultationWindow">
+    <div class="title-bar">
+      <div class="title">Schedule a Free Consultation</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>
+        I offer a free preliminary design consultation for new projects. Share a bit about
+        what you’re imagining and we can talk through options, budget, and timeline.
+      </p>
+      <p class="small-text">
+        Replace the email below with your own:
+      </p>
+      <p class="small-text">
+        <a href="mailto:your-email@domain.com?subject=Custom%20Furniture%20Consultation">
+          Email to schedule a consultation
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Project window (created/updated dynamically) -->
+  <div class="window hidden" id="projectWindow">
+    <div class="title-bar">
+      <div class="title" id="projectWindowTitle">Project</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <img id="projectImage" src="" alt="Project image" style="display:none;">
+      <p id="projectText"></p>
+      <div class="button-row">
+        <button class="retro-button" id="projectConsultButton">
+          Schedule Free Preliminary Design Consultation
+        </button>
+      </div>
+      <p class="small-text" id="projectCodeNote"></p>
+    </div>
+  </div>
+
+  <script>
+    // Simple in-memory project code map.
+    // You can replace image paths and text with real content later.
+    const PROJECTS = {
+      "TABLE01": {
+        title: "Reclaimed Redwood Dining Table",
+        code: "TABLE01",
+        image: "table01.jpg", // replace with real path or leave blank
+        text: "A custom dining table built from reclaimed redwood, designed to weather over time and hold a lot of stories."
+      },
+      "CHAIR01": {
+        title: "Laminated Lounge Chair",
+        code: "CHAIR01",
+        image: "chair01.jpg",
+        text: "An experimental lounge chair exploring laminated curves and comfortable, grounded seating."
+      },
+      "LIGHT01": {
+        title: "Steel + Paper Pendant Light",
+        code: "LIGHT01",
+        image: "light01.jpg",
+        text: "A pendant fixture made from scrap steel and translucent paper, casting a soft, warm light."
+      }
+    };
+
+    function showWindow(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove("hidden");
+        // Bring to front by bumping z-index
+        const maxZ = Array.from(document.querySelectorAll(".window"))
+          .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
+        el.style.zIndex = maxZ + 1;
+      }
+    }
+
+    function hideWindow(el) {
+      el.classList.add("hidden");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Show welcome window on load
+      showWindow("welcomeWindow");
+
+      // Close buttons
+      document.querySelectorAll(".close-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          const win = this.closest(".window");
+          if (win) hideWindow(win);
+        });
+      });
+
+      // Design philosophy link
+      document.getElementById("designPhilosophyLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        showWindow("designPhilosophyWindow");
+      });
+
+      // Past works link
+      document.getElementById("pastWorksLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        showWindow("pastWorksWindow");
+      });
+
+      // General consultation link
+      document.getElementById("consultationLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        showWindow("consultationWindow");
+      });
+
+      // Reach out with project code
+      document.getElementById("reachOutLink").addEventListener("click", function (e) {
+        e.preventDefault();
+        const codeRaw = window.prompt("Enter project code (e.g. TABLE01, CHAIR01, LIGHT01):");
+        if (!codeRaw) return;
+        const code = codeRaw.trim().toUpperCase();
+
+        const project = PROJECTS[code];
+        if (!project) {
+          window.alert("Unknown project code.\n\nUse one of the example codes from Past Works, or email directly.");
+          return;
+        }
+
+        const win = document.getElementById("projectWindow");
+        const titleEl = document.getElementById("projectWindowTitle");
+        const imgEl = document.getElementById("projectImage");
+        const textEl = document.getElementById("projectText");
+        const noteEl = document.getElementById("projectCodeNote");
+        const btnEl = document.getElementById("projectConsultButton");
+
+        titleEl.textContent = project.title + " (" + project.code + ")";
+        textEl.textContent = project.text;
+
+        if (project.image && project.image.length > 0) {
+          imgEl.src = project.image;
+          imgEl.style.display = "block";
+        } else {
+          imgEl.style.display = "none";
+        }
+
+        noteEl.textContent = "Project code: " + project.code;
+
+        // Update consultation button to include code in email subject
+        btnEl.onclick = function () {
+          // Replace with your real email address:
+          const email = "your-email@domain.com";
+          const subject = encodeURIComponent("Preliminary Design Consultation – " + project.code);
+          const body = encodeURIComponent("Hi Jack,\n\nI’m interested in learning more about project " + project.code + ".\n\nBest,\n");
+          window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
+        };
+
+        showWindow("projectWindow");
+      });
+    });
+  </script>
+</body>
+</html>
