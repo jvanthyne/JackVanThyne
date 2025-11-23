@@ -26,7 +26,7 @@
       flex-direction: column;
     }
 
-    /* --- TOP RIGHT TITLE + PANELS --- */
+    /* --- TOP RIGHT BLOCK --- */
     .firm-block {
       position: fixed;
       top: 24px;
@@ -35,7 +35,6 @@
       background: #111;
       color: #f7f7f5;
       padding: 16px 18px 18px;
-      border-radius: 2px;
       border: 1px solid #222;
       letter-spacing: 0.04em;
     }
@@ -52,19 +51,16 @@
       margin-bottom: 12px;
     }
 
-    /* Shared panel styling */
     .firm-panel {
       background: #111;
       color: #f7f7f5;
       border: 1px solid #222;
-      border-radius: 2px;
       padding: 10px 12px;
       font-size: 0.75rem;
       letter-spacing: 0.04em;
       margin-top: 12px;
     }
 
-    /* Focus panel */
     .firm-focus-title {
       text-transform: uppercase;
       font-size: 0.7rem;
@@ -72,27 +68,28 @@
       opacity: 0.85;
     }
 
-    /* --- RED CONSULTATION BUTTON --- */
+    /* --- RED CONSULT BUTTON --- */
     .firm-consult {
       display: block;
-      background: #C44336;     /* RED */
-      border-color: #A5352A;
+      background: #C44336;
+      border: 1px solid #A5352A;
       margin-top: 16px;
-      text-decoration: none;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.15s;
       padding: 12px 14px;
       font-size: 0.76rem;
-      border-radius: 3px;
-      text-align: left;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       font-weight: 600;
+      text-align: left;
+      text-decoration: none;
+      color: #000;
+      border-radius: 0px;
+      cursor: pointer;
+      transition: 0.15s;
     }
 
     .firm-consult:hover {
-      background: #A5352A;     /* Darker red */
+      background: #A5352A;
+      color: #000;
     }
 
     /* --- SPLIT PROFILES --- */
@@ -142,7 +139,6 @@
     .headshot {
       width: 96px;
       height: 96px;
-      border-radius: 2px;
       border: 1px solid #c2c2c0;
       object-fit: cover;
       background: #f0f0ee;
@@ -180,7 +176,7 @@
       content: "— ";
     }
 
-    /* --- PROJECT GALLERIES --- */
+    /* --- 5-IMAGE GRID --- */
     .profile-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -191,44 +187,9 @@
     .profile-grid img {
       width: 100%;
       border: 1px solid #ccc;
-      border-radius: 2px;
       object-fit: cover;
     }
 
-    /* --- RESPONSIVE --- */
-    @media (max-width: 960px) {
-      .firm-block {
-        position: static;
-        align-self: flex-end;
-        margin-bottom: 20px;
-      }
-
-      .profiles {
-        margin-right: 0;
-        border-left: none;
-        border-right: none;
-        flex-direction: column;
-      }
-
-      .profile {
-        border-right: none;
-        border-top: 1px solid #d0d0cf;
-      }
-
-      .profile:first-child {
-        border-top: none;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .page {
-        padding: 24px 18px 40px;
-      }
-
-      .profile {
-        padding: 28px 0;
-      }
-    }
   </style>
 </head>
 
@@ -243,17 +204,12 @@
         site analysis, and spatial studies for projects of any scale.
       </p>
 
-      <!-- FOCUS -->
       <div class="firm-panel">
         <div class="firm-focus-title">Focus</div>
-        <div class="firm-focus-body">
-          Preliminary design packages for additions and full rebuilds: form-finding,
-          site analysis, and clear drawings to guide next steps with architects
-          and engineers.
-        </div>
+        Preliminary design packages for additions and full rebuilds: form-finding,
+        site analysis, and clear drawings to guide next steps.
       </div>
 
-      <!-- RED CONSULTATION BUTTON -->
       <a
         class="firm-consult"
         href="mailto:jvanthyne@berkeley.edu,jpreeves@berkeley.edu?subject=Consultation%20Request&body=Hi%20J+R%2C%0A%0AI%20would%20like%20to%20schedule%20a%20free%20consultation%20or%20site%20visit.%20Here%20are%20the%20project%20details%3A%0A%0A-%20Project%20location%3A%0A-%20Scope%20of%20work%3A%0A-%20Timeline%3A%0A-%20Notes%3A%0A%0AThank%20you!"
@@ -262,28 +218,25 @@
       </a>
     </aside>
 
-    <!-- MAIN SPLIT -->
     <main class="profiles">
 
       <!-- JACK -->
-      <section class="profile profile-jack">
+      <section class="profile">
         <header class="profile-header">
           <div>
             <div class="profile-name">Jack Van Thyne</div>
             <div class="profile-role">Landscape & Spatial Design</div>
           </div>
-          <img src="jack_headshot.jpg" class="headshot" alt="Jack Van Thyne" />
+          <img src="jack_headshot.jpg" class="headshot" />
         </header>
 
         <div class="profile-section">
           <div class="section-label">Experience</div>
-          <div class="section-body">
-            <ul>
-              <li>Concept design for residential and landscape projects</li>
-              <li>Site analysis, mapping, and campus-scale studies</li>
-              <li>Design-build work with wood, steel, and reclaimed materials</li>
-            </ul>
-          </div>
+          <ul class="section-body">
+            <li>Concept design for residential and landscape projects</li>
+            <li>Site analysis, mapping, and campus-scale studies</li>
+            <li>Design-build work with wood, steel, and reclaimed materials</li>
+          </ul>
         </div>
 
         <div class="profile-section">
@@ -294,58 +247,58 @@
           </div>
         </div>
 
-        <!-- JACK GALLERY -->
         <div class="profile-section">
           <div class="section-label">Projects</div>
           <div class="profile-grid">
-            <img src="jack_project_01.jpg" alt="Jack Project 01" />
-            <img src="jack_project_02.jpg" alt="Jack Project 02" />
-            <img src="jack_project_03.jpg" alt="Jack Project 03" />
+            <img src="jack_project_01.jpg" />
+            <img src="jack_project_02.jpg" />
+            <img src="jack_project_03.jpg" />
+            <img src="jack_project_04.jpg" />
+            <img src="jack_project_05.jpg" />
           </div>
         </div>
       </section>
 
       <!-- JACOB -->
-      <section class="profile profile-jacob">
+      <section class="profile">
         <header class="profile-header">
           <div>
             <div class="profile-name">Jacob Reeves</div>
             <div class="profile-role">Architecture & Systems</div>
           </div>
-          <img src="jacob_headshot.jpg" class="headshot" alt="Jacob Reeves" />
+          <img src="jacob_headshot.jpg" class="headshot" />
         </header>
 
         <div class="profile-section">
           <div class="section-label">Experience</div>
-          <div class="section-body">
-            <ul>
-              <li>Massing and layout studies for early-phase architecture</li>
-              <li>Technical drawings and light structural coordination</li>
-              <li>Client-facing graphics and clear design communication</li>
-            </ul>
-          </div>
+          <ul class="section-body">
+            <li>Massing + layout studies for early-phase architecture</li>
+            <li>Technical drawings + light structural coordination</li>
+            <li>Client-facing graphics + design communication</li>
+          </ul>
         </div>
 
         <div class="profile-section">
           <div class="section-label">Interests</div>
           <div class="section-body">
-            Simple, buildable forms, low-tech systems, and clarity in early phases.
+            Simple buildable forms, low-tech systems, and clarity in the early phases.
           </div>
         </div>
 
-        <!-- JACOB GALLERY -->
         <div class="profile-section">
           <div class="section-label">Projects</div>
           <div class="profile-grid">
-            <img src="jacob_project_01.jpg" alt="Jacob Project 01" />
-            <img src="jacob_project_02.jpg" alt="Jacob Project 02" />
-            <img src="jacob_project_03.jpg" alt="Jacob Project 03" />
+            <img src="jacob_project_01.jpg" />
+            <img src="jacob_project_02.jpg" />
+            <img src="jacob_project_03.jpg" />
+            <img src="jacob_project_04.jpg" />
+            <img src="jacob_project_05.jpg" />
           </div>
         </div>
+
       </section>
 
     </main>
-
   </div>
 </body>
 </html>
