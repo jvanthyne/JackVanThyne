@@ -49,6 +49,25 @@
     .firm-block p {
       font-size: 0.75rem;
       line-height: 1.35;
+      margin-bottom: 12px;
+    }
+
+    /* CONSULTATION BUTTON */
+    .consult-box {
+      display: block;
+      background: #111;
+      color: #f7f7f5;
+      text-decoration: none;
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      border: 1px solid #222;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+      transition: 0.15s;
+    }
+
+    .consult-box:hover {
+      background: #222;
     }
 
     /* --- CENTER SPLIT LAYOUT --- */
@@ -58,13 +77,13 @@
       border-left: 1px solid #d0d0cf;
       border-right: 1px solid #d0d0cf;
       margin-top: 40px;
-      margin-right: 320px; /* gives space so text doesn't sit under the firm block */
+      margin-right: 320px;
       min-height: 70vh;
     }
 
     .profile {
       flex: 1;
-      padding: 40px 32px 40px 32px;
+      padding: 40px 32px;
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -108,6 +127,7 @@
       letter-spacing: 0.12em;
       color: #888;
       background: #f0f0ee;
+      object-fit: cover;
     }
 
     .profile-section {
@@ -142,6 +162,34 @@
       content: "— ";
     }
 
+    /* --- PROJECT GALLERY --- */
+    .project-images {
+      margin-top: 60px;
+      padding: 0 40px 40px;
+      margin-right: 320px;
+    }
+
+    .project-images-title {
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .project-grid img {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
     /* --- RESPONSIVE --- */
     @media (max-width: 960px) {
       .firm-block {
@@ -152,9 +200,13 @@
 
       .profiles {
         margin-right: 0;
-        border-right: none;
         border-left: none;
+        border-right: none;
         flex-direction: column;
+      }
+
+      .project-images {
+        margin-right: 0;
       }
 
       .profile {
@@ -182,6 +234,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page">
 
@@ -192,6 +245,13 @@
         Student-run preliminary design studio offering concept-level drawings,
         site analysis, and spatial studies for projects of any scale.
       </p>
+
+      <a 
+        class="consult-box" 
+        href="mailto:jvanthyne@berkeley.edu,jpreeves@berkeley.edu?subject=Consultation%20Request&body=Hi%20J+R%2C%0A%0AI%20would%20like%20to%20schedule%20a%20free%20consultation%20or%20site%20visit.%20Here%20are%20the%20project%20details%3A%0A%0A-%20Project%20location%3A%0A-%20Scope%20of%20work%3A%0A-%20Timeline%3A%0A-%20Notes%3A%0A%0AThank%20you!"
+      >
+        Schedule a Free Consultation / Site Visit
+      </a>
     </aside>
 
     <!-- CENTER SPLIT: JACK / JACOB -->
@@ -204,9 +264,9 @@
             <div class="profile-name">Jack Van Thyne</div>
             <div class="profile-role">Landscape & Spatial Design</div>
           </div>
-          <!-- Replace this div with an <img> when you have a headshot -->
-          <!-- Example: <img src="jack-headshot.jpg" alt="Jack Van Thyne" class="headshot" /> -->
-          <div class="headshot">Headshot</div>
+
+          <!-- Replace with your actual headshot -->
+          <img src="jack_headshot.jpg" class="headshot" alt="Jack Van Thyne" />
         </header>
 
         <div class="profile-section">
@@ -221,8 +281,8 @@
           <div class="section-label">Experience</div>
           <div class="section-body">
             <ul>
-              <li>Concept design for small residential and landscape projects</li>
-              <li>Site analysis and mapping for campus & urban projects</li>
+              <li>Concept design for residential + landscape projects</li>
+              <li>Site analysis, mapping, and campus-scale studies</li>
               <li>Design-build work with wood, steel, and reclaimed materials</li>
             </ul>
           </div>
@@ -231,8 +291,8 @@
         <div class="profile-section">
           <div class="section-label">Interests</div>
           <div class="section-body">
-            Material-driven design, adaptive reuse, small-scale interventions,
-            and projects that sit between architecture, landscape, and furniture.
+            Material-driven design, adaptive reuse, and the overlap between
+            architecture, landscape, and furniture.
           </div>
         </div>
       </section>
@@ -244,15 +304,15 @@
             <div class="profile-name">Jacob Reeves</div>
             <div class="profile-role">Architecture & Systems</div>
           </div>
-          <!-- Replace with Jacob's actual headshot -->
-          <div class="headshot">Headshot</div>
+
+          <img src="jacob_headshot.jpg" class="headshot" alt="Jacob Reeves" />
         </header>
 
         <div class="profile-section">
           <div class="section-label">Focus</div>
           <div class="section-body">
-            Plan and section development, structural logic at a concept level,
-            and diagramming programs from small additions to full re-builds.
+            Plan and section development, structural logic at concept level,
+            and clear program diagramming from additions to full rebuilds.
           </div>
         </div>
 
@@ -260,9 +320,9 @@
           <div class="section-label">Experience</div>
           <div class="section-body">
             <ul>
-              <li>Preliminary architectural layouts and massing studies</li>
-              <li>Technical drawing and coordination with engineering inputs</li>
-              <li>Graphic representation and clear client-facing diagrams</li>
+              <li>Massing + layout studies for early-phase architecture</li>
+              <li>Technical drawing and light structural coordination</li>
+              <li>Client-facing graphics and clear design communication</li>
             </ul>
           </div>
         </div>
@@ -270,13 +330,24 @@
         <div class="profile-section">
           <div class="section-label">Interests</div>
           <div class="section-body">
-            Simple, buildable forms, low-tech solutions, and working with
-            clients early in the process to set a clear design direction.
+            Simple, buildable forms, low-tech solutions, and early-phase clarity.
           </div>
         </div>
       </section>
 
     </main>
+
+    <!-- PROJECT GALLERY -->
+    <section class="project-images">
+      <h2 class="project-images-title">Project Gallery</h2>
+
+      <div class="project-grid">
+        <img src="project_01.jpg" alt="Project 01" />
+        <img src="project_02.jpg" alt="Project 02" />
+        <img src="project_03.jpg" alt="Project 03" />
+      </div>
+    </section>
+
   </div>
 </body>
 </html>
