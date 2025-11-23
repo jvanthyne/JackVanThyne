@@ -117,8 +117,6 @@
     }
 
     .title-bar {
-      background: linear-gradient(to right, #003354, #00436a);
-      color: #f0f0f0;
       padding: 2px 4px;
       display: flex;
       align-items: center;
@@ -126,6 +124,7 @@
       box-sizing: border-box;
       cursor: move; /* drag handle */
       flex-shrink: 0;
+      color: #f0f0f0;
     }
 
     .title-bar .title {
@@ -154,8 +153,6 @@
 
     .window-body {
       padding: 8px;
-      background-image:
-        repeating-linear-gradient(0deg, #c8c8c8 0, #c8c8c8 2px, #bcbcbc 2px, #bcbcbc 3px);
       overflow: auto;
       max-height: calc(80vh - 24px); /* account for title bar */
     }
@@ -179,7 +176,7 @@
     }
 
     .retro-button {
-      border: 2px solid #003354; /* blue accent */
+      border: 2px solid #003354; /* default blue accent */
       background: #e0e0e0;
       padding: 2px 10px;
       font-size: 11px;
@@ -224,6 +221,38 @@
       max-height: 140px;
       object-fit: cover;
     }
+
+    /* THEME COLORS PER WINDOW */
+
+    /* About window – blue */
+    .window-about .title-bar {
+      background: linear-gradient(to right, #003354, #00436a);
+    }
+    .window-about .window-body {
+      background-image:
+        repeating-linear-gradient(0deg, #c8c8c8 0, #c8c8c8 2px, #bcbcbc 2px, #bcbcbc 3px);
+    }
+
+    /* Past works – gray */
+    .window-past .title-bar {
+      background: linear-gradient(to right, #4f4f4f, #6c6c6c);
+    }
+    .window-past .window-body {
+      background-image:
+        repeating-linear-gradient(0deg, #d0d0d0 0, #d0d0d0 2px, #c2c2c2 2px, #c2c2c2 3px);
+    }
+
+    /* Contact – muted orange */
+    .window-contact .title-bar {
+      background: linear-gradient(to right, #8b4a21, #b9642e);
+    }
+    .window-contact .window-body {
+      background-image:
+        repeating-linear-gradient(0deg, #e3d1c4 0, #e3d1c4 2px, #d8c5b8 2px, #d8c5b8 3px);
+    }
+    .window-contact .retro-button {
+      border-color: #8b4a21; /* orange accent on button */
+    }
   </style>
 </head>
 <body>
@@ -251,7 +280,7 @@
   </div>
 
   <!-- About + Design Philosophy window -->
-  <div class="window hidden" id="aboutWindow">
+  <div class="window window-about hidden" id="aboutWindow">
     <div class="title-bar">
       <div class="title">about – van thyne custom furniture</div>
       <div class="controls">
@@ -260,26 +289,28 @@
     </div>
     <div class="window-body">
       <p>
-        i’m jack van thyne, a student at uc berkeley studying landscape architecture
+        jack van thyne is a student at uc berkeley studying landscape architecture
         with a focus on furniture design and research in wood construction and forest management.
       </p>
       <p>
-        i design and build custom furniture in the bay area, often using reclaimed or locally
-        sourced lumber. each project is a small collaboration between you, the site, and the material.
+        van thyne custom furniture designs and builds custom pieces in the bay area,
+        often using reclaimed or locally sourced lumber. each project becomes a collaboration
+        between the client, the site, and the material.
       </p>
       <p>
-        my work sits between architecture, furniture, and landscape. i like pieces that feel honest
-        about their structure: you can read how they’re built and where the wood came from.
+        the work sits between architecture, furniture, and landscape. pieces are meant to feel
+        honest about their structure so the way they are built and where the wood came from
+        remains legible.
       </p>
       <p>
         materials are treated as a record of place and use. dents, grain shifts, and repairs
-        are part of the design language, not something to hide.
+        are part of the design language rather than details to hide.
       </p>
     </div>
   </div>
 
   <!-- Past Works window: images only -->
-  <div class="window hidden" id="pastWorksWindow">
+  <div class="window window-past hidden" id="pastWorksWindow">
     <div class="title-bar">
       <div class="title">past_works / images</div>
       <div class="controls">
@@ -288,18 +319,20 @@
     </div>
     <div class="window-body">
       <p class="small-text">
-        swap these image file names with real photos from your work:
+        some past projects:
       </p>
       <div class="image-grid">
-        <img src="furniturepastworkimage001.jpg" alt="past work 001">
-        <img src="furniturepastworkimage002.jpg" alt="past work 002">
-        <img src="furniturepastworkimage003.jpg" alt="past work 003">
+        <img src="furniturepastworkimage001.jpg" alt="past project 001">
+        <img src="furniturepastworkimage002.jpg" alt="past project 002">
+        <img src="furniturepastworkimage003.jpg" alt="past project 003">
+        <img src="furniturepastworkimage004.jpg" alt="past project 004">
+        <img src="furniturepastworkimage005.jpg" alt="past project 005">
       </div>
     </div>
   </div>
 
   <!-- Contact / Schedule / Reach Out window -->
-  <div class="window hidden" id="contactWindow">
+  <div class="window window-contact hidden" id="contactWindow">
     <div class="title-bar">
       <div class="title">contact / schedule consultation</div>
       <div class="controls">
@@ -308,8 +341,9 @@
     </div>
     <div class="window-body">
       <p>
-        i offer a free preliminary design consultation for new projects. tell me a bit about the piece,
-        where it will live, and your timeline, and we can sketch ideas together.
+        van thyne custom furniture offers a free preliminary design consultation for new projects.
+        the conversation typically covers the piece, where it will live, and the intended timeline,
+        before moving into sketches and possibilities.
       </p>
       <p class="small-text">
         click below to email:
@@ -321,8 +355,8 @@
       </p>
       <hr>
       <p class="small-text">
-        have a project code from a past piece or proposal? enter it here and click <strong>reach out</strong>
-        to open a project window:
+        for a project with a code from a past piece or proposal, enter the code here and click
+        <strong>reach out</strong> to open a project window:
       </p>
       <div class="input-row">
         <input type="text" id="projectCodeInput" placeholder="e.g. TABLE01, CHAIR01, LIGHT01">
@@ -332,7 +366,7 @@
   </div>
 
   <!-- Project window (dynamic) -->
-  <div class="window hidden" id="projectWindow">
+  <div class="window window-about hidden" id="projectWindow">
     <div class="title-bar">
       <div class="title" id="projectWindowTitle">project</div>
       <div class="controls">
@@ -352,19 +386,19 @@
   </div>
 
   <script>
-    // Example project codes (you can rename/add as needed)
+    // Example project codes (can be renamed or expanded)
     const PROJECTS = {
       "TABLE01": {
         title: "reclaimed redwood dining table",
         code: "TABLE01",
         image: "table01.jpg",
-        text: "a custom dining table built from reclaimed redwood, designed to hold a lot of meals and stories."
+        text: "a custom dining table built from reclaimed redwood, designed to carry daily use and long-term stories."
       },
       "CHAIR01": {
         title: "laminated lounge chair",
         code: "CHAIR01",
         image: "chair01.jpg",
-        text: "an experimental lounge chair exploring laminated curves, structure, and comfort."
+        text: "an experimental lounge chair exploring laminated curves, structure, and grounded seating."
       },
       "LIGHT01": {
         title: "steel + paper pendant light",
@@ -513,11 +547,13 @@
 
       noteEl.textContent = "project code: " + project.code;
 
-      // mailto with code
+      // mailto with code, no first-person language in template
       btnEl.onclick = function () {
         const email = "jjvanthyne";
         const subject = encodeURIComponent("preliminary design consultation – " + project.code);
-        const body = encodeURIComponent("hi jack,\n\ni’m interested in project " + project.code + ".\n\nbest,\n");
+        const body = encodeURIComponent(
+          "hello,\n\nthis email is about project " + project.code + ".\n\nbest,\n"
+        );
         window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
       };
 
