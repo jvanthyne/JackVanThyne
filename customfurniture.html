@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>van thyne custom furniture</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       margin: 0;
@@ -10,6 +11,7 @@
       background: #707070; /* muted gray */
       color: #000;
       cursor: default; /* old-school arrow vibe */
+      overflow: hidden; /* keep everything inside viewport */
     }
 
     a {
@@ -68,6 +70,7 @@
       background-image:
         repeating-linear-gradient(45deg, #6c6c6c 0, #6c6c6c 1px, #707070 1px, #707070 3px);
       font-size: 12px;
+      box-sizing: border-box;
     }
 
     /* Launcher panel */
@@ -78,6 +81,7 @@
       display: inline-block;
       padding: 8px 12px;
       max-width: 90vw;
+      box-sizing: border-box;
     }
 
     .link-panel-title {
@@ -110,6 +114,7 @@
       z-index: 10;
       display: flex;
       flex-direction: column;
+      box-sizing: border-box;
     }
 
     .window.hidden {
@@ -125,6 +130,7 @@
       cursor: move; /* drag handle */
       flex-shrink: 0;
       color: #f0f0f0;
+      touch-action: none; /* better touch dragging */
     }
 
     .title-bar .title {
@@ -155,6 +161,7 @@
       padding: 8px;
       overflow: auto;
       max-height: calc(80vh - 24px); /* account for title bar */
+      box-sizing: border-box;
     }
 
     .window-body p {
@@ -209,6 +216,7 @@
       background: #f0f0f0;
       min-width: 160px;
       max-width: 50vw;
+      box-sizing: border-box;
     }
 
     .image-grid {
@@ -252,6 +260,54 @@
     }
     .window-contact .retro-button {
       border-color: #8b4a21; /* orange accent on button */
+    }
+
+    /* MOBILE TWEAKS */
+    @media (max-width: 600px) {
+      .menu-bar {
+        font-size: 11px;
+        padding: 4px 6px;
+      }
+
+      .home-button {
+        padding: 2px 8px;
+        font-size: 10px;
+      }
+
+      .content {
+        padding: 8px;
+        font-size: 11px;
+      }
+
+      .link-panel {
+        width: 100%;
+        max-width: 100%;
+        box-shadow: 2px 2px 0 #000;
+      }
+
+      .window {
+        min-width: 80vw;
+        max-width: 96vw;
+        max-height: 75vh;
+      }
+
+      .window-body {
+        max-height: calc(75vh - 26px);
+      }
+
+      .image-grid img {
+        max-height: 120px;
+      }
+
+      .input-row input {
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
+
+      .retro-button {
+        font-size: 10px;
+        padding: 2px 8px;
+      }
     }
   </style>
 </head>
@@ -476,35 +532,47 @@
       bringToFront(el);
     }
 
-    // basic drag logic for all windows
+    // drag logic for mouse + touch
     function makeWindowsDraggable() {
       let activeWindow = null;
       let offsetX = 0;
       let offsetY = 0;
 
+      function startDrag(win, clientX, clientY) {
+        activeWindow = win;
+        bringToFront(activeWindow);
+        const rect = win.getBoundingClientRect();
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+      }
+
       document.querySelectorAll(".window .title-bar").forEach(bar => {
+        // mouse
         bar.addEventListener("mousedown", function (e) {
           const win = this.closest(".window");
           if (!win) return;
-          activeWindow = win;
-          bringToFront(activeWindow);
-
-          const rect = win.getBoundingClientRect();
-          offsetX = e.clientX - rect.left;
-          offsetY = e.clientY - rect.top;
-
+          startDrag(win, e.clientX, e.clientY);
           e.preventDefault();
         });
+
+        // touch
+        bar.addEventListener("touchstart", function (e) {
+          const win = this.closest(".window");
+          if (!win) return;
+          const touch = e.touches[0];
+          startDrag(win, touch.clientX, touch.clientY);
+          e.preventDefault();
+        }, { passive: false });
       });
 
-      document.addEventListener("mousemove", function (e) {
+      function moveActive(clientX, clientY) {
         if (!activeWindow) return;
 
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const rect = activeWindow.getBoundingClientRect();
-        let newLeft = e.clientX - offsetX;
-        let newTop = e.clientY - offsetY;
+        let newLeft = clientX - offsetX;
+        let newTop = clientY - offsetY;
 
         const maxLeft = viewportWidth - rect.width - 4;
         const maxTop = viewportHeight - rect.height - 4;
@@ -516,9 +584,26 @@
 
         activeWindow.style.left = newLeft + "px";
         activeWindow.style.top = newTop + "px";
+      }
+
+      // mouse move/up
+      document.addEventListener("mousemove", function (e) {
+        moveActive(e.clientX, e.clientY);
       });
 
       document.addEventListener("mouseup", function () {
+        activeWindow = null;
+      });
+
+      // touch move/end
+      document.addEventListener("touchmove", function (e) {
+        if (!activeWindow) return;
+        const touch = e.touches[0];
+        moveActive(touch.clientX, touch.clientY);
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener("touchend", function () {
         activeWindow = null;
       });
     }
@@ -615,7 +700,7 @@
         }
       });
 
-      // re-clamp windows if viewport is resized
+      // re-clamp windows if viewport is resized (desktop + mobile rotation)
       window.addEventListener("resize", function () {
         document.querySelectorAll(".window:not(.hidden)").forEach(clampWindowToViewport);
       });
