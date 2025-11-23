@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>J+R Preliminary Design</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* --- BASE --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f7f5;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 40px 40px 60px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- TOP RIGHT TITLE BLOCK --- */
+    .firm-block {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      max-width: 260px;
+      background: #111;
+      color: #f7f7f5;
+      padding: 16px 18px;
+      border-radius: 2px;
+      border: 1px solid #222;
+      letter-spacing: 0.04em;
+    }
+
+    .firm-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .firm-block p {
+      font-size: 0.75rem;
+      line-height: 1.35;
+    }
+
+    /* --- CENTER SPLIT LAYOUT --- */
+    .profiles {
+      flex: 1;
+      display: flex;
+      border-left: 1px solid #d0d0cf;
+      border-right: 1px solid #d0d0cf;
+      margin-top: 40px;
+      margin-right: 320px; /* gives space so text doesn't sit under the firm block */
+      min-height: 70vh;
+    }
+
+    .profile {
+      flex: 1;
+      padding: 40px 32px 40px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      border-right: 1px solid #d0d0cf;
+    }
+
+    .profile:last-child {
+      border-right: none;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .profile-name {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .profile-role {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #666;
+    }
+
+    .headshot {
+      width: 96px;
+      height: 96px;
+      border-radius: 2px;
+      border: 1px solid #c2c2c0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      background: #f0f0ee;
+    }
+
+    .profile-section {
+      border-top: 1px solid #d0d0cf;
+      padding-top: 14px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+      color: #777;
+    }
+
+    .section-body {
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .section-body ul {
+      list-style: none;
+      margin-top: 6px;
+    }
+
+    .section-body li {
+      font-size: 0.78rem;
+      margin-bottom: 2px;
+    }
+
+    .section-body li::before {
+      content: "— ";
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 960px) {
+      .firm-block {
+        position: static;
+        align-self: flex-end;
+        margin-bottom: 20px;
+      }
+
+      .profiles {
+        margin-right: 0;
+        border-right: none;
+        border-left: none;
+        flex-direction: column;
+      }
+
+      .profile {
+        border-right: none;
+        border-top: 1px solid #d0d0cf;
+      }
+
+      .profile:first-child {
+        border-top: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 24px 18px 40px;
+      }
+
+      .profile {
+        padding: 28px 0;
+      }
+
+      .profile-header {
+        flex-direction: row;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- TOP RIGHT FIRM BLOCK -->
+    <aside class="firm-block">
+      <h1 class="firm-title">J+R Preliminary Design</h1>
+      <p>
+        Student-run preliminary design studio offering concept-level drawings,
+        site analysis, and spatial studies for projects of any scale.
+      </p>
+    </aside>
+
+    <!-- CENTER SPLIT: JACK / JACOB -->
+    <main class="profiles">
+
+      <!-- JACK VAN THYNE -->
+      <section class="profile profile-jack">
+        <header class="profile-header">
+          <div>
+            <div class="profile-name">Jack Van Thyne</div>
+            <div class="profile-role">Landscape & Spatial Design</div>
+          </div>
+          <!-- Replace this div with an <img> when you have a headshot -->
+          <!-- Example: <img src="jack-headshot.jpg" alt="Jack Van Thyne" class="headshot" /> -->
+          <div class="headshot">Headshot</div>
+        </header>
+
+        <div class="profile-section">
+          <div class="section-label">Focus</div>
+          <div class="section-body">
+            Early-stage site and form studies, landscape-driven concepts,
+            and spatial frameworks that tie architecture to context.
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="section-label">Experience</div>
+          <div class="section-body">
+            <ul>
+              <li>Concept design for small residential and landscape projects</li>
+              <li>Site analysis and mapping for campus & urban projects</li>
+              <li>Design-build work with wood, steel, and reclaimed materials</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="section-label">Interests</div>
+          <div class="section-body">
+            Material-driven design, adaptive reuse, small-scale interventions,
+            and projects that sit between architecture, landscape, and furniture.
+          </div>
+        </div>
+      </section>
+
+      <!-- JACOB REEVES -->
+      <section class="profile profile-jacob">
+        <header class="profile-header">
+          <div>
+            <div class="profile-name">Jacob Reeves</div>
+            <div class="profile-role">Architecture & Systems</div>
+          </div>
+          <!-- Replace with Jacob's actual headshot -->
+          <div class="headshot">Headshot</div>
+        </header>
+
+        <div class="profile-section">
+          <div class="section-label">Focus</div>
+          <div class="section-body">
+            Plan and section development, structural logic at a concept level,
+            and diagramming programs from small additions to full re-builds.
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="section-label">Experience</div>
+          <div class="section-body">
+            <ul>
+              <li>Preliminary architectural layouts and massing studies</li>
+              <li>Technical drawing and coordination with engineering inputs</li>
+              <li>Graphic representation and clear client-facing diagrams</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="section-label">Interests</div>
+          <div class="section-body">
+            Simple, buildable forms, low-tech solutions, and working with
+            clients early in the process to set a clear design direction.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
