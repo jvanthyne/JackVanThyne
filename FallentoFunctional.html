@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fallen to Functional: Community Spaces from Campus Wood Waste</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="A student-led design–build initiative transforming fallen campus trees into functional community spaces at UC Berkeley."
+  />
+  <style>
+    /* BASIC RESET */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Courier New", Courier, monospace;
+      background: #000000;
+      color: #00ffcc;
+      line-height: 1.6;
+    }
+
+    a {
+      color: #ff6bff;
+      text-decoration: none;
+      border-bottom: 1px dotted #ff6bff;
+    }
+
+    a:hover {
+      color: #ffffff;
+      border-bottom-style: solid;
+    }
+
+    /* 80s STYLE FRAME */
+    .page {
+      max-width: 960px;
+      margin: 24px auto 56px;
+      padding: 16px 18px 32px;
+      border: 2px solid #00ffcc;
+      box-shadow: 0 0 16px #00ffcc;
+      background: radial-gradient(circle at top, #141414 0, #000000 55%);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ff6bff;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 6px 8px;
+      border: 2px solid #ff6bff;
+      display: inline-block;
+      box-shadow: 0 0 12px #ff6bff;
+    }
+
+    .subline {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #9affee;
+    }
+
+    hr.scanline {
+      margin: 16px auto 18px;
+      border: none;
+      height: 2px;
+      background-image: linear-gradient(
+        90deg,
+        #00ffcc 0,
+        #ff6bff 25%,
+        #00ffcc 50%,
+        #ff6bff 75%,
+        #00ffcc 100%
+      );
+      box-shadow: 0 0 8px #00ffcc;
+    }
+
+    nav {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    nav a {
+      margin: 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    nav span {
+      opacity: 0.6;
+      margin: 0 3px;
+    }
+
+    /* LAYOUT */
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 800px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    section {
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-letter-spacing: 0.16em;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .line-title {
+      border-bottom: 1px solid #00ffcc;
+      padding-bottom: 2px;
+      margin-bottom: 8px;
+    }
+
+    p,
+    li {
+      font-size: 0.9rem;
+      color: #c9fff5;
+    }
+
+    ul {
+      padding-left: 18px;
+      margin-top: 4px;
+    }
+
+    li + li {
+      margin-top: 3px;
+    }
+
+    .block {
+      border: 1px solid #00ffcc;
+      padding: 10px 12px;
+      margin-top: 6px;
+      background: #050505;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #ff6bff;
+      margin-bottom: 3px;
+    }
+
+    .mono {
+      font-family: inherit;
+      font-size: 0.85rem;
+    }
+
+    .hero-box {
+      border: 1px dashed #ff6bff;
+      padding: 14px 12px;
+      text-align: center;
+      background: #050013;
+      margin-bottom: 10px;
+    }
+
+    .hero-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .hero-caption {
+      font-size: 0.85rem;
+      color: #d0baff;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      color: #7cf8dd;
+      opacity: 0.9;
+      padding-top: 20px;
+    }
+
+    .tiny {
+      font-size: 0.72rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    /* 80s glow on TGIF logo */
+    footer img {
+      filter: drop-shadow(0 0 8px #00ffcc);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="badge">tgif grant project // uc berkeley</div>
+      <h1>Fallen to Functional</h1>
+      <div class="subline">
+        Community Spaces from Campus Wood Waste &mdash; a student-led circular design initiative.
+      </div>
+      <hr class="scanline" />
+    </header>
+
+    <nav>
+      <a href="#overview">Overview</a><span>•</span>
+      <a href="#goals">Goals</a><span>•</span>
+      <a href="#timeline">Timeline</a><span>•</span>
+      <a href="#team">Team</a><span>•</span>
+      <a href="#impact">Impact</a><span>•</span>
+      <a href="#archive">Archive</a>
+    </nav>
+
+    <main>
+      <!-- LEFT COLUMN -->
+      <div>
+        <section id="overview">
+          <div class="line-title">
+            <h2>Project Overview</h2>
+          </div>
+          <p>
+            <strong>Fallen to Functional: Community Spaces from Campus Wood Waste</strong> is a
+            design-build initiative that reimagines how UC Berkeley manages its natural resources.
+            The project transforms fallen and discarded campus trees into functional outdoor
+            furniture and community gathering spaces.
+          </p>
+          <p style="margin-top: 8px;">
+            Using the Richmond Field Station Wood Lab, the project reclaims wood from removed
+            trees and fabricates benches, tables, and seating clusters for underutilized outdoor areas.
+          </p>
+        </section>
+
+        <section id="goals">
+          <div class="line-title">
+            <h2>Goals &amp; Objectives</h2>
+          </div>
+          <ul>
+            <li><strong>Sustainability:</strong> Divert usable wood from disposal and reduce embodied carbon.</li>
+            <li><strong>Connection to Place:</strong> Celebrate UC Berkeley’s natural identity through reclaimed materials.</li>
+            <li><strong>Community:</strong> Create accessible gathering spaces for students and staff.</li>
+            <li><strong>Education:</strong> Use QR-linked signage to teach circular design and material reuse.</li>
+            <li><strong>Scalability:</strong> Establish a framework for future campus wood-reuse projects.</li>
+          </ul>
+        </section>
+
+        <section id="timeline">
+          <div class="line-title">
+            <h2>Implementation Timeline (Dec 2025 → May 2026)</h2>
+          </div>
+
+          <div class="block">
+            <div class="label">Dec &ndash; Jan</div>
+            <p>Select trees, transport logs, mill lumber, and prepare material.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">Feb &ndash; Mar</div>
+            <p>Design and fabricate benches, tables, and seating clusters.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">Apr</div>
+            <p>Install furniture in underused campus areas with plaques and QR codes.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">May</div>
+            <p>Complete documentation, photography, and public website archive.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <section>
+          <div class="line-title">
+            <h2>Project Image</h2>
+          </div>
+
+          <div class="hero-box">
+            <div class="hero-title">Concept Render / Logo Placeholder</div>
+
+            <p class="hero-caption" style="margin-top: 6px;">
+              Placeholder for a rendering or photo showing reclaimed-wood outdoor furniture.
+            </p>
+          </div>
+        </section>
+
+        <section id="team">
+          <div class="line-title">
+            <h2>Team &amp; Collaborators</h2>
+          </div>
+
+          <div class="block">
+            <div class="label">Project Lead</div>
+            <p><strong>Jack Van Thyne</strong><br />Landscape Architecture student, UC Berkeley.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">Richmond Field Station Wood Lab</div>
+            <p>Provides facilities, equipment, and mentorship for fabrication.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">UC Berkeley Facilities &amp; Grounds</div>
+            <p>Identifies usable fallen trees and approves installation sites.</p>
+          </div>
+
+          <div class="block">
+            <div class="label">TGIF / SERC</div>
+            <p>Funds the project and connects it to sustainability networks.</p>
+          </div>
+        </section>
+
+        <section id="impact">
+          <div class="line-title">
+            <h2>Impact &amp; Evaluation</h2>
+          </div>
+
+          <ul>
+            <li>Wood diverted from waste stream.</li>
+            <li>Number of pieces installed across campus.</li>
+            <li>Embodied carbon savings.</li>
+            <li>Engagement from students, staff, and visitors.</li>
+          </ul>
+        </section>
+
+        <section id="archive">
+          <div class="line-title">
+            <h2>Future Plans</h2>
+          </div>
+          <ul>
+            <li>Creation of a Campus Wood Reuse Program.</li>
+            <li>Expansion to dorms, libraries, and outdoor classrooms.</li>
+            <li>Use of the website as an ongoing project archive.</li>
+          </ul>
+        </section>
+      </div>
+    </main>
+
+    <!-- UPDATED FOOTER WITH TGIF LOGO -->
+    <footer>
+      <div style="margin-bottom: 12px;">
+        Fallen to Functional: Community Spaces from Campus Wood Waste
+      </div>
+
+      <img 
+        src="TGIF_fundedby_main.png" 
+        alt="Funded by TGIF" 
+        style="width: 200px; max-width: 60%; margin: 10px auto; display: block;"
+      />
+
+      <div class="tiny">
+        This page documents a TGIF-funded project at UC Berkeley. All text is written in the third person.
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
