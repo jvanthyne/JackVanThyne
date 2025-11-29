@@ -77,7 +77,7 @@
     }
 
     .header-logo-box img {
-      height: 28px; /* replace logo.png with your actual logo file */
+      height: 28px; /* replace with your actual logo file */
       width: auto;
       display: block;
     }
@@ -125,6 +125,10 @@
 
     .window.hidden {
       display: none;
+    }
+
+    .window-template {
+      display: none; /* templates stay hidden */
     }
 
     .title-bar {
@@ -215,7 +219,8 @@
       flex-wrap: wrap;
     }
 
-    .input-row input {
+    .input-row input,
+    .input-row textarea {
       font-size: 11px;
       padding: 2px 4px;
       border: 1px solid #000;
@@ -223,6 +228,17 @@
       min-width: 160px;
       max-width: 50vw;
       box-sizing: border-box;
+    }
+
+    .input-column {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .input-column textarea {
+      resize: vertical;
     }
 
     .image-grid {
@@ -408,7 +424,8 @@
         max-height: 120px;
       }
 
-      .input-row input {
+      .input-row input,
+      .input-row textarea {
         max-width: 100%;
         flex: 1 1 100%;
       }
@@ -458,7 +475,7 @@
     </div>
 
     <div class="content">
-      <!-- desktop area; windows appear here -->
+      <!-- desktop area; windows appear here (cloned from templates) -->
     </div>
   </div>
 
@@ -498,10 +515,10 @@
     </div>
   </div>
 
-  <!-- Base windows (used both as visible first instances and as templates) -->
+  <!-- WINDOW TEMPLATES (hidden) -->
 
-  <!-- About + Design Philosophy window -->
-  <div class="window window-about" id="aboutWindow">
+  <!-- About template -->
+  <div class="window window-about window-template" id="aboutTemplate">
     <div class="title-bar">
       <div class="title">about – van thyne custom furniture</div>
       <div class="controls">
@@ -530,8 +547,8 @@
     </div>
   </div>
 
-  <!-- Past Works window: images only -->
-  <div class="window window-past" id="pastWorksWindow">
+  <!-- Past Works template -->
+  <div class="window window-past window-template" id="pastTemplate">
     <div class="title-bar">
       <div class="title">past_works / images</div>
       <div class="controls">
@@ -552,8 +569,8 @@
     </div>
   </div>
 
-  <!-- Request / Schedule / Project code window -->
-  <div class="window window-request" id="requestWindow">
+  <!-- Request / Schedule / Project code template -->
+  <div class="window window-request window-template" id="requestTemplate">
     <div class="title-bar">
       <div class="title">schedule / request a project</div>
       <div class="controls">
@@ -563,31 +580,37 @@
     <div class="window-body">
       <p>
         van thyne custom furniture offers a free preliminary design consultation for new projects.
-        the conversation typically covers the piece, where it will live, and the intended timeline,
-        before moving into sketches and possibilities.
       </p>
-      <p class="small-text">
-        to request a project or schedule a consultation, an email can be started here:
-      </p>
-      <p class="small-text">
-        <a href="mailto:jjvanthyne?subject=custom%20furniture%20consultation">
-          email jjvanthyne to request a project
-        </a>
-      </p>
-      <hr>
+
+      <p class="small-text"><strong>enter a project code</strong></p>
       <p class="small-text">
         if a project has an associated code (for example from a past collaboration),
-        it can be entered here. clicking <strong>reach out</strong> will open a project window:
+        it can be entered here. clicking <strong>reach out</strong> will open a project window.
       </p>
       <div class="input-row">
-        <input type="text" id="projectCodeInput" placeholder="enter project code (if applicable)">
-        <button class="retro-button" id="projectCodeButton">reach out</button>
+        <input type="text" class="project-code-input" placeholder="enter project code (if applicable)">
+        <button class="retro-button project-code-button">reach out</button>
+      </div>
+
+      <hr>
+
+      <p class="small-text"><strong>start a new project</strong></p>
+      <p class="small-text">
+        to start a new project, basic information can be sent as a draft email below.
+      </p>
+      <div class="input-column">
+        <input type="text" class="new-project-title" placeholder="project name or type">
+        <input type="text" class="new-project-location" placeholder="location (city, state)">
+        <textarea class="new-project-details" rows="4" placeholder="project details and description"></textarea>
+      </div>
+      <div class="button-row">
+        <button class="retro-button new-project-submit">submit request</button>
       </div>
     </div>
   </div>
 
-  <!-- Contact window (simple info) -->
-  <div class="window window-contact" id="contactWindow">
+  <!-- Contact template -->
+  <div class="window window-contact window-template" id="contactTemplate">
     <div class="title-bar">
       <div class="title">contact information</div>
       <div class="controls">
@@ -604,7 +627,7 @@
     </div>
   </div>
 
-  <!-- Project window (dynamic, single instance is fine) -->
+  <!-- Project window (single, dynamic) -->
   <div class="window window-about hidden" id="projectWindow">
     <div class="title-bar">
       <div class="title" id="projectWindowTitle">project</div>
@@ -688,12 +711,11 @@
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      // temporarily ensure visible for size
       el.style.display = "block";
       const rect = el.getBoundingClientRect();
 
       const maxLeft = Math.max(0, viewportWidth - rect.width - 16);
-      const maxTop = Math.max(24, viewportHeight - rect.height - 90); // keep above dock/banner
+      const maxTop = Math.max(24, viewportHeight - rect.height - 90);
 
       const left = Math.floor(Math.random() * (maxLeft + 1));
       const top = Math.floor(Math.random() * (maxTop + 1));
@@ -702,12 +724,6 @@
       el.style.top = top + "px";
 
       bringToFront(el);
-    }
-
-    function positionWindowRandomById(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      positionWindowRandomElement(el);
     }
 
     function initWindow(win) {
@@ -740,7 +756,11 @@
       const closeBtn = win.querySelector(".close-btn");
       if (closeBtn) {
         closeBtn.addEventListener("click", function () {
-          win.classList.add("hidden");
+          if (win.id === "projectWindow") {
+            win.classList.add("hidden");
+          } else {
+            win.remove();
+          }
         });
       }
 
@@ -754,6 +774,7 @@
       const clone = template.cloneNode(true);
       const uniqueId = templateId + "_clone_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
       clone.id = uniqueId;
+      clone.classList.remove("window-template");
       clone.classList.remove("hidden");
       document.body.appendChild(clone);
       initWindow(clone);
@@ -762,7 +783,12 @@
 
     function closeAllWindows() {
       document.querySelectorAll(".window").forEach(win => {
-        win.classList.add("hidden");
+        if (win.classList.contains("window-template")) return; // keep templates
+        if (win.id === "projectWindow") {
+          win.classList.add("hidden");
+        } else {
+          win.remove();
+        }
       });
     }
 
@@ -802,7 +828,8 @@
         const email = "jjvanthyne";
         const subject = encodeURIComponent("preliminary design consultation – " + project.code);
         const body = encodeURIComponent(
-          "hello,\n\nthis email is about project " + project.code + ".\n\nbest,\n"
+          "hello,\n\nthis email is about project " + project.code + ".\n\n" +
+          "a few possible times for a preliminary consultation can be suggested here.\n\nbest,\n"
         );
         window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
       };
@@ -812,6 +839,7 @@
       positionWindowRandomElement(win);
     }
 
+    // Drag move handlers
     document.addEventListener("mousemove", function (e) {
       if (!activeWindow) return;
 
@@ -864,54 +892,92 @@
       activeWindow = null;
     });
 
+    // Delegated events for request windows (works for clones)
+    document.addEventListener("click", function (e) {
+      // project code reach out
+      if (e.target.classList.contains("project-code-button")) {
+        const win = e.target.closest(".window-request");
+        if (!win) return;
+        const input = win.querySelector(".project-code-input");
+        if (!input) return;
+        openProjectFromCode(input.value);
+      }
+
+      // new project submit
+      if (e.target.classList.contains("new-project-submit")) {
+        const win = e.target.closest(".window-request");
+        if (!win) return;
+        const titleInput = win.querySelector(".new-project-title");
+        const locationInput = win.querySelector(".new-project-location");
+        const detailsInput = win.querySelector(".new-project-details");
+
+        const title = titleInput ? titleInput.value.trim() : "";
+        const location = locationInput ? locationInput.value.trim() : "";
+        const details = detailsInput ? detailsInput.value.trim() : "";
+
+        const email = "jjvanthyne";
+        const subjectBase = title || "new custom furniture project";
+        const subject = encodeURIComponent("project request – " + subjectBase);
+
+        let body = "hello,\n\n";
+        body += "a new project request is being submitted.\n\n";
+        if (title) body += "project name / type: " + title + "\n";
+        if (location) body += "location: " + location + "\n";
+        if (details) {
+          body += "\nproject details and description:\n" + details + "\n";
+        }
+        body += "\nplease reply with a few possible times for a preliminary consultation.\n\nbest,\n";
+
+        window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + encodeURIComponent(body);
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && e.target.classList.contains("project-code-input")) {
+        const win = e.target.closest(".window-request");
+        if (!win) return;
+        openProjectFromCode(e.target.value);
+      }
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
-      // initialize existing base windows
-      document.querySelectorAll(".window").forEach(initWindow);
+      // Initialize project window behavior
+      const projectWin = document.getElementById("projectWindow");
+      if (projectWin) {
+        initWindow(projectWin);
+        projectWin.classList.add("hidden");
+      }
 
-      // randomize positions for the four main base windows on load
-      positionWindowRandomById("aboutWindow");
-      positionWindowRandomById("pastWorksWindow");
-      positionWindowRandomById("requestWindow");
-      positionWindowRandomById("contactWindow");
+      // Spawn one of each template on load
+      spawnWindowFromTemplate("aboutTemplate");
+      spawnWindowFromTemplate("pastTemplate");
+      spawnWindowFromTemplate("requestTemplate");
+      spawnWindowFromTemplate("contactTemplate");
 
-      // dock actions spawn new windows from templates
+      // Dock actions: spawn new instances from templates
       document.getElementById("dockRequest").addEventListener("click", function () {
-        spawnWindowFromTemplate("requestWindow");
+        spawnWindowFromTemplate("requestTemplate");
       });
 
       document.getElementById("dockAbout").addEventListener("click", function () {
-        spawnWindowFromTemplate("aboutWindow");
+        spawnWindowFromTemplate("aboutTemplate");
       });
 
       document.getElementById("dockPast").addEventListener("click", function () {
-        spawnWindowFromTemplate("pastWorksWindow");
+        spawnWindowFromTemplate("pastTemplate");
       });
 
       document.getElementById("dockContact").addEventListener("click", function () {
-        spawnWindowFromTemplate("contactWindow");
+        spawnWindowFromTemplate("contactTemplate");
       });
 
       document.getElementById("dockClose").addEventListener("click", function () {
         closeAllWindows();
       });
 
-      // project code reach-out button on the base request window
-      const projectCodeInput = document.getElementById("projectCodeInput");
-      const projectCodeButton = document.getElementById("projectCodeButton");
-
-      projectCodeButton.addEventListener("click", function () {
-        openProjectFromCode(projectCodeInput.value);
-      });
-
-      projectCodeInput.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          openProjectFromCode(projectCodeInput.value);
-        }
-      });
-
-      // re-clamp windows on resize
+      // Re-clamp windows on resize
       window.addEventListener("resize", function () {
-        document.querySelectorAll(".window:not(.hidden)").forEach(clampWindowToViewport);
+        document.querySelectorAll(".window:not(.window-template)").forEach(clampWindowToViewport);
       });
     });
   </script>
