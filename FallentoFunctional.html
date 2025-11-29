@@ -22,7 +22,7 @@
 
     body {
       font-family: "Times New Roman", Times, serif;
-      background: #d6d6d6; /* overall gray background */
+      background: #0c1908; /* back to previous dark background */
       color: #234515;      /* main green text */
       line-height: 1.5;
     }
@@ -43,7 +43,7 @@
       margin: 24px auto 40px;
       background: #f5f5f5;              /* light gray window */
       border: 3px solid #9e8f03;        /* strong accent frame */
-      box-shadow: 0 0 0 1px #888888;
+      box-shadow: 0 0 0 1px #000000;
     }
 
     @media (min-width: 900px) {
@@ -165,7 +165,7 @@
       border-top: 2px solid #b5b5b5;
       border-bottom: 2px solid #b5b5b5;
       background: #f9f9f9;
-      transition: border-color 0.2s ease, background-color 0.2s ease;
+      transition: border 0.2s ease, background-color 0.2s ease;
     }
 
     section + section {
@@ -173,8 +173,13 @@
     }
 
     section.highlight {
-      border-color: #9e8f03;
+      border: 3px solid #9e8f03;      /* full border when highlighted */
       background-color: #f0f0f0;
+    }
+
+    section.highlight h2 {
+      color: #9e8f03;                 /* highlight the title too */
+      border-color: #9e8f03;
     }
 
     h2 {
