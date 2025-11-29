@@ -157,7 +157,7 @@
     main {
       display: flex;
       flex-direction: column;
-      gap: 18px; /* more vertical space between sections */
+      gap: 18px; /* vertical space between sections */
     }
 
     section {
@@ -172,12 +172,12 @@
     }
 
     section.highlight {
-      border: 3px solid #9e8f03;      /* full border when highlighted */
-      background-color: #7c8727;      /* slightly lighter olive on highlight */
+      border: 3px solid #9e8f03;
+      background-color: #7c8727;
     }
 
     section.highlight h2 {
-      color: #9e8f03;                 /* highlight the title too */
+      color: #9e8f03;
       border-color: #9e8f03;
     }
 
@@ -199,7 +199,7 @@
     }
 
     p + p {
-      margin-top: 8px; /* more space between paragraphs */
+      margin-top: 8px;
     }
 
     ul {
@@ -223,7 +223,7 @@
       border: 2px solid #50551a;
       padding: 10px 12px;
       margin-top: 10px;
-      background: #7c8727; /* slightly lighter than main */
+      background: #7c8727;
     }
 
     .block + .block {
@@ -259,50 +259,69 @@
       background: #7c8727;
     }
 
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
     .project-title {
       font-weight: bold;
-      margin-bottom: 2px;
+      font-size: 0.9rem;
     }
 
     .project-meta {
       font-size: 0.8rem;
       color: #e4ebb7;
+      margin-top: 2px;
     }
 
     .map-frame {
       border: 2px solid #50551a;
       background: #7c8727;
-      height: 220px;
+      height: auto;
       margin-bottom: 10px;
+      padding: 6px;
+      text-align: center;
     }
 
-    .map-frame iframe {
-      border: 0;
-      width: 100%;
-      height: 100%;
+    .map-frame img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
 
-    .link-button {
-      display: inline-block;
-      margin-top: 10px;
+    .link-button,
+    .detail-button {
       font-family: "Times New Roman", Times, serif;
       background: #c0c0c0;
       color: #000000;
       border: 2px solid #777777;
-      padding: 5px 12px;
+      padding: 5px 10px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       font-size: 0.75rem;
       cursor: pointer;
       box-shadow: inset 1px 1px 0 #f9f9f9, inset -1px -1px 0 #7f7f7f;
+      white-space: nowrap;
     }
 
-    .link-button:hover {
+    .link-button {
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .link-button:hover,
+    .detail-button:hover {
       background: #d8d8d8;
       border-color: #9e8f03;
     }
 
-    .link-button:active {
+    .link-button:active,
+    .detail-button:active {
       box-shadow: inset -1px -1px 0 #f9f9f9, inset 1px 1px 0 #7f7f7f;
     }
 
@@ -353,6 +372,94 @@
       max-width: 60%;
       margin: 10px auto 6px;
       display: block;
+    }
+
+    /* MODALS */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      padding: 12px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #69701d;
+      border: 3px solid #9e8f03;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 14px 14px 16px;
+      box-shadow: 0 0 0 1px #000000;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #50551a;
+      padding-bottom: 4px;
+    }
+
+    .modal-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #f3f7de;
+    }
+
+    .modal-close {
+      font-family: "Times New Roman", Times, serif;
+      border: 2px solid #777777;
+      background: #c0c0c0;
+      color: #000000;
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      line-height: 1;
+      padding: 0;
+      box-shadow: inset 1px 1px 0 #f9f9f9, inset -1px -1px 0 #7f7f7f;
+    }
+
+    .modal-close:active {
+      box-shadow: inset -1px -1px 0 #f9f9f9, inset 1px 1px 0 #7f7f7f;
+    }
+
+    .modal-body p {
+      margin-bottom: 8px;
+      font-size: 0.86rem;
+      color: #f3f7de;
+    }
+
+    .modal-photos {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .modal-photos img {
+      width: 100%;
+      display: block;
+      background: #8d9a30;
+      min-height: 60px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 600px) {
+      .modal-photos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
@@ -470,38 +577,44 @@
         <section id="projects">
           <h2>Projects</h2>
           <p>
-            The four initial installations are located on the central UC Berkeley campus. The map
-            below indicates their approximate locations.
+            The four initial installations are located on the central UC Berkeley campus. The site
+            map below indicates their approximate locations.
           </p>
 
           <div class="map-frame">
-            <!-- Central campus map embed (overview for all four projects) -->
-            <iframe
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3154.78!2d-122.264!3d37.8715!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80857c2464c45a0b%3A0xeadf39c429f775d7!2sUniversity%20of%20California%2C%20Berkeley!5e0!3m2!1sen!2sus!4v1700000000003"
-              allowfullscreen
-            ></iframe>
+            <img src="SITE_MAP.png" alt="Site map of four project locations on the UC Berkeley campus" />
           </div>
 
           <div class="projects-list">
             <div class="project-item">
-              <div class="project-title">Memorial Glade Bench Cluster</div>
+              <div class="project-header">
+                <div class="project-title">1. Memorial Glade Bench Cluster</div>
+                <button class="detail-button" data-project="project1">Details</button>
+              </div>
               <div class="project-meta">Memorial Glade · Central lawn seating</div>
             </div>
 
             <div class="project-item">
-              <div class="project-title">Eucalyptus Grove Table</div>
+              <div class="project-header">
+                <div class="project-title">2. Eucalyptus Grove Table</div>
+                <button class="detail-button" data-project="project2">Details</button>
+              </div>
               <div class="project-meta">Strawberry Creek Edge · Shared work surface</div>
             </div>
 
             <div class="project-item">
-              <div class="project-title">North Gate Entry Seating</div>
+              <div class="project-header">
+                <div class="project-title">3. North Gate Entry Seating</div>
+                <button class="detail-button" data-project="project3">Details</button>
+              </div>
               <div class="project-meta">North Gate / CED · Threshold seating</div>
             </div>
 
             <div class="project-item">
-              <div class="project-title">Dwinelle Plaza Study Table</div>
+              <div class="project-header">
+                <div class="project-title">4. Dwinelle Plaza Study Table</div>
+                <button class="detail-button" data-project="project4">Details</button>
+              </div>
               <div class="project-meta">Dwinelle Plaza · Informal study and meeting table</div>
             </div>
           </div>
@@ -578,6 +691,108 @@
     </div>
   </div>
 
+  <!-- MODALS FOR PROJECT DETAILS -->
+
+  <div class="modal-backdrop" data-modal="project1">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">1. Memorial Glade Bench Cluster</div>
+        <button class="modal-close" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          The Memorial Glade Bench Cluster is planned as a series of low benches fabricated from a
+          single reclaimed campus tree. The pieces are oriented to frame views across the central
+          lawn and provide informal seating for study, events, and everyday use.
+        </p>
+        <p>
+          The benches will be detailed to show grain, growth rings, and joinery, keeping the
+          material origin legible while meeting accessibility and durability requirements.
+        </p>
+        <div class="modal-photos">
+          <img src="memorial_glade_1.jpg" alt="Memorial Glade bench – view 1 (placeholder)" />
+          <img src="memorial_glade_2.jpg" alt="Memorial Glade bench – view 2 (placeholder)" />
+          <img src="memorial_glade_3.jpg" alt="Memorial Glade bench – detail (placeholder)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" data-modal="project2">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">2. Eucalyptus Grove Table</div>
+        <button class="modal-close" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          The Eucalyptus Grove Table is proposed as a continuous shared work surface along the edge
+          of Strawberry Creek. The table will use salvaged eucalyptus and simple steel hardware to
+          form a durable, repairable structure.
+        </p>
+        <p>
+          The installation is intended to support group work, teaching, and informal gatherings
+          while referencing the history and management of the surrounding grove.
+        </p>
+        <div class="modal-photos">
+          <img src="eucalyptus_grove_1.jpg" alt="Eucalyptus Grove table – view 1 (placeholder)" />
+          <img src="eucalyptus_grove_2.jpg" alt="Eucalyptus Grove table – view 2 (placeholder)" />
+          <img src="eucalyptus_grove_3.jpg" alt="Eucalyptus Grove table – detail (placeholder)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" data-modal="project3">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">3. North Gate Entry Seating</div>
+        <button class="modal-close" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          North Gate Entry Seating is conceived as a set of compact seating elements framing the
+          approach to the College of Environmental Design. Reclaimed wood from a removed campus tree
+          will be used to create robust blocks and ledges at a heavy-traffic threshold.
+        </p>
+        <p>
+          The goal is to create a defined pause point where students can wait, meet, or sit briefly
+          between city and campus, while keeping the source material traceable.
+        </p>
+        <div class="modal-photos">
+          <img src="north_gate_1.jpg" alt="North Gate seating – view 1 (placeholder)" />
+          <img src="north_gate_2.jpg" alt="North Gate seating – view 2 (placeholder)" />
+          <img src="north_gate_3.jpg" alt="North Gate seating – detail (placeholder)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" data-modal="project4">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">4. Dwinelle Plaza Study Table</div>
+        <button class="modal-close" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          The Dwinelle Plaza Study Table is planned as an informal study and meeting table located
+          in a busy plaza used by multiple departments. Reclaimed campus wood will be configured as
+          a long, shared surface with integrated seating or edge conditions.
+        </p>
+        <p>
+          The piece is intended to test how reclaimed material can perform in a high-use setting,
+          with straightforward connections that allow future maintenance and repair.
+        </p>
+        <div class="modal-photos">
+          <img src="dwinelle_plaza_1.jpg" alt="Dwinelle Plaza table – view 1 (placeholder)" />
+          <img src="dwinelle_plaza_2.jpg" alt="Dwinelle Plaza table – view 2 (placeholder)" />
+          <img src="dwinelle_plaza_3.jpg" alt="Dwinelle Plaza table – detail (placeholder)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Section highlight + scroll
     const navButtons = document.querySelectorAll("nav button");
@@ -594,6 +809,32 @@
 
         section.classList.add("highlight");
         setTimeout(() => section.classList.remove("highlight"), 900);
+      });
+    });
+
+    // Project details modals
+    const detailButtons = document.querySelectorAll(".detail-button");
+    const modals = document.querySelectorAll(".modal-backdrop");
+
+    detailButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-project");
+        const modal = document.querySelector(`.modal-backdrop[data-modal="${id}"]`);
+        if (modal) modal.classList.add("active");
+      });
+    });
+
+    modals.forEach((backdrop) => {
+      const closeBtn = backdrop.querySelector(".modal-close");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          backdrop.classList.remove("active");
+        });
+      }
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
+          backdrop.classList.remove("active");
+        }
       });
     });
   </script>
