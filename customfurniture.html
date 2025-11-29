@@ -219,8 +219,18 @@
       flex-wrap: wrap;
     }
 
+    .input-column {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
     .input-row input,
-    .input-row textarea {
+    .input-row textarea,
+    .input-column input,
+    .input-column textarea {
+      font-family: inherit;  /* keep font consistent */
       font-size: 11px;
       padding: 2px 4px;
       border: 1px solid #000;
@@ -228,13 +238,6 @@
       min-width: 160px;
       max-width: 50vw;
       box-sizing: border-box;
-    }
-
-    .input-column {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 6px;
     }
 
     .input-column textarea {
@@ -425,7 +428,9 @@
       }
 
       .input-row input,
-      .input-row textarea {
+      .input-row textarea,
+      .input-column input,
+      .input-column textarea {
         max-width: 100%;
         flex: 1 1 100%;
       }
@@ -681,6 +686,9 @@
     let offsetX = 0;
     let offsetY = 0;
 
+    // last positions per template for stacked spawning
+    const lastSpawnPositions = {};
+
     function bringToFront(win) {
       const maxZ = Array.from(document.querySelectorAll(".window"))
         .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
@@ -707,7 +715,7 @@
       el.style.top = top + "px";
     }
 
-    function positionWindowRandomElement(el) {
+    function placeWindowRandom(el) {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
@@ -724,6 +732,35 @@
       el.style.top = top + "px";
 
       bringToFront(el);
+      return { left, top };
+    }
+
+    function placeWindowStacked(el, prevPos) {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      el.style.display = "block";
+      const rect = el.getBoundingClientRect();
+
+      let left = prevPos.left + 24;
+      let top = prevPos.top + 24;
+
+      const maxLeft = Math.max(0, viewportWidth - rect.width - 16);
+      const maxTop = Math.max(24, viewportHeight - rect.height - 90);
+
+      if (left > maxLeft) left = 0;
+      if (top > maxTop) top = 24;
+
+      el.style.left = left + "px";
+      el.style.top = top + "px";
+
+      bringToFront(el);
+      return { left, top };
+    }
+
+    function positionWindowRandomElement(el) {
+      // used for projectWindow
+      placeWindowRandom(el);
     }
 
     function initWindow(win) {
@@ -753,21 +790,10 @@
         }, { passive: false });
       }
 
-      const closeBtn = win.querySelector(".close-btn");
-      if (closeBtn) {
-        closeBtn.addEventListener("click", function () {
-          if (win.id === "projectWindow") {
-            win.classList.add("hidden");
-          } else {
-            win.remove();
-          }
-        });
-      }
-
       clampWindowToViewport(win);
     }
 
-    function spawnWindowFromTemplate(templateId) {
+    function spawnWindowFromTemplate(templateId, mode) {
       const template = document.getElementById(templateId);
       if (!template) return;
 
@@ -778,7 +804,15 @@
       clone.classList.remove("hidden");
       document.body.appendChild(clone);
       initWindow(clone);
-      positionWindowRandomElement(clone);
+
+      let pos;
+      const prev = lastSpawnPositions[templateId];
+      if (mode === "stack" && prev) {
+        pos = placeWindowStacked(clone, prev);
+      } else {
+        pos = placeWindowRandom(clone);
+      }
+      lastSpawnPositions[templateId] = pos;
     }
 
     function closeAllWindows() {
@@ -892,6 +926,18 @@
       activeWindow = null;
     });
 
+    // Global close button handler (for all X's, including clones)
+    document.addEventListener("click", function (e) {
+      if (!e.target.classList.contains("close-btn")) return;
+      const win = e.target.closest(".window");
+      if (!win) return;
+      if (win.id === "projectWindow") {
+        win.classList.add("hidden");
+      } else {
+        win.remove();
+      }
+    });
+
     // Delegated events for request windows (works for clones)
     document.addEventListener("click", function (e) {
       // project code reach out
@@ -934,8 +980,6 @@
 
     document.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && e.target.classList.contains("project-code-input")) {
-        const win = e.target.closest(".window-request");
-        if (!win) return;
         openProjectFromCode(e.target.value);
       }
     });
@@ -948,27 +992,27 @@
         projectWin.classList.add("hidden");
       }
 
-      // Spawn one of each template on load
-      spawnWindowFromTemplate("aboutTemplate");
-      spawnWindowFromTemplate("pastTemplate");
-      spawnWindowFromTemplate("requestTemplate");
-      spawnWindowFromTemplate("contactTemplate");
+      // Spawn one of each template on load (random positions)
+      spawnWindowFromTemplate("aboutTemplate", "auto");
+      spawnWindowFromTemplate("pastTemplate", "auto");
+      spawnWindowFromTemplate("requestTemplate", "auto");
+      spawnWindowFromTemplate("contactTemplate", "auto");
 
-      // Dock actions: spawn new instances from templates
+      // Dock actions: spawn new instances from templates, stacked
       document.getElementById("dockRequest").addEventListener("click", function () {
-        spawnWindowFromTemplate("requestTemplate");
+        spawnWindowFromTemplate("requestTemplate", "stack");
       });
 
       document.getElementById("dockAbout").addEventListener("click", function () {
-        spawnWindowFromTemplate("aboutTemplate");
+        spawnWindowFromTemplate("aboutTemplate", "stack");
       });
 
       document.getElementById("dockPast").addEventListener("click", function () {
-        spawnWindowFromTemplate("pastTemplate");
+        spawnWindowFromTemplate("pastTemplate", "stack");
       });
 
       document.getElementById("dockContact").addEventListener("click", function () {
-        spawnWindowFromTemplate("contactTemplate");
+        spawnWindowFromTemplate("contactTemplate", "stack");
       });
 
       document.getElementById("dockClose").addEventListener("click", function () {
