@@ -22,7 +22,7 @@
 
     body {
       font-family: "Times New Roman", Times, serif;
-      background: #0c1908; /* back to previous dark background */
+      background: #0c1908; /* dark outer background */
       color: #234515;      /* main green text */
       line-height: 1.5;
     }
@@ -40,15 +40,15 @@
     /* MAIN WINDOW FRAME */
     .page {
       max-width: 900px;
-      margin: 24px auto 40px;
-      background: #f5f5f5;              /* light gray window */
+      margin: 32px auto 48px;
+      background: #69701d;              /* replaced gray with olive green */
       border: 3px solid #9e8f03;        /* strong accent frame */
       box-shadow: 0 0 0 1px #000000;
     }
 
     @media (min-width: 900px) {
       .page {
-        margin-top: 32px;
+        margin-top: 40px;
       }
     }
 
@@ -80,25 +80,25 @@
     }
 
     .window-body {
-      padding: 16px 14px 22px;
+      padding: 20px 18px 26px;
     }
 
     @media (min-width: 900px) {
       .window-body {
-        padding: 20px 22px 26px;
+        padding: 24px 26px 30px;
       }
     }
 
     header {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .badge {
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.2em;
-      color: #4a6b37;
-      margin-bottom: 4px;
+      color: #d6e0b5;
+      margin-bottom: 6px;
     }
 
     h1 {
@@ -108,25 +108,25 @@
     }
 
     .subline {
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 0.9rem;
       max-width: 40rem;
-      color: #234515;
+      color: #f3f7de;
     }
 
     hr {
-      margin: 12px 0 14px;
+      margin: 14px 0 18px;
       border: none;
-      border-top: 2px solid #b5b5b5;
+      border-top: 2px solid #50551a;
     }
 
     /* NAV BUTTONS (WINDOWS-ISH) */
     nav {
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       font-size: 0.8rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
 
     nav button {
@@ -135,12 +135,12 @@
       color: #000000;
       border: 2px solid #777777;
       box-shadow: inset 1px 1px 0 #f9f9f9, inset -1px -1px 0 #7f7f7f;
-      padding: 4px 10px;
+      padding: 5px 12px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       font-size: 0.75rem;
       cursor: pointer;
-      min-width: 100px;
+      min-width: 110px;
       text-align: center;
     }
 
@@ -157,14 +157,13 @@
     main {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 18px; /* more vertical space between sections */
     }
 
     section {
-      padding: 10px 8px;
-      border-top: 2px solid #b5b5b5;
-      border-bottom: 2px solid #b5b5b5;
-      background: #f9f9f9;
+      padding: 16px 12px;
+      border: 2px solid #50551a;
+      background: #69701d; /* olive background instead of gray */
       transition: border 0.2s ease, background-color 0.2s ease;
     }
 
@@ -174,7 +173,7 @@
 
     section.highlight {
       border: 3px solid #9e8f03;      /* full border when highlighted */
-      background-color: #f0f0f0;
+      background-color: #7c8727;      /* slightly lighter olive on highlight */
     }
 
     section.highlight h2 {
@@ -186,49 +185,57 @@
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      margin-bottom: 6px;
-      color: #234515;
+      margin-bottom: 10px;
+      color: #f3f7de;
       border-bottom: 2px solid #9e8f03;
-      padding-bottom: 2px;
+      padding-bottom: 3px;
       display: inline-block;
     }
 
     p,
     li {
       font-size: 0.88rem;
-      color: #234515;
+      color: #f3f7de;
+    }
+
+    p + p {
+      margin-top: 8px; /* more space between paragraphs */
     }
 
     ul {
-      padding-left: 20px;
-      margin-top: 4px;
+      padding-left: 22px;
+      margin-top: 6px;
     }
 
     li + li {
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
     .label {
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: #4a6b37;
-      margin-bottom: 3px;
+      color: #e4ebb7;
+      margin-bottom: 4px;
     }
 
     .block {
-      border: 2px solid #b5b5b5;
-      padding: 6px 9px;
-      margin-top: 6px;
-      background: #fdfdfd;
+      border: 2px solid #50551a;
+      padding: 10px 12px;
+      margin-top: 10px;
+      background: #7c8727; /* slightly lighter than main */
+    }
+
+    .block + .block {
+      margin-top: 12px;
     }
 
     .hero-box {
-      border: 2px dashed #b5b5b5;
-      padding: 7px 9px;
-      background: #fdfdfd;
+      border: 2px dashed #50551a;
+      padding: 10px 12px;
+      background: #7c8727;
       font-size: 0.86rem;
-      margin-top: 4px;
+      margin-top: 8px;
     }
 
     .hero-box-title {
@@ -236,23 +243,23 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       margin-bottom: 4px;
-      color: #234515;
+      color: #f3f7de;
     }
 
     .projects-list {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-top: 6px;
+      gap: 8px;  /* more space between project rows */
+      margin-top: 10px;
     }
 
     .project-link {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 6px 9px;
-      border: 2px solid #b5b5b5;
-      background: #ffffff;
+      padding: 8px 12px;
+      border: 2px solid #50551a;
+      background: #7c8727;
       cursor: pointer;
       width: 100%;
       text-align: left;
@@ -265,14 +272,14 @@
 
     .project-link span.meta {
       font-size: 0.8rem;
-      color: #4a6b37;
+      color: #e4ebb7;
       margin-left: 10px;
       text-align: right;
     }
 
     .project-link:hover {
       border-color: #9e8f03;
-      background: #f5f5e5;
+      background: #8d9a30;
     }
 
     @media (max-width: 600px) {
@@ -282,29 +289,29 @@
       }
       .project-link span.meta {
         margin-left: 0;
-        margin-top: 2px;
+        margin-top: 3px;
       }
     }
 
     footer {
-      margin-top: 20px;
+      margin-top: 26px;
       text-align: center;
-      color: #234515;
-      padding-top: 12px;
-      border-top: 2px solid #b5b5b5;
-      background: #f5f5f5;
+      color: #f3f7de;
+      padding: 14px 12px 10px;
+      border-top: 2px solid #50551a;
+      background: #69701d;
     }
 
     .tiny {
       font-size: 0.76rem;
       opacity: 0.9;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     footer img {
       width: 180px;
       max-width: 60%;
-      margin: 8px auto 4px;
+      margin: 10px auto 6px;
       display: block;
     }
 
@@ -313,7 +320,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       justify-content: center;
       align-items: center;
       z-index: 50;
@@ -325,22 +332,22 @@
     }
 
     .modal {
-      background: #f5f5f5;
+      background: #69701d;            /* match page background */
       border: 3px solid #9e8f03;
       max-width: 720px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
-      padding: 12px 12px 14px;
-      box-shadow: 0 0 0 1px #888888;
+      padding: 14px 14px 16px;
+      box-shadow: 0 0 0 1px #000000;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
-      border-bottom: 2px solid #b5b5b5;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #50551a;
       padding-bottom: 4px;
     }
 
@@ -348,7 +355,7 @@
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: #234515;
+      color: #f3f7de;
     }
 
     .modal-close {
@@ -370,16 +377,16 @@
     }
 
     .modal-body p {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-size: 0.86rem;
-      color: #234515;
+      color: #f3f7de;
     }
 
     .modal-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
-      gap: 10px;
-      margin-top: 8px;
+      gap: 12px;
+      margin-top: 10px;
     }
 
     @media (max-width: 700px) {
@@ -391,21 +398,21 @@
     .project-photos {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 4px;
-      margin-top: 4px;
+      gap: 5px;
+      margin-top: 6px;
     }
 
     .project-photos img {
       width: 100%;
       display: block;
       object-fit: cover;
-      background: #e0e0e0;
+      background: #8d9a30;
       min-height: 60px;
     }
 
     .map-frame {
-      border: 2px solid #b5b5b5;
-      background: #ffffff;
+      border: 2px solid #50551a;
+      background: #7c8727;
       height: 180px;
     }
 
@@ -455,7 +462,7 @@
             UC Berkeley. The project reclaims wood from trees removed for safety, age, or disease and
             fabricates benches, tables, and seating clusters for underused outdoor areas.
           </p>
-          <p style="margin-top: 4px;">
+          <p>
             All pieces are produced at the Richmond Field Station Wood Lab and installed as durable,
             place-based infrastructure that links campus furniture to campus ecology.
           </p>
