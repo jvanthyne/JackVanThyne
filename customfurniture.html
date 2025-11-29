@@ -8,14 +8,14 @@
     body {
       margin: 0;
       font-family: "MS Sans Serif", system-ui, sans-serif;
-      background: #707070; /* muted gray */
+      background: #6e6e6e; /* flat muted gray */
       color: #000;
-      cursor: default; /* old-school arrow vibe */
-      overflow: hidden; /* keep everything inside viewport */
+      cursor: default;
+      overflow: hidden;
     }
 
     a {
-      color: #0000aa; /* softer blue */
+      color: #0000aa;
       text-decoration: underline;
       cursor: pointer;
     }
@@ -28,7 +28,7 @@
 
     /* Top banner */
     .menu-bar {
-      background: #003354; /* muted blue */
+      background: #003354;
       color: #f0f0f0;
       padding: 4px 8px;
       font-size: 12px;
@@ -36,11 +36,13 @@
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 2px 0 #000;
+      z-index: 50;
+      position: relative;
     }
 
     .menu-bar span.title {
       font-weight: bold;
-      text-transform: none; /* keep lowercase */
+      text-transform: none;
     }
 
     .menu-right {
@@ -66,37 +68,10 @@
 
     .content {
       flex: 1;
-      padding: 16px;
-      background-image:
-        repeating-linear-gradient(45deg, #6c6c6c 0, #6c6c6c 1px, #707070 1px, #707070 3px);
-      font-size: 12px;
+      padding: 12px;
       box-sizing: border-box;
-    }
-
-    /* Launcher panel */
-    .link-panel {
-      background: #c4c4c4;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #000;
-      display: inline-block;
-      padding: 8px 12px;
-      max-width: 90vw;
-      box-sizing: border-box;
-    }
-
-    .link-panel-title {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .link-list {
-      list-style: none;
-      padding-left: 16px;
-      margin: 4px 0 0 0;
-    }
-
-    .link-list li {
-      margin-bottom: 4px;
+      position: relative;
+      overflow: hidden;
     }
 
     /* Window / popup styles */
@@ -109,7 +84,7 @@
       box-shadow: 4px 4px 0 #000;
       min-width: 220px;
       max-width: 90vw;
-      max-height: 80vh;
+      max-height: 70vh; /* leave room for dock + banner */
       font-size: 12px;
       z-index: 10;
       display: flex;
@@ -127,10 +102,10 @@
       align-items: center;
       justify-content: space-between;
       box-sizing: border-box;
-      cursor: move; /* drag handle */
+      cursor: move;
       flex-shrink: 0;
       color: #f0f0f0;
-      touch-action: none; /* better touch dragging */
+      touch-action: none;
     }
 
     .title-bar .title {
@@ -149,7 +124,7 @@
       width: 18px;
       height: 18px;
       border: 1px solid #5c0000;
-      background: #992222; /* muted red X */
+      background: #992222;
       color: #fff;
       font-size: 10px;
       line-height: 1;
@@ -160,7 +135,7 @@
     .window-body {
       padding: 8px;
       overflow: auto;
-      max-height: calc(80vh - 26px); /* account for title bar */
+      max-height: calc(70vh - 26px);
       box-sizing: border-box;
     }
 
@@ -183,7 +158,7 @@
     }
 
     .retro-button {
-      border: 2px solid #003354; /* default blue accent */
+      border: 2px solid #003354;
       background: #e0e0e0;
       padding: 2px 10px;
       font-size: 11px;
@@ -259,7 +234,83 @@
         repeating-linear-gradient(0deg, #e3d1c4 0, #e3d1c4 2px, #d8c5b8 2px, #d8c5b8 3px);
     }
     .window-contact .retro-button {
-      border-color: #8b4a21; /* orange accent on button */
+      border-color: #8b4a21;
+    }
+
+    /* Bottom dock + banner */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .dock {
+      background: #3d3d3d;
+      border-top: 2px solid #000;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 -2px 0 #000;
+    }
+
+    .dock-icon {
+      width: 44px;
+      height: 44px;
+      border: 2px solid #000;
+      background: #c8c8c8;
+      box-shadow: 2px 2px 0 #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+      text-align: center;
+      padding: 4px 2px;
+      box-sizing: border-box;
+    }
+
+    .dock-icon-symbol {
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .dock-icon:active {
+      box-shadow: 1px 1px 0 #000;
+      transform: translate(1px, 1px);
+    }
+
+    .ticker {
+      position: relative;
+      overflow: hidden;
+      background: #111;
+      color: #f0f0f0;
+      font-size: 11px;
+      border-top: 1px solid #000;
+      padding: 2px 0;
+      box-sizing: border-box;
+    }
+
+    .ticker-inner {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: tickerMove 18s linear infinite;
+    }
+
+    @keyframes tickerMove {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
     }
 
     /* MOBILE TWEAKS */
@@ -279,16 +330,10 @@
         font-size: 11px;
       }
 
-      .link-panel {
-        width: 100%;
-        max-width: 100%;
-        box-shadow: 2px 2px 0 #000;
-      }
-
       .window {
         min-width: 80vw;
         max-width: 96vw;
-        max-height: 75vh;
+        max-height: 62vh;
       }
 
       .title-bar {
@@ -302,7 +347,7 @@
       }
 
       .window-body {
-        max-height: calc(75vh - 30px);
+        max-height: calc(62vh - 30px);
       }
 
       .image-grid img {
@@ -317,6 +362,25 @@
       .retro-button {
         font-size: 10px;
         padding: 2px 8px;
+      }
+
+      .dock {
+        gap: 8px;
+        padding: 4px 6px;
+      }
+
+      .dock-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 9px;
+      }
+
+      .dock-icon-symbol {
+        font-size: 13px;
+      }
+
+      .ticker {
+        font-size: 10px;
       }
     }
   </style>
@@ -333,14 +397,37 @@
     </div>
 
     <div class="content">
-      <!-- small “launcher” panel for all popups -->
-      <div class="link-panel">
-        <div class="link-panel-title">open windows</div>
-        <ul class="link-list">
-          <li><a href="#" id="aboutLink">about + design philosophy</a></li>
-          <li><a href="#" id="pastWorksLink">past works</a></li>
-          <li><a href="#" id="contactLink">contact / schedule / reach out</a></li>
-        </ul>
+      <!-- empty desktop area; windows appear here -->
+    </div>
+  </div>
+
+  <!-- Bottom dock + banner -->
+  <div class="bottom-bar">
+    <div class="dock">
+      <!-- plus: main / start -->
+      <div class="dock-icon" id="dockStart">
+        <div class="dock-icon-symbol">+</div>
+        <div>start</div>
+      </div>
+      <!-- about -->
+      <div class="dock-icon" id="dockAbout">
+        <div class="dock-icon-symbol">?</div>
+        <div>about</div>
+      </div>
+      <!-- past works -->
+      <div class="dock-icon" id="dockPast">
+        <div class="dock-icon-symbol">★</div>
+        <div>works</div>
+      </div>
+      <!-- contact -->
+      <div class="dock-icon" id="dockContact">
+        <div class="dock-icon-symbol">@</div>
+        <div>contact</div>
+      </div>
+    </div>
+    <div class="ticker">
+      <div class="ticker-inner">
+        welcome to van thyne custom furniture – hit the plus to start • welcome to van thyne custom furniture – hit the plus to start •
       </div>
     </div>
   </div>
@@ -480,18 +567,22 @@
       }
     };
 
-    // bring window to front
     function bringToFront(win) {
       const maxZ = Array.from(document.querySelectorAll(".window"))
         .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
       win.style.zIndex = maxZ + 1;
     }
 
-    function showWindow(id) {
+    function showWindow(id, randomIfHidden = false) {
       const el = document.getElementById(id);
       if (!el) return;
+      const wasHidden = el.classList.contains("hidden");
       el.classList.remove("hidden");
-      clampWindowToViewport(el);
+      if (randomIfHidden && wasHidden) {
+        positionWindowRandom(id);
+      } else {
+        clampWindowToViewport(el);
+      }
       bringToFront(el);
     }
 
@@ -508,7 +599,7 @@
       let top = rect.top;
 
       const maxLeft = Math.max(0, viewportWidth - rect.width - 4);
-      const maxTop = Math.max(24, viewportHeight - rect.height - 4);
+      const maxTop = Math.max(24, viewportHeight - rect.height - 70); // leave for dock/banner
 
       if (left < 0) left = 0;
       if (top < 0) top = 0;
@@ -523,7 +614,6 @@
       const el = document.getElementById(id);
       if (!el) return;
 
-      // ensure it's visible for measurements
       el.classList.remove("hidden");
 
       const viewportWidth = window.innerWidth;
@@ -531,7 +621,7 @@
       const rect = el.getBoundingClientRect();
 
       const maxLeft = Math.max(0, viewportWidth - rect.width - 16);
-      const maxTop = Math.max(24, viewportHeight - rect.height - 16);
+      const maxTop = Math.max(24, viewportHeight - rect.height - 90); // keep above dock/banner
 
       const left = Math.floor(Math.random() * (maxLeft + 1));
       const top = Math.floor(Math.random() * (maxTop + 1));
@@ -556,22 +646,19 @@
         offsetY = clientY - rect.top;
       }
 
-      // Make title bars draggable and all windows bring-to-front on tap/click
       document.querySelectorAll(".window").forEach(win => {
-        // Bring to front when touching/clicking anywhere on the window
+        // bring to front on tap/click anywhere
         win.addEventListener("mousedown", () => bringToFront(win));
         win.addEventListener("touchstart", () => bringToFront(win), { passive: true });
 
         const bar = win.querySelector(".title-bar");
         if (!bar) return;
 
-        // mouse drag
         bar.addEventListener("mousedown", function (e) {
           startDrag(win, e.clientX, e.clientY);
           e.preventDefault();
         });
 
-        // touch drag
         bar.addEventListener("touchstart", function (e) {
           const touch = e.touches[0];
           startDrag(win, touch.clientX, touch.clientY);
@@ -589,7 +676,7 @@
         let newTop = clientY - offsetY;
 
         const maxLeft = viewportWidth - rect.width - 4;
-        const maxTop = viewportHeight - rect.height - 4;
+        const maxTop = viewportHeight - rect.height - 70;
 
         if (newLeft < 0) newLeft = 0;
         if (newTop < 0) newTop = 0;
@@ -600,7 +687,6 @@
         activeWindow.style.top = newTop + "px";
       }
 
-      // mouse move/up
       document.addEventListener("mousemove", function (e) {
         moveActive(e.clientX, e.clientY);
       });
@@ -609,7 +695,6 @@
         activeWindow = null;
       });
 
-      // touch move/end
       document.addEventListener("touchmove", function (e) {
         if (!activeWindow) return;
         const touch = e.touches[0];
@@ -654,7 +739,6 @@
 
       noteEl.textContent = "project code: " + project.code;
 
-      // mailto with code, third-person friendly template
       btnEl.onclick = function () {
         const email = "jjvanthyne";
         const subject = encodeURIComponent("preliminary design consultation – " + project.code);
@@ -664,17 +748,11 @@
         window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
       };
 
-      showWindow("projectWindow");
+      showWindow("projectWindow", true);
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      // enable dragging + bring-to-front behavior
       makeWindowsDraggable();
-
-      // open all main windows in random locations on load
-      positionWindowRandom("aboutWindow");
-      positionWindowRandom("pastWorksWindow");
-      positionWindowRandom("contactWindow");
 
       // close buttons
       document.querySelectorAll(".close-btn").forEach(btn => {
@@ -684,20 +762,23 @@
         });
       });
 
-      // launcher links
-      document.getElementById("aboutLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        showWindow("aboutWindow");
+      // DOCK actions
+      document.getElementById("dockStart").addEventListener("click", function () {
+        // start: open about + contact as main entry
+        showWindow("aboutWindow", true);
+        showWindow("contactWindow", true);
       });
 
-      document.getElementById("pastWorksLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        showWindow("pastWorksWindow");
+      document.getElementById("dockAbout").addEventListener("click", function () {
+        showWindow("aboutWindow", true);
       });
 
-      document.getElementById("contactLink").addEventListener("click", function (e) {
-        e.preventDefault();
-        showWindow("contactWindow");
+      document.getElementById("dockPast").addEventListener("click", function () {
+        showWindow("pastWorksWindow", true);
+      });
+
+      document.getElementById("dockContact").addEventListener("click", function () {
+        showWindow("contactWindow", true);
       });
 
       // project code reach-out button
@@ -714,7 +795,7 @@
         }
       });
 
-      // re-clamp windows if viewport is resized (desktop + mobile rotation)
+      // re-clamp windows on resize
       window.addEventListener("resize", function () {
         document.querySelectorAll(".window:not(.hidden)").forEach(clampWindowToViewport);
       });
