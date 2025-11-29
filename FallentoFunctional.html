@@ -22,104 +22,149 @@
 
     body {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-      background: #050605;
-      color: #e6e6e6;
-      line-height: 1.6;
+        "Courier New", monospace;
+      background: #020404; /* very dark green/black */
+      color: #d7e3d3;
+      line-height: 1.5;
     }
 
     a {
-      color: #c0df85;
+      color: #7fbf7f;
       text-decoration: none;
       border-bottom: 1px dotted transparent;
     }
 
     a:hover {
-      border-bottom-color: #c0df85;
+      border-bottom-color: #7fbf7f;
     }
 
+    /* MAIN WINDOW FRAME */
     .page {
-      max-width: 880px;
+      max-width: 900px;
       margin: 24px auto 40px;
-      padding: 18px 14px 26px;
-      border: 1px solid #313731;
-      background: #070b08;
+      background: #0c1511; /* muted green window */
+      border: 2px solid #1f2a24;
+      box-shadow: 0 0 0 1px #000000;
     }
 
     @media (min-width: 900px) {
       .page {
-        padding: 22px 26px 30px;
         margin-top: 32px;
       }
     }
 
+    /* TITLE BAR */
+    .title-bar {
+      background: #1c3b2f; /* dark green title bar */
+      color: #eaf5ea;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #000000;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .title-bar-buttons {
+      display: flex;
+      gap: 4px;
+    }
+
+    .title-button {
+      width: 14px;
+      height: 14px;
+      background: #c0c0c0;
+      border: 1px solid #000000;
+      box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #7f7f7f;
+    }
+
+    .window-body {
+      padding: 14px 12px 20px;
+    }
+
+    @media (min-width: 900px) {
+      .window-body {
+        padding: 18px 20px 24px;
+      }
+    }
+
     header {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .badge {
       font-size: 0.75rem;
-      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #8c978c;
+      letter-spacing: 0.16em;
+      color: #9bb39a;
       margin-bottom: 4px;
     }
 
     h1 {
-      font-size: clamp(1.7rem, 4vw, 2.1rem);
-      letter-spacing: 0.08em;
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .subline {
-      margin-top: 6px;
-      font-size: 0.86rem;
-      color: #c8ccc8;
+      margin-top: 4px;
+      font-size: 0.82rem;
+      color: #c3d2c0;
       max-width: 40rem;
     }
 
     hr {
-      margin: 14px 0;
+      margin: 10px 0 12px;
       border: none;
-      border-top: 1px solid #313731;
+      border-top: 1px solid #1c241f;
     }
 
-    /* NAV (DESKTOP-LEANING, STILL OK ON MOBILE) */
+    /* OLD-SCHOOL BUTTON NAV */
     nav {
-      margin-bottom: 14px;
-      font-size: 0.8rem;
+      margin-bottom: 10px;
+      font-size: 0.78rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 6px;
     }
 
     nav button {
-      background: transparent;
-      border: 1px solid transparent;
-      color: #c8ccc8;
+      background: #c0c0c0;
+      color: #000000;
+      border: 1px solid #000000;
+      box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #7f7f7f;
+      padding: 3px 8px;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      font-size: 0.75rem;
-      padding: 4px 6px;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
       cursor: pointer;
+      min-width: 90px;
+      text-align: center;
     }
 
     nav button:hover {
-      border-color: #c0df85;
+      background: #d4d4d4;
+    }
+
+    nav button:active {
+      box-shadow: inset -1px -1px 0 #ffffff, inset 1px 1px 0 #7f7f7f;
     }
 
     /* SINGLE COLUMN LAYOUT */
     main {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 10px;
     }
 
     section {
-      padding: 10px 0;
-      border-top: 1px solid #1a1f1a;
-      border-bottom: 1px solid #1a1f1a;
-      transition: border-color 0.25s ease, background-color 0.25s ease;
+      padding: 8px 6px;
+      border-top: 1px solid #141c17;
+      border-bottom: 1px solid #141c17;
+      background: #0c1511;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
 
     section + section {
@@ -127,27 +172,27 @@
     }
 
     section.highlight {
-      border-color: #c0df85;
-      background-color: #0b100c;
+      border-color: #7fbf7f;
+      background-color: #0f1914;
     }
 
     h2 {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       text-transform: uppercase;
-      letter-spacing: 0.16em;
-      margin-bottom: 6px;
-      color: #f0f0f0;
+      letter-spacing: 0.14em;
+      margin-bottom: 4px;
+      color: #f4faf4;
     }
 
     p,
     li {
-      font-size: 0.85rem;
-      color: #e2e2e2;
+      font-size: 0.8rem;
+      color: #dde6dd;
     }
 
     ul {
-      padding-left: 18px;
-      margin-top: 4px;
+      padding-left: 17px;
+      margin-top: 3px;
     }
 
     li + li {
@@ -155,69 +200,71 @@
     }
 
     .label {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: #9ca69c;
+      letter-spacing: 0.13em;
+      color: #9bb39a;
       margin-bottom: 2px;
     }
 
     .block {
-      border: 1px solid #313731;
-      padding: 6px 8px;
-      margin-top: 6px;
-      background: #090f0a;
+      border: 1px solid #1f2a24;
+      padding: 5px 7px;
+      margin-top: 5px;
+      background: #101a15;
     }
 
     .hero-box {
-      border: 1px dashed #313731;
-      padding: 8px;
-      background: #090f0a;
-      font-size: 0.82rem;
-      color: #cccccc;
+      border: 1px dashed #1f2a24;
+      padding: 6px 7px;
+      background: #101a15;
+      font-size: 0.78rem;
+      color: #c9d6c9;
       margin-top: 4px;
     }
 
     .hero-box-title {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
       letter-spacing: 0.13em;
-      margin-bottom: 4px;
-      color: #f0f0f0;
+      margin-bottom: 3px;
+      color: #eef5ee;
     }
 
     .projects-list {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
     .project-link {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 6px 8px;
-      border: 1px solid #313731;
-      background: #090f0a;
+      padding: 5px 7px;
+      border: 1px solid #1f2a24;
+      background: #101a15;
       cursor: pointer;
       width: 100%;
       text-align: left;
+      color: inherit;
     }
 
     .project-link span.title {
-      font-size: 0.84rem;
+      font-size: 0.8rem;
     }
 
     .project-link span.meta {
-      font-size: 0.78rem;
-      color: #9ca69c;
-      margin-left: 12px;
+      font-size: 0.75rem;
+      color: #9bb39a;
+      margin-left: 8px;
       text-align: right;
     }
 
     .project-link:hover {
-      border-color: #c0df85;
+      border-color: #7fbf7f;
+      background: #121c17;
     }
 
     @media (max-width: 600px) {
@@ -232,11 +279,11 @@
     }
 
     footer {
-      margin-top: 22px;
+      margin-top: 18px;
       text-align: center;
       color: #c2b9a5;
-      padding-top: 12px;
-      border-top: 1px solid #313731;
+      padding-top: 10px;
+      border-top: 1px solid #141c17;
     }
 
     .tiny {
@@ -248,20 +295,21 @@
     footer img {
       width: 180px;
       max-width: 60%;
-      margin: 8px auto 2px;
+      margin: 6px auto 2px;
       display: block;
+      image-rendering: pixelated;
     }
 
-    /* MODALS */
+    /* MODALS (old-window style) */
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(3, 4, 3, 0.9);
+      background: rgba(0, 0, 0, 0.8);
       justify-content: center;
       align-items: center;
       z-index: 50;
-      padding: 12px;
+      padding: 10px;
     }
 
     .modal-backdrop.active {
@@ -269,46 +317,58 @@
     }
 
     .modal {
-      background: #070b08;
-      border: 1px solid #313731;
+      background: #0c1511;
+      border: 2px solid #1f2a24;
+      box-shadow: 0 0 0 1px #000000;
       max-width: 720px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
-      padding: 14px 14px 16px;
+      padding: 10px 10px 12px;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #141c17;
+      padding-bottom: 3px;
     }
 
     .modal-title {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
+      color: #eef5ee;
     }
 
     .modal-close {
-      border: none;
-      background: transparent;
-      color: #c2b9a5;
-      font-size: 1.1rem;
+      border: 1px solid #000000;
+      background: #c0c0c0;
+      color: #000000;
+      font-size: 0.9rem;
       cursor: pointer;
-      padding: 0 2px;
+      width: 18px;
+      height: 18px;
+      line-height: 1;
+      padding: 0;
+      box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #7f7f7f;
+    }
+
+    .modal-close:active {
+      box-shadow: inset -1px -1px 0 #ffffff, inset 1px 1px 0 #7f7f7f;
     }
 
     .modal-body p {
-      margin-bottom: 6px;
-      font-size: 0.83rem;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
     }
 
     .modal-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.1fr);
-      gap: 10px;
+      gap: 8px;
       margin-top: 6px;
     }
 
@@ -321,8 +381,8 @@
     .project-photos {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 4px;
-      margin-top: 4px;
+      gap: 3px;
+      margin-top: 3px;
     }
 
     .project-photos img {
@@ -331,12 +391,13 @@
       object-fit: cover;
       background: #111711;
       min-height: 60px;
+      image-rendering: pixelated;
     }
 
     .map-frame {
-      border: 1px solid #313731;
-      background: #090f0a;
-      height: 180px;
+      border: 1px solid #1f2a24;
+      background: #101a15;
+      height: 170px;
     }
 
     .map-frame iframe {
@@ -348,154 +409,165 @@
 </head>
 <body>
   <div class="page">
-    <header>
-      <div class="badge">tgif grant project / uc berkeley</div>
-      <h1>Fallen to Functional</h1>
-      <div class="subline">
-        Community Spaces from Campus Wood Waste. A student-led project that reuses fallen campus
-        trees as outdoor furniture and gathering spaces.
+    <div class="title-bar">
+      <div>FALLEN_TO_FUNCTIONAL.EXE</div>
+      <div class="title-bar-buttons">
+        <div class="title-button"></div>
+        <div class="title-button"></div>
+        <div class="title-button"></div>
       </div>
-      <hr />
-    </header>
+    </div>
 
-    <nav>
-      <button data-target="overview">Overview</button>
-      <button data-target="goals">Goals</button>
-      <button data-target="timeline">Timeline</button>
-      <button data-target="projects">Projects</button>
-      <button data-target="team">Team</button>
-      <button data-target="impact">Impact</button>
-    </nav>
-
-    <main>
-      <section id="overview">
-        <h2>Overview</h2>
-        <p>
-          Fallen to Functional: Community Spaces from Campus Wood Waste is a design-build project at
-          UC Berkeley. The project reclaims wood from trees removed for safety, age, or disease and
-          fabricates benches, tables, and seating clusters for underused outdoor areas.
-        </p>
-        <p style="margin-top: 4px;">
-          All pieces are produced at the Richmond Field Station Wood Lab and installed as durable,
-          place-based infrastructure that links campus furniture to campus ecology.
-        </p>
-      </section>
-
-      <section id="goals">
-        <h2>Goals</h2>
-        <ul>
-          <li>Sustainability: divert usable wood from disposal and reduce embodied carbon.</li>
-          <li>Connection to place: construct furniture from the campus landscape itself.</li>
-          <li>Community: provide informal, accessible outdoor spaces for everyday use.</li>
-          <li>Education: use plaques and QR codes to describe circular design and material reuse.</li>
-          <li>Scalability: test a framework for a potential Campus Wood Reuse Program.</li>
-        </ul>
-      </section>
-
-      <section id="timeline">
-        <h2>Timeline (Dec 2025 – May 2026)</h2>
-        <div class="block">
-          <div class="label">Dec – Jan</div>
-          <p>Identify removed trees, select usable logs, and mill lumber at the Wood Lab.</p>
+    <div class="window-body">
+      <header>
+        <div class="badge">tgif grant project / uc berkeley</div>
+        <h1>Fallen to Functional</h1>
+        <div class="subline">
+          Community Spaces from Campus Wood Waste. A student-led project that reuses fallen campus
+          trees as outdoor furniture and gathering spaces.
         </div>
-        <div class="block">
-          <div class="label">Feb – Mar</div>
-          <p>Design and fabricate a small series of outdoor furniture pieces from reclaimed wood.</p>
-        </div>
-        <div class="block">
-          <div class="label">Apr</div>
-          <p>Install furniture in approved campus locations with plaques and QR-code signage.</p>
-        </div>
-        <div class="block">
-          <div class="label">May</div>
-          <p>Document the project, photograph installations, and update this archive.</p>
-        </div>
-      </section>
+        <hr />
+      </header>
 
-      <section id="projects">
-        <h2>Projects</h2>
-        <p>
-          Each installation uses reclaimed campus wood and includes on-site signage with a QR code
-          linking to this page.
-        </p>
+      <nav>
+        <button data-target="overview">Overview</button>
+        <button data-target="goals">Goals</button>
+        <button data-target="timeline">Timeline</button>
+        <button data-target="projects">Projects</button>
+        <button data-target="team">Team</button>
+        <button data-target="impact">Impact</button>
+      </nav>
 
-        <div class="projects-list">
-          <button class="project-link" data-project="memorial-glade">
-            <span class="title">Memorial Glade Bench Cluster</span>
-            <span class="meta">Memorial Glade · Central Campus</span>
-          </button>
-
-          <button class="project-link" data-project="eucalyptus-grove">
-            <span class="title">Eucalyptus Grove Table</span>
-            <span class="meta">Strawberry Creek Edge</span>
-          </button>
-
-          <button class="project-link" data-project="north-gate">
-            <span class="title">North Gate Entry Seating</span>
-            <span class="meta">North Gate / CED</span>
-          </button>
-        </div>
-      </section>
-
-      <section id="team">
-        <h2>Team</h2>
-        <div class="block">
-          <div class="label">Project Lead</div>
+      <main>
+        <section id="overview">
+          <h2>Overview</h2>
           <p>
-            Jack Van Thyne — Landscape Architecture student, College of Environmental Design,
-            UC Berkeley.
+            Fallen to Functional: Community Spaces from Campus Wood Waste is a design-build project at
+            UC Berkeley. The project reclaims wood from trees removed for safety, age, or disease and
+            fabricates benches, tables, and seating clusters for underused outdoor areas.
           </p>
-        </div>
-        <div class="block">
-          <div class="label">Richmond Field Station Wood Lab</div>
-          <p>Provides facilities, equipment, and mentorship for milling and fabrication.</p>
-        </div>
-        <div class="block">
-          <div class="label">UC Berkeley Facilities &amp; Grounds</div>
-          <p>Identifies usable trees, supplies material, and approves installation sites.</p>
-        </div>
-        <div class="block">
-          <div class="label">TGIF / SERC</div>
-          <p>Funds the project and connects it to campus sustainability networks.</p>
-        </div>
-      </section>
+          <p style="margin-top: 4px;">
+            All pieces are produced at the Richmond Field Station Wood Lab and installed as durable,
+            place-based infrastructure that links campus furniture to campus ecology.
+          </p>
+        </section>
 
-      <section id="impact">
-        <h2>Impact</h2>
-        <ul>
-          <li>Wood volume diverted from the waste stream.</li>
-          <li>Number and distribution of installed pieces.</li>
-          <li>Estimated embodied carbon savings relative to new materials.</li>
-          <li>Feedback from students, staff, and visitors at installation sites.</li>
-        </ul>
-      </section>
+        <section id="goals">
+          <h2>Goals</h2>
+          <ul>
+            <li>Sustainability: divert usable wood from disposal and reduce embodied carbon.</li>
+            <li>Connection to place: construct furniture from the campus landscape itself.</li>
+            <li>Community: provide informal, accessible outdoor spaces for everyday use.</li>
+            <li>Education: use plaques and QR codes to describe circular design and material reuse.</li>
+            <li>Scalability: test a framework for a potential Campus Wood Reuse Program.</li>
+          </ul>
+        </section>
 
-      <section>
-        <h2>Representative Image</h2>
-        <div class="hero-box">
-          <div class="hero-box-title">Concept image</div>
+        <section id="timeline">
+          <h2>Timeline (Dec 2025 – May 2026)</h2>
+          <div class="block">
+            <div class="label">Dec – Jan</div>
+            <p>Identify removed trees, select usable logs, and mill lumber at the Wood Lab.</p>
+          </div>
+          <div class="block">
+            <div class="label">Feb – Mar</div>
+            <p>Design and fabricate a small series of outdoor furniture pieces from reclaimed wood.</p>
+          </div>
+          <div class="block">
+            <div class="label">Apr</div>
+            <p>Install furniture in approved campus locations with plaques and QR-code signage.</p>
+          </div>
+          <div class="block">
+            <div class="label">May</div>
+            <p>Document the project, photograph installations, and update this archive.</p>
+          </div>
+        </section>
+
+        <section id="projects">
+          <h2>Projects</h2>
           <p>
-            Placeholder for a rendering or photograph showing outdoor seating fabricated from
-            reclaimed UC Berkeley campus wood.
+            Each installation uses reclaimed campus wood and includes on-site signage with a QR code
+            linking to this page.
           </p>
+
+          <div class="projects-list">
+            <button class="project-link" data-project="memorial-glade">
+              <span class="title">Memorial Glade Bench Cluster</span>
+              <span class="meta">Memorial Glade · Central Campus</span>
+            </button>
+
+            <button class="project-link" data-project="eucalyptus-grove">
+              <span class="title">Eucalyptus Grove Table</span>
+              <span class="meta">Strawberry Creek Edge</span>
+            </button>
+
+            <button class="project-link" data-project="north-gate">
+              <span class="title">North Gate Entry Seating</span>
+              <span class="meta">North Gate / CED</span>
+            </button>
+          </div>
+        </section>
+
+        <section id="team">
+          <h2>Team</h2>
+          <div class="block">
+            <div class="label">Project Lead</div>
+            <p>
+              Jack Van Thyne — Landscape Architecture student, College of Environmental Design,
+              UC Berkeley.
+            </p>
+          </div>
+          <div class="block">
+            <div class="label">Richmond Field Station Wood Lab</div>
+            <p>Provides facilities, equipment, and mentorship for milling and fabrication.</p>
+          </div>
+          <div class="block">
+            <div class="label">UC Berkeley Facilities &amp; Grounds</div>
+            <p>Identifies usable trees, supplies material, and approves installation sites.</p>
+          </div>
+          <div class="block">
+            <div class="label">TGIF / SERC</div>
+            <p>Funds the project and connects it to campus sustainability networks.</p>
+          </div>
+        </section>
+
+        <section id="impact">
+          <h2>Impact</h2>
+          <ul>
+            <li>Wood volume diverted from the waste stream.</li>
+            <li>Number and distribution of installed pieces.</li>
+            <li>Estimated embodied carbon savings relative to new materials.</li>
+            <li>Feedback from students, staff, and visitors at installation sites.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Representative Image</h2>
+          <div class="hero-box">
+            <div class="hero-box-title">Concept image</div>
+            <p>
+              Placeholder for a rendering or photograph showing outdoor seating fabricated from
+              reclaimed UC Berkeley campus wood.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div>
+          Fallen to Functional: Community Spaces from Campus Wood Waste
         </div>
-      </section>
-    </main>
 
-    <footer>
-      <div>
-        Fallen to Functional: Community Spaces from Campus Wood Waste
-      </div>
+        <img
+          src="TGIF_fundedby_main.png"
+          alt="Funded by TGIF"
+        />
 
-      <img
-        src="TGIF_fundedby_main.png"
-        alt="Funded by TGIF"
-      />
-
-      <div class="tiny">
-        This page documents a TGIF-funded project at UC Berkeley. All text is written in the third person.
-      </div>
-    </footer>
+        <div class="tiny">
+          This page documents a TGIF-funded project at UC Berkeley. All text is written in the third person.
+        </div>
+      </footer>
+    </div>
   </div>
 
   <!-- MODALS -->
@@ -505,7 +577,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">Memorial Glade Bench Cluster</div>
-        <button class="modal-close" aria-label="Close">&times;</button>
+        <button class="modal-close" aria-label="Close">X</button>
       </div>
       <div class="modal-body">
         <p>
@@ -545,7 +617,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">Eucalyptus Grove Table</div>
-        <button class="modal-close" aria-label="Close">&times;</button>
+        <button class="modal-close" aria-label="Close">X</button>
       </div>
       <div class="modal-body">
         <p>
@@ -583,7 +655,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">North Gate Entry Seating</div>
-        <button class="modal-close" aria-label="Close">&times;</button>
+        <button class="modal-close" aria-label="Close">X</button>
       </div>
       <div class="modal-body">
         <p>
