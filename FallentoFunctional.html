@@ -23,27 +23,27 @@
     body {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
         "Courier New", monospace;
-      background: #020404; /* very dark green/black */
-      color: #d7e3d3;
+      background: #0c1908; /* dark backdrop derived from #2f5e1e */
+      color: #f4f7f3;
       line-height: 1.5;
     }
 
     a {
-      color: #7fbf7f;
+      color: #9e8f03; /* accent */
       text-decoration: none;
       border-bottom: 1px dotted transparent;
     }
 
     a:hover {
-      border-bottom-color: #7fbf7f;
+      border-bottom-color: #9e8f03;
     }
 
     /* MAIN WINDOW FRAME */
     .page {
       max-width: 900px;
       margin: 24px auto 40px;
-      background: #0c1511; /* muted green window */
-      border: 2px solid #1f2a24;
+      background: #2f5e1e; /* main green */
+      border: 2px solid #1a3311; /* darker frame */
       box-shadow: 0 0 0 1px #000000;
     }
 
@@ -55,8 +55,8 @@
 
     /* TITLE BAR */
     .title-bar {
-      background: #1c3b2f; /* dark green title bar */
-      color: #eaf5ea;
+      background: #224217; /* darker green bar */
+      color: #f7fbe9;
       padding: 4px 8px;
       display: flex;
       align-items: center;
@@ -82,6 +82,7 @@
 
     .window-body {
       padding: 14px 12px 20px;
+      background: #172a10; /* inner dark green */
     }
 
     @media (min-width: 900px) {
@@ -98,7 +99,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: #9bb39a;
+      color: #c3d7bf;
       margin-bottom: 4px;
     }
 
@@ -111,14 +112,14 @@
     .subline {
       margin-top: 4px;
       font-size: 0.82rem;
-      color: #c3d2c0;
+      color: #e1ecd8;
       max-width: 40rem;
     }
 
     hr {
       margin: 10px 0 12px;
       border: none;
-      border-top: 1px solid #1c241f;
+      border-top: 1px solid #101b0b;
     }
 
     /* OLD-SCHOOL BUTTON NAV */
@@ -161,9 +162,9 @@
 
     section {
       padding: 8px 6px;
-      border-top: 1px solid #141c17;
-      border-bottom: 1px solid #141c17;
-      background: #0c1511;
+      border-top: 1px solid #101b0b;
+      border-bottom: 1px solid #101b0b;
+      background: #172a10;
       transition: border-color 0.2s ease, background-color 0.2s ease;
     }
 
@@ -172,8 +173,8 @@
     }
 
     section.highlight {
-      border-color: #7fbf7f;
-      background-color: #0f1914;
+      border-color: #9e8f03; /* accent highlight */
+      background-color: #1c3411;
     }
 
     h2 {
@@ -181,13 +182,13 @@
       text-transform: uppercase;
       letter-spacing: 0.14em;
       margin-bottom: 4px;
-      color: #f4faf4;
+      color: #fdfef9;
     }
 
     p,
     li {
       font-size: 0.8rem;
-      color: #dde6dd;
+      color: #f2f6ee;
     }
 
     ul {
@@ -203,23 +204,23 @@
       font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.13em;
-      color: #9bb39a;
+      color: #c3d7bf;
       margin-bottom: 2px;
     }
 
     .block {
-      border: 1px solid #1f2a24;
+      border: 1px solid #101b0b;
       padding: 5px 7px;
       margin-top: 5px;
-      background: #101a15;
+      background: #1b3112;
     }
 
     .hero-box {
-      border: 1px dashed #1f2a24;
+      border: 1px dashed #101b0b;
       padding: 6px 7px;
-      background: #101a15;
+      background: #1b3112;
       font-size: 0.78rem;
-      color: #c9d6c9;
+      color: #e4efe0;
       margin-top: 4px;
     }
 
@@ -228,7 +229,7 @@
       text-transform: uppercase;
       letter-spacing: 0.13em;
       margin-bottom: 3px;
-      color: #eef5ee;
+      color: #fdfef9;
     }
 
     .projects-list {
@@ -243,8 +244,8 @@
       justify-content: space-between;
       align-items: baseline;
       padding: 5px 7px;
-      border: 1px solid #1f2a24;
-      background: #101a15;
+      border: 1px solid #101b0b;
+      background: #1b3112;
       cursor: pointer;
       width: 100%;
       text-align: left;
@@ -257,14 +258,14 @@
 
     .project-link span.meta {
       font-size: 0.75rem;
-      color: #9bb39a;
+      color: #c3d7bf;
       margin-left: 8px;
       text-align: right;
     }
 
     .project-link:hover {
-      border-color: #7fbf7f;
-      background: #121c17;
+      border-color: #9e8f03;
+      background: #223f15;
     }
 
     @media (max-width: 600px) {
@@ -281,14 +282,15 @@
     footer {
       margin-top: 18px;
       text-align: center;
-      color: #c2b9a5;
+      color: #f1f3e4;
       padding-top: 10px;
-      border-top: 1px solid #141c17;
+      border-top: 1px solid #101b0b;
+      background: #172a10;
     }
 
     .tiny {
       font-size: 0.7rem;
-      opacity: 0.85;
+      opacity: 0.9;
       margin-top: 3px;
     }
 
@@ -300,7 +302,7 @@
       image-rendering: pixelated;
     }
 
-    /* MODALS (old-window style) */
+    /* MODALS (old-window style, same palette) */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -317,8 +319,8 @@
     }
 
     .modal {
-      background: #0c1511;
-      border: 2px solid #1f2a24;
+      background: #172a10;
+      border: 2px solid #1a3311;
       box-shadow: 0 0 0 1px #000000;
       max-width: 720px;
       width: 100%;
@@ -332,7 +334,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 4px;
-      border-bottom: 1px solid #141c17;
+      border-bottom: 1px solid #101b0b;
       padding-bottom: 3px;
     }
 
@@ -340,7 +342,7 @@
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
-      color: #eef5ee;
+      color: #fdfef9;
     }
 
     .modal-close {
@@ -363,6 +365,7 @@
     .modal-body p {
       margin-bottom: 5px;
       font-size: 0.8rem;
+      color: #f2f6ee;
     }
 
     .modal-grid {
@@ -389,14 +392,14 @@
       width: 100%;
       display: block;
       object-fit: cover;
-      background: #111711;
+      background: #1f3614;
       min-height: 60px;
       image-rendering: pixelated;
     }
 
     .map-frame {
-      border: 1px solid #1f2a24;
-      background: #101a15;
+      border: 1px solid #101b0b;
+      background: #1b3112;
       height: 170px;
     }
 
@@ -598,7 +601,6 @@
           <div>
             <div class="label">Location · UC Berkeley</div>
             <div class="map-frame">
-              <!-- Simple campus map embed centered on Memorial Glade -->
               <iframe
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
