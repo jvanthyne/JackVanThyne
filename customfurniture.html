@@ -26,29 +26,60 @@
       flex-direction: column;
     }
 
-    /* Top banner */
+    /* Top header */
     .menu-bar {
-      background: #003354;
-      color: #f0f0f0;
-      padding: 4px 8px;
+      background: #6e6e6e;
+      color: #000;
+      padding: 6px 8px;
       font-size: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 0 #000;
+      border-bottom: 2px solid #000;
+      box-sizing: border-box;
       z-index: 50;
       position: relative;
     }
 
-    .menu-bar span.title {
-      font-weight: bold;
-      text-transform: none;
+    .menu-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .menu-right {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .header-box {
+      border: 2px solid #000;
+      background: #c8c8c8;
+      box-shadow: 2px 2px 0 #000;
+      padding: 4px 8px;
+      text-transform: none;
+      font-weight: bold;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .header-logo-box {
+      border: 2px solid #000;
+      background: #c8c8c8;
+      box-shadow: 2px 2px 0 #000;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .header-logo-box img {
+      height: 28px; /* replace logo.png with your actual logo file */
+      width: auto;
+      display: block;
     }
 
     .home-button {
@@ -225,16 +256,25 @@
         repeating-linear-gradient(0deg, #d0d0d0 0, #d0d0d0 2px, #c2c2c2 2px, #c2c2c2 3px);
     }
 
-    /* Contact – muted orange */
-    .window-contact .title-bar {
+    /* Request / schedule – muted orange */
+    .window-request .title-bar {
       background: linear-gradient(to right, #8b4a21, #b9642e);
     }
-    .window-contact .window-body {
+    .window-request .window-body {
       background-image:
         repeating-linear-gradient(0deg, #e3d1c4 0, #e3d1c4 2px, #d8c5b8 2px, #d8c5b8 3px);
     }
-    .window-contact .retro-button {
+    .window-request .retro-button {
       border-color: #8b4a21;
+    }
+
+    /* Contact – simple gray */
+    .window-contact .title-bar {
+      background: linear-gradient(to right, #555555, #777777);
+    }
+    .window-contact .window-body {
+      background-image:
+        repeating-linear-gradient(0deg, #d2d2d2 0, #d2d2d2 2px, #c6c6c6 2px, #c6c6c6 3px);
     }
 
     /* Bottom dock + banner */
@@ -254,7 +294,7 @@
       border-top: 2px solid #000;
       padding: 4px 8px;
       display: flex;
-      justify-content: center;
+      justify-content: flex-start; /* left aligned */
       gap: 12px;
       box-shadow: 0 -2px 0 #000;
     }
@@ -301,7 +341,7 @@
       display: inline-block;
       white-space: nowrap;
       padding-left: 100%;
-      animation: tickerMove 18s linear infinite;
+      animation: tickerMove 32s linear infinite; /* slower */
     }
 
     @keyframes tickerMove {
@@ -318,6 +358,20 @@
       .menu-bar {
         font-size: 11px;
         padding: 4px 6px;
+      }
+
+      .header-box {
+        font-size: 11px;
+        padding: 3px 6px;
+      }
+
+      .header-logo-box {
+        font-size: 10px;
+        padding: 3px 6px;
+      }
+
+      .header-logo-box img {
+        height: 22px;
       }
 
       .home-button {
@@ -388,8 +442,15 @@
 <body>
   <div class="desktop">
     <div class="menu-bar">
-      <span class="title">van thyne custom furniture</span>
+      <div class="menu-left">
+        <div class="header-box">van thyne custom furniture</div>
+      </div>
       <div class="menu-right">
+        <div class="header-logo-box">
+          <span>van thyne custom furniture</span>
+          <!-- replace logo.png with your actual logo file name -->
+          <img src="logo.png" alt="van thyne custom furniture logo">
+        </div>
         <button class="home-button" onclick="window.location.href='index.html'">
           home
         </button>
@@ -397,17 +458,17 @@
     </div>
 
     <div class="content">
-      <!-- empty desktop area; windows appear here -->
+      <!-- desktop area; windows appear here -->
     </div>
   </div>
 
   <!-- Bottom dock + banner -->
   <div class="bottom-bar">
     <div class="dock">
-      <!-- plus: main / start -->
-      <div class="dock-icon" id="dockStart">
+      <!-- plus: schedule / request a project -->
+      <div class="dock-icon" id="dockRequest">
         <div class="dock-icon-symbol">+</div>
-        <div>start</div>
+        <div>request</div>
       </div>
       <!-- about -->
       <div class="dock-icon" id="dockAbout">
@@ -421,13 +482,23 @@
       </div>
       <!-- contact -->
       <div class="dock-icon" id="dockContact">
-        <div class="dock-icon-symbol">@</div>
+        <div class="dock-icon-symbol">i</div>
         <div>contact</div>
+      </div>
+      <!-- home (bottom) -->
+      <div class="dock-icon" id="dockHome">
+        <div class="dock-icon-symbol">⌂</div>
+        <div>home</div>
+      </div>
+      <!-- close all -->
+      <div class="dock-icon" id="dockClose">
+        <div class="dock-icon-symbol">×</div>
+        <div>close</div>
       </div>
     </div>
     <div class="ticker">
       <div class="ticker-inner">
-        welcome to van thyne custom furniture – hit the plus to start • welcome to van thyne custom furniture – hit the plus to start •
+        welcome to van thyne custom furniture – hit the plus to start a project request • welcome to van thyne custom furniture – hit the plus to start a project request •
       </div>
     </div>
   </div>
@@ -484,10 +555,10 @@
     </div>
   </div>
 
-  <!-- Contact / Schedule / Reach Out window -->
-  <div class="window window-contact hidden" id="contactWindow">
+  <!-- Request / Schedule / Project code window -->
+  <div class="window window-request hidden" id="requestWindow">
     <div class="title-bar">
-      <div class="title">contact / schedule consultation</div>
+      <div class="title">schedule / request a project</div>
       <div class="controls">
         <button class="close-btn">X</button>
       </div>
@@ -499,22 +570,40 @@
         before moving into sketches and possibilities.
       </p>
       <p class="small-text">
-        click below to email:
+        to request a project or schedule a consultation, an email can be started here:
       </p>
       <p class="small-text">
         <a href="mailto:jjvanthyne?subject=custom%20furniture%20consultation">
-          email jjvanthyne to schedule a consultation
+          email jjvanthyne to request a project
         </a>
       </p>
       <hr>
       <p class="small-text">
-        if a project has an associated code, it can be entered here. clicking
-        <strong>reach out</strong> will open a project window:
+        if a project has an associated code (for example from a past collaboration),
+        it can be entered here. clicking <strong>reach out</strong> will open a project window:
       </p>
       <div class="input-row">
         <input type="text" id="projectCodeInput" placeholder="enter project code (if applicable)">
         <button class="retro-button" id="projectCodeButton">reach out</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Contact window (simple info) -->
+  <div class="window window-contact hidden" id="contactWindow">
+    <div class="title-bar">
+      <div class="title">contact information</div>
+      <div class="controls">
+        <button class="close-btn">X</button>
+      </div>
+    </div>
+    <div class="window-body">
+      <p>name: jack van thyne</p>
+      <p>location: berkeley, california</p>
+      <p>
+        email:
+        <a href="mailto:jjvanthyne">jjvanthyne</a>
+      </p>
     </div>
   </div>
 
@@ -590,6 +679,10 @@
       el.classList.add("hidden");
     }
 
+    function closeAllWindows() {
+      document.querySelectorAll(".window").forEach(win => win.classList.add("hidden"));
+    }
+
     function clampWindowToViewport(el) {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
@@ -599,7 +692,7 @@
       let top = rect.top;
 
       const maxLeft = Math.max(0, viewportWidth - rect.width - 4);
-      const maxTop = Math.max(24, viewportHeight - rect.height - 70); // leave for dock/banner
+      const maxTop = Math.max(24, viewportHeight - rect.height - 70); // keep above dock/banner
 
       if (left < 0) left = 0;
       if (top < 0) top = 0;
@@ -752,7 +845,14 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+      // dragging + z-index behavior
       makeWindowsDraggable();
+
+      // open all main popups in random locations on load
+      positionWindowRandom("aboutWindow");
+      positionWindowRandom("pastWorksWindow");
+      positionWindowRandom("requestWindow");
+      positionWindowRandom("contactWindow");
 
       // close buttons
       document.querySelectorAll(".close-btn").forEach(btn => {
@@ -763,10 +863,8 @@
       });
 
       // DOCK actions
-      document.getElementById("dockStart").addEventListener("click", function () {
-        // start: open about + contact as main entry
-        showWindow("aboutWindow", true);
-        showWindow("contactWindow", true);
+      document.getElementById("dockRequest").addEventListener("click", function () {
+        showWindow("requestWindow", true);
       });
 
       document.getElementById("dockAbout").addEventListener("click", function () {
@@ -779,6 +877,14 @@
 
       document.getElementById("dockContact").addEventListener("click", function () {
         showWindow("contactWindow", true);
+      });
+
+      document.getElementById("dockHome").addEventListener("click", function () {
+        window.location.href = "index.html";
+      });
+
+      document.getElementById("dockClose").addEventListener("click", function () {
+        closeAllWindows();
       });
 
       // project code reach-out button
