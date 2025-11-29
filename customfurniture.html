@@ -485,11 +485,6 @@
         <div class="dock-icon-symbol">i</div>
         <div>contact</div>
       </div>
-      <!-- home (bottom) -->
-      <div class="dock-icon" id="dockHome">
-        <div class="dock-icon-symbol">⌂</div>
-        <div>home</div>
-      </div>
       <!-- close all -->
       <div class="dock-icon" id="dockClose">
         <div class="dock-icon-symbol">×</div>
@@ -503,8 +498,10 @@
     </div>
   </div>
 
+  <!-- Base windows (used both as visible first instances and as templates) -->
+
   <!-- About + Design Philosophy window -->
-  <div class="window window-about hidden" id="aboutWindow">
+  <div class="window window-about" id="aboutWindow">
     <div class="title-bar">
       <div class="title">about – van thyne custom furniture</div>
       <div class="controls">
@@ -534,7 +531,7 @@
   </div>
 
   <!-- Past Works window: images only -->
-  <div class="window window-past hidden" id="pastWorksWindow">
+  <div class="window window-past" id="pastWorksWindow">
     <div class="title-bar">
       <div class="title">past_works / images</div>
       <div class="controls">
@@ -556,7 +553,7 @@
   </div>
 
   <!-- Request / Schedule / Project code window -->
-  <div class="window window-request hidden" id="requestWindow">
+  <div class="window window-request" id="requestWindow">
     <div class="title-bar">
       <div class="title">schedule / request a project</div>
       <div class="controls">
@@ -590,7 +587,7 @@
   </div>
 
   <!-- Contact window (simple info) -->
-  <div class="window window-contact hidden" id="contactWindow">
+  <div class="window window-contact" id="contactWindow">
     <div class="title-bar">
       <div class="title">contact information</div>
       <div class="controls">
@@ -607,7 +604,7 @@
     </div>
   </div>
 
-  <!-- Project window (dynamic) -->
+  <!-- Project window (dynamic, single instance is fine) -->
   <div class="window window-about hidden" id="projectWindow">
     <div class="title-bar">
       <div class="title" id="projectWindowTitle">project</div>
@@ -656,31 +653,15 @@
       }
     };
 
+    // global dragging state
+    let activeWindow = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
     function bringToFront(win) {
       const maxZ = Array.from(document.querySelectorAll(".window"))
         .reduce((m, w) => Math.max(m, parseInt(window.getComputedStyle(w).zIndex) || 0), 10);
       win.style.zIndex = maxZ + 1;
-    }
-
-    function showWindow(id, randomIfHidden = false) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const wasHidden = el.classList.contains("hidden");
-      el.classList.remove("hidden");
-      if (randomIfHidden && wasHidden) {
-        positionWindowRandom(id);
-      } else {
-        clampWindowToViewport(el);
-      }
-      bringToFront(el);
-    }
-
-    function hideWindow(el) {
-      el.classList.add("hidden");
-    }
-
-    function closeAllWindows() {
-      document.querySelectorAll(".window").forEach(win => win.classList.add("hidden"));
     }
 
     function clampWindowToViewport(el) {
@@ -703,14 +684,12 @@
       el.style.top = top + "px";
     }
 
-    function positionWindowRandom(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      el.classList.remove("hidden");
-
+    function positionWindowRandomElement(el) {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
+
+      // temporarily ensure visible for size
+      el.style.display = "block";
       const rect = el.getBoundingClientRect();
 
       const maxLeft = Math.max(0, viewportWidth - rect.width - 16);
@@ -725,78 +704,65 @@
       bringToFront(el);
     }
 
-    // drag logic for mouse + touch
-    function makeWindowsDraggable() {
-      let activeWindow = null;
-      let offsetX = 0;
-      let offsetY = 0;
+    function positionWindowRandomById(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      positionWindowRandomElement(el);
+    }
 
-      function startDrag(win, clientX, clientY) {
-        activeWindow = win;
-        bringToFront(activeWindow);
-        const rect = win.getBoundingClientRect();
-        offsetX = clientX - rect.left;
-        offsetY = clientY - rect.top;
-      }
+    function initWindow(win) {
+      // bring to front when interacting
+      win.addEventListener("mousedown", () => bringToFront(win));
+      win.addEventListener("touchstart", () => bringToFront(win), { passive: true });
 
-      document.querySelectorAll(".window").forEach(win => {
-        // bring to front on tap/click anywhere
-        win.addEventListener("mousedown", () => bringToFront(win));
-        win.addEventListener("touchstart", () => bringToFront(win), { passive: true });
-
-        const bar = win.querySelector(".title-bar");
-        if (!bar) return;
-
+      const bar = win.querySelector(".title-bar");
+      if (bar) {
         bar.addEventListener("mousedown", function (e) {
-          startDrag(win, e.clientX, e.clientY);
+          activeWindow = win;
+          bringToFront(win);
+          const rect = win.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
           e.preventDefault();
         });
 
         bar.addEventListener("touchstart", function (e) {
           const touch = e.touches[0];
-          startDrag(win, touch.clientX, touch.clientY);
+          activeWindow = win;
+          bringToFront(win);
+          const rect = win.getBoundingClientRect();
+          offsetX = touch.clientX - rect.left;
+          offsetY = touch.clientY - rect.top;
           e.preventDefault();
         }, { passive: false });
-      });
-
-      function moveActive(clientX, clientY) {
-        if (!activeWindow) return;
-
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const rect = activeWindow.getBoundingClientRect();
-        let newLeft = clientX - offsetX;
-        let newTop = clientY - offsetY;
-
-        const maxLeft = viewportWidth - rect.width - 4;
-        const maxTop = viewportHeight - rect.height - 70;
-
-        if (newLeft < 0) newLeft = 0;
-        if (newTop < 0) newTop = 0;
-        if (newLeft > maxLeft) newLeft = maxLeft;
-        if (newTop > maxTop) newTop = maxTop;
-
-        activeWindow.style.left = newLeft + "px";
-        activeWindow.style.top = newTop + "px";
       }
 
-      document.addEventListener("mousemove", function (e) {
-        moveActive(e.clientX, e.clientY);
-      });
+      const closeBtn = win.querySelector(".close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", function () {
+          win.classList.add("hidden");
+        });
+      }
 
-      document.addEventListener("mouseup", function () {
-        activeWindow = null;
-      });
+      clampWindowToViewport(win);
+    }
 
-      document.addEventListener("touchmove", function (e) {
-        if (!activeWindow) return;
-        const touch = e.touches[0];
-        moveActive(touch.clientX, touch.clientY);
-        e.preventDefault();
-      }, { passive: false });
+    function spawnWindowFromTemplate(templateId) {
+      const template = document.getElementById(templateId);
+      if (!template) return;
 
-      document.addEventListener("touchend", function () {
-        activeWindow = null;
+      const clone = template.cloneNode(true);
+      const uniqueId = templateId + "_clone_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+      clone.id = uniqueId;
+      clone.classList.remove("hidden");
+      document.body.appendChild(clone);
+      initWindow(clone);
+      positionWindowRandomElement(clone);
+    }
+
+    function closeAllWindows() {
+      document.querySelectorAll(".window").forEach(win => {
+        win.classList.add("hidden");
       });
     }
 
@@ -841,53 +807,95 @@
         window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body;
       };
 
-      showWindow("projectWindow", true);
+      win.classList.remove("hidden");
+      initWindow(win);
+      positionWindowRandomElement(win);
     }
 
+    document.addEventListener("mousemove", function (e) {
+      if (!activeWindow) return;
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const rect = activeWindow.getBoundingClientRect();
+      let newLeft = e.clientX - offsetX;
+      let newTop = e.clientY - offsetY;
+
+      const maxLeft = viewportWidth - rect.width - 4;
+      const maxTop = viewportHeight - rect.height - 70;
+
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      activeWindow.style.left = newLeft + "px";
+      activeWindow.style.top = newTop + "px";
+    });
+
+    document.addEventListener("mouseup", function () {
+      activeWindow = null;
+    });
+
+    document.addEventListener("touchmove", function (e) {
+      if (!activeWindow) return;
+      const touch = e.touches[0];
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const rect = activeWindow.getBoundingClientRect();
+      let newLeft = touch.clientX - offsetX;
+      let newTop = touch.clientY - offsetY;
+
+      const maxLeft = viewportWidth - rect.width - 4;
+      const maxTop = viewportHeight - rect.height - 70;
+
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      activeWindow.style.left = newLeft + "px";
+      activeWindow.style.top = newTop + "px";
+
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener("touchend", function () {
+      activeWindow = null;
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
-      // dragging + z-index behavior
-      makeWindowsDraggable();
+      // initialize existing base windows
+      document.querySelectorAll(".window").forEach(initWindow);
 
-      // open all main popups in random locations on load
-      positionWindowRandom("aboutWindow");
-      positionWindowRandom("pastWorksWindow");
-      positionWindowRandom("requestWindow");
-      positionWindowRandom("contactWindow");
+      // randomize positions for the four main base windows on load
+      positionWindowRandomById("aboutWindow");
+      positionWindowRandomById("pastWorksWindow");
+      positionWindowRandomById("requestWindow");
+      positionWindowRandomById("contactWindow");
 
-      // close buttons
-      document.querySelectorAll(".close-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-          const win = this.closest(".window");
-          if (win) hideWindow(win);
-        });
-      });
-
-      // DOCK actions
+      // dock actions spawn new windows from templates
       document.getElementById("dockRequest").addEventListener("click", function () {
-        showWindow("requestWindow", true);
+        spawnWindowFromTemplate("requestWindow");
       });
 
       document.getElementById("dockAbout").addEventListener("click", function () {
-        showWindow("aboutWindow", true);
+        spawnWindowFromTemplate("aboutWindow");
       });
 
       document.getElementById("dockPast").addEventListener("click", function () {
-        showWindow("pastWorksWindow", true);
+        spawnWindowFromTemplate("pastWorksWindow");
       });
 
       document.getElementById("dockContact").addEventListener("click", function () {
-        showWindow("contactWindow", true);
-      });
-
-      document.getElementById("dockHome").addEventListener("click", function () {
-        window.location.href = "index.html";
+        spawnWindowFromTemplate("contactWindow");
       });
 
       document.getElementById("dockClose").addEventListener("click", function () {
         closeAllWindows();
       });
 
-      // project code reach-out button
+      // project code reach-out button on the base request window
       const projectCodeInput = document.getElementById("projectCodeInput");
       const projectCodeButton = document.getElementById("projectCodeButton");
 
