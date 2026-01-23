@@ -5,107 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>JACK VAN THYNE — DESKTOP</title>
 
-  <!-- Favicon (pixel-ish) -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23007bd6'/%3E%3Crect x='10' y='10' width='44' height='44' fill='%23c0c0c0'/%3E%3Crect x='14' y='14' width='36' height='10' fill='%23000080'/%3E%3Crect x='18' y='30' width='28' height='20' fill='%23ffffff'/%3E%3C/svg%3E" />
-
   <style>
     :root{
-      /* Reference image vibes: deep OS/2-ish blue + grey chrome */
+      /* OS/2-ish reference palette */
       --desk:#0a41c9;
       --chrome:#c0c0c0;
       --chrome2:#d7d7d7;
-      --shadow:#000;
-      --shadow2:#404040;
-      --highlight:#fff;
+      --hi:#ffffff;
+      --lo:#404040;
+      --lo2:#000000;
       --title:#000080;
-      --text:#000;
+      --txt:#000;
 
-      --taskbar-h: 44px;
-      --icon: 64px;
-
-      /* pixel-ish font stack */
-      --ui: "MS Sans Serif","Microsoft Sans Serif","Tahoma","Verdana",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      --taskbar-h: 46px;
+      --font: "MS Sans Serif","Microsoft Sans Serif","Tahoma","Verdana",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       background:var(--desk);
-      font-family:var(--ui);
-      color:var(--text);
+      font-family:var(--font);
+      color:var(--txt);
       overflow:hidden;
       user-select:none;
     }
 
-    /* CRT-ish subtle texture */
+    /* CRT-ish overlay */
     body::before{
       content:"";
       position:fixed; inset:0;
       pointer-events:none;
       background:
-        linear-gradient(rgba(255,255,255,.04), rgba(255,255,255,0)) ,
-        repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0, rgba(0,0,0,.05) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px);
-      mix-blend-mode:overlay;
+        linear-gradient(rgba(255,255,255,.05), rgba(255,255,255,0)),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0, rgba(0,0,0,.06) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px);
       opacity:.35;
+      mix-blend-mode:overlay;
     }
 
-    /* Window bevel helpers */
     .bevel{
       background:var(--chrome);
-      border-top:2px solid var(--highlight);
-      border-left:2px solid var(--highlight);
-      border-right:2px solid var(--shadow2);
-      border-bottom:2px solid var(--shadow2);
+      border-top:2px solid var(--hi);
+      border-left:2px solid var(--hi);
+      border-right:2px solid var(--lo);
+      border-bottom:2px solid var(--lo);
     }
     .bevel-in{
       background:var(--chrome2);
-      border-top:2px solid var(--shadow2);
-      border-left:2px solid var(--shadow2);
-      border-right:2px solid var(--highlight);
-      border-bottom:2px solid var(--highlight);
+      border-top:2px solid var(--lo);
+      border-left:2px solid var(--lo);
+      border-right:2px solid var(--hi);
+      border-bottom:2px solid var(--hi);
     }
 
-    /* Desktop */
     #desktop{
       position:relative;
       height:calc(100% - var(--taskbar-h));
-      padding:18px 18px 10px;
+      padding:16px;
     }
 
+    /* Icons */
     .icon{
-      width:var(--icon);
+      width:86px;
+      position:absolute;
       display:flex;
       flex-direction:column;
       align-items:center;
       gap:6px;
       cursor:default;
-      position:absolute;
+      outline:none;
     }
-    .icon .glyph{
-      width:48px; height:48px;
-      image-rendering: pixelated;
+    .glyph{
+      width:48px;height:48px;
+      image-rendering:pixelated;
       filter: drop-shadow(1px 1px 0 rgba(0,0,0,.35));
     }
-    .icon .label{
-      max-width:84px;
-      text-align:center;
+    .label{
       font-size:12px;
+      max-width:92px;
+      text-align:center;
       color:#fff;
-      text-shadow:1px 1px 0 rgba(0,0,0,.45);
-      line-height:1.1;
+      text-shadow:1px 1px 0 rgba(0,0,0,.5);
       padding:2px 4px;
       border:1px solid transparent;
+      line-height:1.1;
+      white-space:normal;
+      word-break:break-word;
     }
     .icon.selected .label{
-      background:rgba(0,0,128,.9);
+      background:rgba(0,0,128,.92);
       border-color:#fff;
     }
 
+    /* Windows */
+    .window{
+      position:absolute;
+      z-index:50;
+      min-width:280px;
+      min-height:160px;
+    }
+    .window.hidden{display:none}
+    .titlebar{
+      height:28px;
+      background:var(--title);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 8px;
+      cursor:move;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .titlebar .left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+    .titlebar .title{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:420px;
+    }
+    .winbtns{display:flex; gap:6px}
+    .winbtn{
+      width:20px;height:18px;
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .winbtn:active{transform:translate(1px,1px)}
+    .content{
+      height:calc(100% - 28px);
+      padding:10px;
+    }
+    .pane{
+      height:100%;
+      padding:10px;
+      background:#fff;
+      overflow:auto;
+      font-size:13px;
+    }
+    .pane h2{margin:0 0 8px 0; font-size:16px}
+    .pane h3{margin:14px 0 6px 0; font-size:13px}
+    .pane p{margin:0 0 10px 0; line-height:1.35}
+    .muted{opacity:.75}
+    .divider{height:1px;background:#8a8a8a;margin:10px 0}
+
     /* Taskbar */
     #taskbar{
-      position:fixed;
-      left:0; right:0; bottom:0;
+      position:fixed; left:0; right:0; bottom:0;
       height:var(--taskbar-h);
       display:flex;
       align-items:center;
@@ -113,31 +167,25 @@
       padding:6px 8px;
       z-index:9999;
       background:var(--chrome);
-      border-top:2px solid var(--highlight);
+      border-top:2px solid var(--hi);
     }
     #startBtn{
       display:flex; align-items:center; gap:8px;
       padding:6px 10px;
-      font-weight:700;
-      font-size:13px;
       cursor:pointer;
+      font-weight:800;
+      font-size:13px;
     }
-    #startBtn .dot{
-      width:14px; height:14px;
-      border-radius:2px;
+    #startDot{
+      width:14px;height:14px;border-radius:2px;
       background:#00b050;
       border:1px solid rgba(0,0,0,.35);
       box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
     }
-    #tasks{
-      flex:1;
-      display:flex;
-      gap:6px;
-      overflow:hidden;
-    }
+    #tasks{flex:1; display:flex; gap:6px; overflow:hidden}
     .task{
-      min-width:160px;
-      max-width:240px;
+      min-width:150px;
+      max-width:260px;
       padding:6px 10px;
       font-size:12px;
       white-space:nowrap;
@@ -150,16 +198,20 @@
     }
     .task.active{
       background:var(--chrome2);
-      border-top:2px solid var(--shadow2);
-      border-left:2px solid var(--shadow2);
-      border-right:2px solid var(--highlight);
-      border-bottom:2px solid var(--highlight);
+      border-top:2px solid var(--lo);
+      border-left:2px solid var(--lo);
+      border-right:2px solid var(--hi);
+      border-bottom:2px solid var(--hi);
+    }
+    #tray{
+      display:flex; gap:6px; align-items:center;
     }
     #clock{
       padding:6px 10px;
+      min-width:84px;
       font-size:12px;
-      min-width:76px;
       text-align:center;
+      cursor:default;
     }
 
     /* Start menu */
@@ -167,15 +219,15 @@
       position:fixed;
       left:8px;
       bottom:calc(var(--taskbar-h) + 8px);
-      width:260px;
-      display:none;
+      width:280px;
       z-index:10000;
+      display:none;
     }
     #startMenu .head{
       background:var(--title);
       color:#fff;
       padding:10px 12px;
-      font-weight:700;
+      font-weight:800;
       letter-spacing:.2px;
     }
     #startMenu .menu{
@@ -192,744 +244,1358 @@
     }
     .menuItem:hover{
       background:rgba(0,0,128,.12);
-      outline:1px dotted rgba(0,0,0,.6);
+      outline:1px dotted rgba(0,0,0,.65);
       outline-offset:-3px;
     }
-    .menuItem svg{width:18px;height:18px;image-rendering:pixelated}
 
-    /* Windows */
-    .window{
-      position:absolute;
-      width:520px;
-      height:360px;
-      z-index:20;
+    /* Desktop context menu */
+    #ctx{
+      position:fixed;
+      z-index:20000;
+      width:200px;
+      display:none;
     }
-    .window.minimized{display:none}
-    .titlebar{
-      height:28px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 8px;
-      background:var(--title);
-      color:#fff;
-      cursor:move;
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:.2px;
-    }
-    .titlebar .left{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      min-width:0;
-    }
-    .titlebar .title{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:320px;
-    }
-    .winbtns{
-      display:flex;
-      gap:6px;
-    }
-    .winbtn{
-      width:20px; height:18px;
-      display:grid;
-      place-items:center;
-      font-size:12px;
-      line-height:1;
+    .ctxItem{
+      padding:8px;
+      font-size:13px;
       cursor:pointer;
     }
-    .winbtn:active{transform:translate(1px,1px)}
-    .content{
-      height:calc(100% - 28px);
-      padding:10px;
+    .ctxItem:hover{
+      background:rgba(0,0,128,.12);
+      outline:1px dotted rgba(0,0,0,.65);
+      outline-offset:-3px;
     }
 
-    .pane{
-      height:100%;
-      padding:10px;
-      background:#fff;
-      overflow:auto;
+    /* Inputs */
+    .fieldrow{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    input[type="text"]{
+      font-family:var(--font);
       font-size:13px;
+      padding:6px 8px;
+      border:none;
+      outline:none;
+      width:min(420px, 100%);
     }
-    .pane h2{
-      margin:0 0 8px 0;
-      font-size:16px;
+    .btn{
+      padding:6px 10px;
+      cursor:pointer;
+      display:inline-block;
+      font-size:13px;
+      font-weight:700;
     }
-    .pane p{margin:0 0 10px 0; line-height:1.35}
-    .divider{
-      height:1px;
-      background:#8a8a8a;
-      margin:10px 0;
-    }
+    .btn:active{transform:translate(1px,1px)}
+    a{color:#000080}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;font-size:12px}
 
-    /* Explorer-ish list */
-    .list{
+    /* Lists */
+    .grid{
       display:grid;
-      gap:6px;
+      gap:8px;
     }
     .row{
       display:flex;
-      align-items:center;
       gap:10px;
+      align-items:center;
       padding:6px;
-      cursor:pointer;
       border:1px solid transparent;
+      cursor:pointer;
     }
     .row:hover{
       background:rgba(0,0,128,.08);
       border-color:rgba(0,0,0,.15);
     }
-    .row .name{flex:1}
-    .tag{
+    .pill{
       font-size:11px;
       padding:2px 6px;
       background:#f3f3f3;
       border:1px solid #cfcfcf;
     }
+    .k{
+      display:inline-block;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid #cfcfcf;
+      background:#f7f7f7;
+      margin:0 4px 4px 0;
+    }
 
-    /* Tiny pixel svg helpers */
-    .pix{image-rendering:pixelated}
+    /* “Screensaver” */
+    #saver{
+      position:fixed; inset:0;
+      display:none;
+      z-index:50000;
+      background:#000;
+      color:#0f0;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:14px;
+    }
+    #saver pre{
+      margin:0;
+      position:absolute;
+      left:16px; top:16px; right:16px; bottom:16px;
+      overflow:hidden;
+      opacity:.85;
+    }
 
-    /* Mobile fallback */
-    @media (max-width: 720px){
-      .window{width:min(92vw,520px); height:min(60vh,360px)}
-      .icon{position:relative}
+    @media (max-width: 820px){
+      body{overflow:auto}
       #desktop{overflow:auto}
+      .icon{position:relative}
     }
   </style>
 </head>
 
 <body>
   <div id="desktop" aria-label="desktop">
-    <!-- Icons (positioned by JS) -->
-    <div class="icon" data-open="projects" tabindex="0" aria-label="Projects">
-      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+
+    <!-- DESKTOP ICONS -->
+    <div class="icon" data-open="works" tabindex="0" aria-label="WORKS">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
         <rect x="3" y="7" width="26" height="20" fill="#e6c24a" stroke="#000" stroke-width="1"/>
         <rect x="3" y="7" width="12" height="6" fill="#f5d56f" stroke="#000" stroke-width="1"/>
         <rect x="6" y="15" width="20" height="2" fill="#000" opacity=".25"/>
         <rect x="6" y="19" width="16" height="2" fill="#000" opacity=".18"/>
       </svg>
-      <div class="label">PROJECTS</div>
+      <div class="label">WORKS</div>
     </div>
 
-    <div class="icon" data-open="about" tabindex="0" aria-label="About">
-      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+    <div class="icon" data-open="about" tabindex="0" aria-label="ABOUT">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
         <rect x="6" y="5" width="20" height="22" fill="#fff" stroke="#000" stroke-width="1"/>
         <rect x="6" y="5" width="20" height="5" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
         <circle cx="12" cy="16" r="3" fill="#0a41c9" stroke="#000" stroke-width="1"/>
         <rect x="16" y="14" width="8" height="2" fill="#000" opacity=".35"/>
         <rect x="10" y="22" width="14" height="2" fill="#000" opacity=".25"/>
       </svg>
-      <div class="label">ABOUT</div>
+      <div class="label">WHO I AM</div>
     </div>
 
-    <div class="icon" data-open="contact" tabindex="0" aria-label="Contact">
-      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="5" y="8" width="22" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
-        <path d="M5 9l11 9 11-9" fill="none" stroke="#000" stroke-width="1.2"/>
-        <rect x="8" y="12" width="4" height="2" fill="#0a41c9"/>
-        <rect x="8" y="16" width="10" height="2" fill="#000" opacity=".2"/>
+    <div class="icon" data-open="art" tabindex="0" aria-label="ART">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="8" y="8" width="16" height="12" fill="#0a41c9" opacity=".12"/>
+        <path d="M8 20l4-4 3 3 3-5 6 6H8z" fill="#00b050" opacity=".8" stroke="#000" stroke-width=".6"/>
+        <circle cx="22" cy="11" r="2" fill="#e6c24a" stroke="#000" stroke-width=".6"/>
       </svg>
-      <div class="label">CONTACT</div>
+      <div class="label">ART + FILM</div>
     </div>
 
-    <div class="icon" data-open="resume" tabindex="0" aria-label="Resume">
-      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+    <div class="icon" data-open="build" tabindex="0" aria-label="BUILD">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="10" width="20" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="10" y="6" width="12" height="6" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
+        <rect x="9" y="14" width="14" height="2" fill="#000" opacity=".22"/>
+        <rect x="9" y="18" width="10" height="2" fill="#000" opacity=".18"/>
+      </svg>
+      <div class="label">BUILD</div>
+    </div>
+
+    <div class="icon" data-open="design" tabindex="0" aria-label="DESIGN">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#000" stroke-width="1"/>
+        <path d="M10 22l2-10 10-2-2 10-10 2z" fill="#e6c24a" stroke="#000" stroke-width="1"/>
+        <path d="M13 19l6-6" stroke="#000" stroke-width="1"/>
+      </svg>
+      <div class="label">DESIGN</div>
+    </div>
+
+    <div class="icon" data-open="resume" tabindex="0" aria-label="RESUME">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
         <rect x="7" y="5" width="18" height="22" fill="#ffffff" stroke="#000" stroke-width="1"/>
         <rect x="10" y="10" width="12" height="2" fill="#000" opacity=".25"/>
         <rect x="10" y="14" width="10" height="2" fill="#000" opacity=".2"/>
         <rect x="10" y="18" width="12" height="2" fill="#000" opacity=".18"/>
-        <rect x="10" y="22" width="8" height="2" fill="#000" opacity=".16"/>
-        <rect x="19" y="6" width="5" height="5" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
       </svg>
       <div class="label">RESUME</div>
     </div>
 
-    <!-- Windows (hidden until opened) -->
-    <div class="window bevel" id="win-projects" data-win="projects" style="display:none;">
-      <div class="titlebar">
-        <div class="left">
-          <span aria-hidden="true">📁</span>
-          <div class="title">PROJECTS</div>
-        </div>
-        <div class="winbtns">
-          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
-          <div class="winbtn bevel" data-act="close" title="Close">×</div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="pane bevel-in">
-          <h2>Projects</h2>
-          <p>Double-click a project to open its window. (Edit the list in the JS <code>PROJECTS</code> array.)</p>
-          <div class="divider"></div>
-          <div class="list" id="projectList"></div>
-        </div>
-      </div>
+    <div class="icon" data-open="run" tabindex="0" aria-label="RUN">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="8" width="20" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="8" y="10" width="16" height="3" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
+        <rect x="9" y="16" width="10" height="2" fill="#000" opacity=".2"/>
+        <rect x="9" y="19" width="12" height="2" fill="#000" opacity=".15"/>
+      </svg>
+      <div class="label">RUN…</div>
     </div>
 
-    <div class="window bevel" id="win-about" data-win="about" style="display:none; width:480px; height:320px;">
-      <div class="titlebar">
-        <div class="left">
-          <span aria-hidden="true">🗒️</span>
-          <div class="title">ABOUT</div>
-        </div>
-        <div class="winbtns">
-          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
-          <div class="winbtn bevel" data-act="close" title="Close">×</div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="pane bevel-in">
-          <h2>Jack Van Thyne</h2>
-          <p>
-            Replace this with your real bio. Keep it short, punchy, and a little “desktop-era”.
-          </p>
-          <p>
-            <b>Focus:</b> design-build, landscape + housing, reclaimed materials, furniture, prototypes, field research.
-          </p>
-          <div class="divider"></div>
-          <p style="font-size:12px;opacity:.8;">
-            Tip: add images by dropping <code>&lt;img&gt;</code> tags into the project windows (created dynamically in JS).
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="window bevel" id="win-contact" data-win="contact" style="display:none; width:460px; height:260px;">
-      <div class="titlebar">
-        <div class="left">
-          <span aria-hidden="true">✉️</span>
-          <div class="title">CONTACT</div>
-        </div>
-        <div class="winbtns">
-          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
-          <div class="winbtn bevel" data-act="close" title="Close">×</div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="pane bevel-in">
-          <h2>Contact</h2>
-          <p><b>Email:</b> <span style="opacity:.7;">you@domain.com</span></p>
-          <p><b>Instagram:</b> <span style="opacity:.7;">@yourhandle</span></p>
-          <p><b>PDF Portfolio:</b> <span style="opacity:.7;">/portfolio.pdf</span></p>
-          <div class="divider"></div>
-          <p style="font-size:12px;opacity:.8;">(Swap these for real links.)</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="window bevel" id="win-resume" data-win="resume" style="display:none; width:520px; height:340px;">
-      <div class="titlebar">
-        <div class="left">
-          <span aria-hidden="true">📄</span>
-          <div class="title">RESUME</div>
-        </div>
-        <div class="winbtns">
-          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
-          <div class="winbtn bevel" data-act="close" title="Close">×</div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="pane bevel-in">
-          <h2>Resume</h2>
-          <p>Drop a PDF in your site folder and link it here, or paste a short resume snapshot.</p>
-          <div class="divider"></div>
-          <p><b>Download:</b> <a href="#" onclick="alert('Replace this with a real /resume.pdf link.'); return false;">resume.pdf</a></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project window template gets cloned into here -->
-    <div id="dynamicWindows"></div>
+    <!-- WINDOWS (created/managed by JS) -->
+    <div id="windowLayer"></div>
   </div>
 
-  <!-- Taskbar -->
+  <!-- TASKBAR -->
   <div id="taskbar" class="bevel" role="navigation" aria-label="taskbar">
     <div id="startBtn" class="bevel" tabindex="0" aria-label="Start">
-      <div class="dot" aria-hidden="true"></div>
+      <div id="startDot" aria-hidden="true"></div>
       START
     </div>
-
     <div id="tasks" aria-label="open windows"></div>
-
-    <div id="clock" class="bevel-in" aria-label="clock">--:--</div>
-  </div>
-
-  <!-- Start menu -->
-  <div id="startMenu" class="bevel" aria-label="start menu">
-    <div class="head">JACK — MENU</div>
-    <div class="menu">
-      <div class="menuItem" data-open="projects">
-        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
-          <rect x="1" y="4" width="14" height="10" fill="#e6c24a" stroke="#000"/>
-          <rect x="1" y="4" width="6" height="3" fill="#f5d56f" stroke="#000"/>
-        </svg>
-        Projects
-      </div>
-      <div class="menuItem" data-open="about">
-        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
-          <rect x="3" y="2" width="10" height="12" fill="#fff" stroke="#000"/>
-          <rect x="3" y="2" width="10" height="3" fill="#d7d7d7" stroke="#000"/>
-        </svg>
-        About
-      </div>
-      <div class="menuItem" data-open="contact">
-        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
-          <rect x="2" y="4" width="12" height="8" fill="#fff" stroke="#000"/>
-          <path d="M2 4l6 5 6-5" stroke="#000" fill="none"/>
-        </svg>
-        Contact
-      </div>
-      <div class="menuItem" id="menuArrange">
-        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
-          <rect x="2" y="2" width="5" height="5" fill="#fff" stroke="#000"/>
-          <rect x="9" y="2" width="5" height="5" fill="#fff" stroke="#000"/>
-          <rect x="2" y="9" width="5" height="5" fill="#fff" stroke="#000"/>
-          <rect x="9" y="9" width="5" height="5" fill="#fff" stroke="#000"/>
-        </svg>
-        Arrange Icons
-      </div>
-      <div class="menuItem" id="menuShutdown">
-        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
-          <circle cx="8" cy="8" r="6" fill="#ff4d4d" stroke="#000"/>
-          <rect x="7" y="3" width="2" height="7" fill="#fff"/>
-        </svg>
-        “Shut Down”
-      </div>
+    <div id="tray">
+      <div id="clock" class="bevel-in" title="(secret: click me)">--:--</div>
     </div>
   </div>
 
-  <script>
-    // ====== CONTENT YOU EDIT ======
-    const PROJECTS = [
-      {
-        id: "001",
-        title: "CRITIQUE",
-        year: "2026",
-        blurb: "Simple platform seat on a retaining wall. A pause between concrete + canopy.",
-        tags: ["FURNITURE", "SITE"],
-        images: [] // e.g. ["images/001_1.jpg","images/001_2.jpg"]
-      },
-      {
-        id: "002",
-        title: "GRASSHOPPER",
-        year: "2026",
-        blurb: "Parametric studies, joints, iterations — a toolkit for building systems.",
-        tags: ["DIGITAL", "PROTOTYPE"],
-        images: []
-      },
-      {
-        id: "003",
-        title: "MINI",
-        year: "2025",
-        blurb: "Small intervention, tight constraints, clear move.",
-        tags: ["MODEL"],
-        images: []
-      },
-      {
-        id: "004",
-        title: "STUMP",
-        year: "2025",
-        blurb: "Found material, precise cut, new use.",
-        tags: ["RECLAIMED"],
-        images: []
-      },
-      {
-        id: "005",
-        title: "CORNERSTONE",
-        year: "2025",
-        blurb: "A datum and a decision — framing a site through one grounded object.",
-        tags: ["LANDSCAPE"],
-        images: []
-      },
-      {
-        id: "006",
-        title: "RUINS",
-        year: "2025",
-        blurb: "Present rests atop history. Brick carries wood. Time does the detailing.",
-        tags: ["INSTALLATION"],
-        images: []
-      },
-      {
-        id: "007",
-        title: "OVERHANG",
-        year: "2025",
-        blurb: "Shelter as edge-condition. Shade, dripline, threshold.",
-        tags: ["STRUCTURE"],
-        images: []
-      },
-      {
-        id: "008",
-        title: "RIM",
-        year: "2025",
-        blurb: "Set along the rim, overlooking the game — gathering at the boundary.",
-        tags: ["PLACE"],
-        images: []
-      }
-    ];
+  <!-- START MENU -->
+  <div id="startMenu" class="bevel" aria-label="start menu">
+    <div class="head">JACK VAN THYNE</div>
+    <div class="menu">
+      <div class="menuItem" data-open="works">WORKS</div>
+      <div class="menuItem" data-open="about">WHO I AM</div>
+      <div class="menuItem" data-open="art">ART + FILM</div>
+      <div class="menuItem" data-open="build">BUILD</div>
+      <div class="menuItem" data-open="design">DESIGN</div>
+      <div class="menuItem" data-open="run">RUN…</div>
+      <div class="menuItem" id="arrangeIcons">ARRANGE ICONS</div>
+      <div class="menuItem" id="fakeShutdown">SHUT DOWN…</div>
+    </div>
+  </div>
 
-    // ====== UI CORE ======
-    const desktop = document.getElementById("desktop");
-    const tasks = document.getElementById("tasks");
-    const startBtn = document.getElementById("startBtn");
-    const startMenu = document.getElementById("startMenu");
-    const projectList = document.getElementById("projectList");
-    const dynamicWindows = document.getElementById("dynamicWindows");
+  <!-- DESKTOP CONTEXT MENU -->
+  <div id="ctx" class="bevel" aria-label="context menu">
+    <div class="ctxItem" data-ctx="refresh">Refresh</div>
+    <div class="ctxItem" data-ctx="arrange">Arrange Icons</div>
+    <div class="ctxItem" data-ctx="newnote">New Note</div>
+    <div class="ctxItem" data-ctx="secret">???</div>
+  </div>
 
-    let zTop = 50;
-    const openState = new Map(); // winKey -> { el, taskEl, minimized }
+  <!-- SCREENSAVER -->
+  <div id="saver" aria-label="screensaver">
+    <pre id="saverText"></pre>
+  </div>
 
-    // Arrange icons in a tidy grid (like old desktops)
-    function arrangeIcons(){
-      const icons = [...document.querySelectorAll(".icon")];
-      const padX = 18, padY = 18;
-      const colW = 92, rowH = 92;
-      const maxH = desktop.clientHeight - 12;
-      let x = padX, y = padY;
+<script>
+/* =========================
+   DATA (EDIT THIS)
+========================= */
+const PROFILE = {
+  name: "JACK VAN THYNE",
+  statement: "I am a 22-year-old student living in Berkeley, studying landscape architecture at UC Berkeley. I am an artist and builder, drawn to designing and creating spaces and objects that shape how people interact with the world and with each other.",
+  awards: [
+    { year:"2020", title:"AFSB Architecture Design Competition — First Place" },
+    { year:"2023", title:"UC Berkeley Chair Design Competition — First Place" },
+    { year:"2024", title:"EPA Rain Works Stormwater Design Competition — Third Place" },
+    { year:"2025", title:"UC Berkeley TGIF Grant Recipient" },
+    { year:"2025", title:"BARE Art Showcase — Second Place" }
+  ],
+  experience: [
+    { when:"2019–Present", role:"Van Thyne Handy Service — Founder / Owner", link:"" },
+    { when:"Summer 2023", role:"AB Design Studio — Design Intern", link:"https://www.abdesignstudioinc.com/" },
+    { when:"2020–2023", role:"Cornwall Landscape Design Build — Designer / Fabricator", link:"" },
+    { when:"Summer 2025", role:"Sidste Skole (Copenhagen) — Carpenter / Designer / Bartender", link:"https://sidstemole.dk/#sidste-skole" }
+  ]
+};
 
-      icons.forEach((ic) => {
-        ic.style.left = x + "px";
-        ic.style.top  = y + "px";
-        y += rowH;
-        if (y + rowH > maxH){
-          y = padY;
-          x += colW;
-        }
-      });
+const ART = {
+  paintings: ["Redwood Tree","Blue","Dancing"],
+  films: [
+    { title:"Treetops", url:"https://www.youtube.com/watch?v=hWi82rb9htU" },
+    { title:"Day of the Dead Mead", url:"https://www.youtube.com/watch?v=xrAxkaNebeE" },
+    { title:"Color and Sound Mead", url:"https://www.youtube.com/watch?v=yWdhz6hPLDI" },
+    { title:"Deckhand Mead", url:"https://www.youtube.com/watch?v=1jONL0xIJhI" },
+    { title:"NYC Bikeride", url:"https://www.youtube.com/watch?v=N8SXElfR1d4" },
+    { title:"Zum Matterhorn", url:"https://www.youtube.com/watch?v=WGi0fDkJY7o" },
+    { title:"Cykel", url:"https://www.youtube.com/watch?v=O1BMu3R6Spc" }
+  ]
+};
+
+const PROJECTS = [
+  { id:"001", title:"DOVETAIL CHAIR", year:"2023", type:"Furniture", desc:"During a semester in Denmark studying furniture design, I built this project using a single sheet of plywood. The piece was designed to pack flat, used no glue, and featured hand-cut dovetail joints." },
+  { id:"002", title:"3716 FORTUNATO WAY", year:"2021", type:"Build", desc:"COVID home yard renovation: composite deck, custom lighting, irrigation, planting scheme — all labor completed over three months." },
+  { id:"005", title:"CED CHAIR", year:"2023", type:"Furniture", desc:"Winning design for UC Berkeley’s CED Chair Competition. Modular laminated plywood chair fabricated with CNC, now permanently in the Environmental Design Library." },
+  { id:"007", title:"PENDANT LIGHTS (STEEL)", year:"2023", type:"Lighting", desc:"Built two pendant lights for my apartment using scrap metal from the fabrication shop. Designed to frame the window and bed. Completed in one day." },
+  { id:"008", title:"SHIPPING CONTAINER HOME", year:"2024", type:"Build", desc:"Converted a storage container into a livable home with insulation, windows, electrical wiring, and doors. Adaptive reuse + efficient small-space planning." },
+  { id:"009", title:"SIT-STAND DESK", year:"2023", type:"Build", desc:"Repaired a broken sit-stand desk from Craigslist and built a custom reclaimed-wood top by joining two bookshelf sides." },
+  { id:"010", title:"SHADE STRUCTURE", year:"2022", type:"Structure", desc:"First larger-scale build. Half-lap joinery + lattice, designed for plants to grow over the structure." },
+  { id:"011", title:"PAINTINGS (COLLECTION)", year:"2022", type:"Art", desc:"Acrylic paintings on wood panels with custom recycled wood frames made from furniture scraps." },
+  { id:"012", title:"SHŌJI LIGHT", year:"2024", type:"Lighting", desc:"Lighting fixture inspired by Japanese shōji screen-making. Built from reclaimed materials after a first version failed." },
+  { id:"013", title:"GRID LIGHT", year:"2024", type:"Lighting", desc:"Reclaimed headboard wood + precise joinery. Balanced art and function through iterative material-based design." },
+  { id:"014", title:"FLOATING SAUNA", year:"2024", type:"Structure", desc:"Design-build contribution to a wood-fired sauna built from an old barge in Copenhagen. Community sauna space." },
+  { id:"015", title:"OAK BEND CHAIR", year:"2023", type:"Furniture", desc:"Steam bending + joinery experiment. Material failed due to humidity, but it became a valuable learning study." },
+  { id:"016", title:"STEAM PAVILION", year:"2024", type:"Structure", desc:"Largest project to date. Built from reclaimed redwood decks and fencing. Inspired by fog + sauna traditions. Installed at UC Botanical Garden." },
+  { id:"017", title:"GREENHOUSE", year:"2022", type:"Build", desc:"Built entirely from reclaimed materials and windows. Housed ~30 plants with a live-edge bench inside." },
+  { id:"018", title:"OUTDOOR TABLES", year:"2023", type:"Furniture", desc:"Modular scrap-wood tables for a beach dinner party. Detachable legs for transport. Inspired by Outstanding in the Field." },
+  { id:"019", title:"MOBILE SAUNA", year:"2024", type:"Structure", desc:"Electric sauna on a trailer with deck + cold plunge. Designed for portability + accessible experience." },
+  { id:"020", title:"CUTTING BOARD", year:"2023", type:"Build", desc:"Reclaimed kitchen cabinet faces found on the curb. Two-day project turning scrap wood into a kitchen centerpiece." },
+  { id:"021", title:"CIRCLE STAGE", year:"2025", type:"Structure", desc:"Circular stage for concerts and community events. Designed + built independently; now used weekly." },
+  { id:"022", title:"SUBMERGED DOCK", year:"2025", type:"Structure", desc:"Small dock at a Copenhagen park using scrap wood. Designed to submerge slightly at high tide to blend with the shoreline." },
+  { id:"023", title:"SHADE STRUCTURE II", year:"2025", type:"Structure", desc:"Second iteration of pergola design, refined with Japanese joinery techniques for greater precision and complexity. Built in Berkeley." },
+  { id:"024", title:"TIME MACHINE", year:"2025", type:"Art", desc:"Art installation for a Berkeley Hills music festival. Reflection through generative form, design + technology + storytelling." },
+  { id:"025", title:"SOLID OAK STOOL", year:"2025", type:"Furniture", desc:"(Add description.)" },
+  { id:"026", title:"SOLID OAK CHAIR", year:"2025", type:"Furniture", desc:"(Add description.)" },
+  { id:"027", title:"SCRAP SAUNA", year:"2025", type:"Structure", desc:"(Add description.)" },
+  { id:"028", title:"OUTDOOR TABLES (PLY)", year:"2025", type:"Furniture", desc:"(Add description.)" },
+  { id:"029", title:"SCRAP BENCH", year:"2025", type:"Furniture", desc:"(Add description.)" },
+  { id:"030", title:"GUERRILLA GROTTO", year:"2025", type:"Design", desc:"(Add description.)" },
+  { id:"031", title:"FILMS", year:"—", type:"Film", desc:"Short works + process videos." }
+];
+
+/* =========================
+   WINDOW MANAGER
+========================= */
+const desktop = document.getElementById("desktop");
+const layer = document.getElementById("windowLayer");
+const tasks = document.getElementById("tasks");
+const startBtn = document.getElementById("startBtn");
+const startMenu = document.getElementById("startMenu");
+const clockEl = document.getElementById("clock");
+const ctx = document.getElementById("ctx");
+const saver = document.getElementById("saver");
+const saverText = document.getElementById("saverText");
+
+let zTop = 100;
+let activeKey = null;
+const open = new Map(); // key -> {el, task, minimized, title}
+
+function bevelBtn(label){
+  const b = document.createElement("div");
+  b.className = "winbtn bevel";
+  b.textContent = label;
+  return b;
+}
+
+function makeWindow({key,title,w=560,h=380,x=120,y=80,contentHTML=""}){
+  const win = document.createElement("div");
+  win.className = "window bevel hidden";
+  win.dataset.key = key;
+  win.style.width = w+"px";
+  win.style.height = h+"px";
+  win.style.left = x+"px";
+  win.style.top = y+"px";
+  win.style.zIndex = (++zTop);
+
+  const bar = document.createElement("div");
+  bar.className = "titlebar";
+  bar.innerHTML = `<div class="left"><div class="title">${title}</div></div>`;
+  const btns = document.createElement("div");
+  btns.className = "winbtns";
+
+  const min = bevelBtn("_");
+  min.title = "Minimize";
+  const max = bevelBtn("□");
+  max.title = "Maximize";
+  const close = bevelBtn("×");
+  close.title = "Close";
+
+  btns.appendChild(min);
+  btns.appendChild(max);
+  btns.appendChild(close);
+  bar.appendChild(btns);
+
+  const content = document.createElement("div");
+  content.className = "content";
+  content.innerHTML = `<div class="pane bevel-in">${contentHTML}</div>`;
+
+  win.appendChild(bar);
+  win.appendChild(content);
+  layer.appendChild(win);
+
+  // task
+  const t = document.createElement("div");
+  t.className = "task bevel";
+  t.textContent = title;
+  t.addEventListener("click", () => {
+    const st = open.get(key);
+    if(!st) return;
+    if(st.minimized){ restoreWindow(key); }
+    focusWindow(key);
+  });
+
+  // wire buttons
+  min.addEventListener("click", () => minimizeWindow(key));
+  close.addEventListener("click", () => closeWindow(key));
+  max.addEventListener("click", () => toggleMax(key));
+
+  // drag
+  let dragging=false, ox=0, oy=0;
+  bar.addEventListener("mousedown", (e)=>{
+    dragging=true;
+    focusWindow(key);
+    const r = win.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+  });
+  window.addEventListener("mousemove", (e)=>{
+    if(!dragging) return;
+    const maxX = desktop.clientWidth - win.offsetWidth;
+    const maxY = desktop.clientHeight - win.offsetHeight;
+    const nx = Math.max(0, Math.min(maxX, e.clientX - ox));
+    const ny = Math.max(0, Math.min(maxY, e.clientY - oy));
+    win.style.left = nx + "px";
+    win.style.top  = ny + "px";
+  });
+  window.addEventListener("mouseup", ()=> dragging=false);
+
+  win.addEventListener("mousedown", ()=> focusWindow(key));
+
+  open.set(key, { el: win, task: t, minimized:false, title, maxed:false, pre:{} });
+  return win;
+}
+
+function openWindow(key){
+  const st = open.get(key);
+  if(!st) return;
+  if(!st.task.isConnected) tasks.appendChild(st.task);
+  st.el.classList.remove("hidden");
+  st.el.style.display = "block";
+  st.minimized=false;
+  focusWindow(key);
+}
+
+function focusWindow(key){
+  const st = open.get(key);
+  if(!st) return;
+  activeKey = key;
+  st.el.style.zIndex = (++zTop);
+  document.querySelectorAll(".task").forEach(x=>x.classList.remove("active"));
+  st.task.classList.add("active");
+}
+
+function minimizeWindow(key){
+  const st = open.get(key);
+  if(!st) return;
+  st.minimized=true;
+  st.el.style.display = "none";
+  st.task.classList.remove("active");
+  if(activeKey === key) activeKey = null;
+}
+
+function restoreWindow(key){
+  const st = open.get(key);
+  if(!st) return;
+  st.minimized=false;
+  st.el.style.display = "block";
+  focusWindow(key);
+}
+
+function closeWindow(key){
+  const st = open.get(key);
+  if(!st) return;
+  st.el.style.display = "none";
+  st.el.classList.add("hidden");
+  st.minimized=false;
+  st.task.remove();
+  if(activeKey === key) activeKey = null;
+}
+
+function toggleMax(key){
+  const st = open.get(key);
+  if(!st) return;
+  const win = st.el;
+  if(!st.maxed){
+    st.pre = {
+      w: win.style.width,
+      h: win.style.height,
+      x: win.style.left,
+      y: win.style.top
+    };
+    win.style.left = "6px";
+    win.style.top = "6px";
+    win.style.width = (desktop.clientWidth - 12) + "px";
+    win.style.height = (desktop.clientHeight - 12) + "px";
+    st.maxed = true;
+  }else{
+    win.style.width = st.pre.w;
+    win.style.height = st.pre.h;
+    win.style.left = st.pre.x;
+    win.style.top = st.pre.y;
+    st.maxed = false;
+  }
+  focusWindow(key);
+}
+
+/* =========================
+   ICONS / SELECTION / ARRANGE
+========================= */
+function arrangeIcons(){
+  const icons = [...document.querySelectorAll(".icon")];
+  const padX=18, padY=18, colW=96, rowH=96;
+  const maxH = desktop.clientHeight - 10;
+  let x=padX, y=padY;
+  icons.forEach(ic=>{
+    ic.style.left = x+"px";
+    ic.style.top  = y+"px";
+    y += rowH;
+    if(y + rowH > maxH){ y = padY; x += colW; }
+  });
+}
+
+function clearIconSelection(){
+  document.querySelectorAll(".icon.selected").forEach(i=>i.classList.remove("selected"));
+}
+desktop.addEventListener("mousedown",(e)=>{
+  if(e.target.closest(".icon") || e.target.closest(".window")) return;
+  clearIconSelection();
+  hideStart();
+  hideCtx();
+});
+
+/* =========================
+   START MENU
+========================= */
+function showStart(){ startMenu.style.display="block"; }
+function hideStart(){ startMenu.style.display="none"; }
+function toggleStart(){ startMenu.style.display === "block" ? hideStart() : showStart(); }
+startBtn.addEventListener("click", toggleStart);
+startBtn.addEventListener("keydown",(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleStart(); }});
+document.addEventListener("mousedown",(e)=>{
+  if(e.target.closest("#startMenu") || e.target.closest("#startBtn")) return;
+  hideStart();
+});
+startMenu.addEventListener("click",(e)=>{
+  const it = e.target.closest(".menuItem");
+  if(!it) return;
+  if(it.dataset.open){ openWindow(it.dataset.open); hideStart(); }
+  if(it.id==="arrangeIcons"){ arrangeIcons(); hideStart(); }
+  if(it.id==="fakeShutdown"){
+    hideStart();
+    messageBox("SYSTEM", "Nice try. No shutting down. Go make something.");
+  }
+});
+
+/* =========================
+   CONTEXT MENU
+========================= */
+function showCtx(x,y){
+  ctx.style.left = x+"px";
+  ctx.style.top = y+"px";
+  ctx.style.display = "block";
+}
+function hideCtx(){ ctx.style.display="none"; }
+desktop.addEventListener("contextmenu",(e)=>{
+  e.preventDefault();
+  hideStart();
+  showCtx(e.clientX, e.clientY);
+});
+document.addEventListener("mousedown",(e)=>{
+  if(e.target.closest("#ctx")) return;
+  hideCtx();
+});
+ctx.addEventListener("click",(e)=>{
+  const it = e.target.closest(".ctxItem");
+  if(!it) return;
+  const act = it.dataset.ctx;
+  hideCtx();
+  if(act==="refresh") messageBox("DESKTOP", "Refreshed. (Nothing changed. That’s the point.)");
+  if(act==="arrange") arrangeIcons();
+  if(act==="newnote") openNotepad("NEW NOTE", "Type something. Save is fake. Feelings are real.");
+  if(act==="secret") secretPrompt();
+});
+
+/* =========================
+   CLOCK + SCREENSAVER
+========================= */
+function tick(){
+  const d = new Date();
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2,"0");
+  const ap = h >= 12 ? "PM" : "AM";
+  h = h % 12; if(h===0) h=12;
+  clockEl.textContent = `${h}:${m} ${ap}`;
+}
+setInterval(tick,1000); tick();
+
+let idleTimer = null;
+function resetIdle(){
+  if(idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(()=> startSaver(), 1000*60*3); // 3 minutes
+}
+["mousemove","mousedown","keydown","touchstart"].forEach(ev=>window.addEventListener(ev, resetIdle, {passive:true}));
+resetIdle();
+
+function startSaver(){
+  saver.style.display="block";
+  saverText.textContent = buildSaverText();
+}
+function stopSaver(){ saver.style.display="none"; }
+saver.addEventListener("mousedown", stopSaver);
+saver.addEventListener("mousemove", stopSaver);
+saver.addEventListener("keydown", stopSaver);
+
+function buildSaverText(){
+  const lines = [];
+  const stamp = new Date().toLocaleString();
+  lines.push("JACK VAN THYNE — SYSTEM IDLE");
+  lines.push("TIME: " + stamp);
+  lines.push("");
+  lines.push("LOADING WORKS…");
+  lines.push("LOADING MATERIAL…");
+  lines.push("LOADING MIST…");
+  lines.push("");
+  const picks = PROJECTS.slice(0, 16).map(p=>`${p.id}  ${p.title}  (${p.year})`);
+  for(let i=0;i<Math.min(14,picks.length);i++){
+    lines.push("> " + picks[(i*3) % picks.length]);
+  }
+  lines.push("");
+  lines.push("MOVE MOUSE TO RETURN.");
+  return lines.join("\n");
+}
+
+/* =========================
+   EASTER EGGS + HIDDEN THINGS
+========================= */
+let clockClicks = 0;
+clockEl.addEventListener("click", ()=>{
+  clockClicks++;
+  if(clockClicks === 1) messageBox("TIP", "Hidden stuff exists.\n\nTry: right-click desktop, Win+R, Ctrl+K, or… the Konami code.");
+  if(clockClicks === 5){
+    messageBox("SECRET", "ACCESS GRANTED:\n\nTYPE 'grotto' IN RUN…");
+    clockClicks = 0;
+  }
+});
+
+// background shift-doubleclick opens a hidden archive window
+let bgClicks = 0, bgTimer = null;
+desktop.addEventListener("dblclick",(e)=>{
+  if(e.target.closest(".icon") || e.target.closest(".window")) return;
+  if(!e.shiftKey) return;
+  openWindow("archive");
+});
+
+// Konami code to reveal “GUERRILLA GROTTO”
+const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let konamiPos = 0;
+window.addEventListener("keydown",(e)=>{
+  const k = e.key;
+  if(k === KONAMI[konamiPos] || k.toLowerCase() === KONAMI[konamiPos]){
+    konamiPos++;
+    if(konamiPos === KONAMI.length){
+      konamiPos = 0;
+      revealGrotto();
     }
+  }else{
+    konamiPos = 0;
+  }
+});
 
-    // Selection behavior
-    function clearIconSelection(){
-      document.querySelectorAll(".icon.selected").forEach(i => i.classList.remove("selected"));
+// Ctrl+K opens command prompt
+window.addEventListener("keydown",(e)=>{
+  if(e.ctrlKey && e.key.toLowerCase() === "k"){
+    e.preventDefault();
+    openWindow("cmd");
+  }
+  // Win+R opens Run…
+  if((e.metaKey || e.ctrlKey) && e.key.toLowerCase()==="r"){
+    e.preventDefault();
+    openWindow("run");
+  }
+});
+
+function revealGrotto(){
+  if(!open.has("grotto")) buildHiddenGrotto();
+  openWindow("grotto");
+  messageBox("SYSTEM", "NEW ICON DISCOVERED:\nGUERRILLA GROTTO");
+}
+
+/* =========================
+   ICON INTERACTIONS
+========================= */
+document.querySelectorAll(".icon").forEach(ic=>{
+  ic.addEventListener("click", ()=>{
+    clearIconSelection();
+    ic.classList.add("selected");
+  });
+  ic.addEventListener("dblclick", ()=>{
+    const k = ic.dataset.open;
+    if(k) openWindow(k);
+  });
+  ic.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+      const k = ic.dataset.open;
+      if(k) openWindow(k);
     }
-    desktop.addEventListener("mousedown", (e)=>{
-      if (e.target.closest(".icon") || e.target.closest(".window")) return;
-      clearIconSelection();
-      hideStartMenu();
-    });
+  });
+});
 
-    // Clock
-    function tick(){
-      const d = new Date();
-      let h = d.getHours();
-      const m = String(d.getMinutes()).padStart(2,"0");
-      const ap = h >= 12 ? "PM" : "AM";
-      h = h % 12; if (h === 0) h = 12;
-      document.getElementById("clock").textContent = `${h}:${m} ${ap}`;
+/* =========================
+   WINDOW CONTENT BUILDERS
+========================= */
+function esc(s){ return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+function messageBox(title, msg){
+  const key = "msg-" + Math.random().toString(16).slice(2);
+  const html = `
+    <h2>${esc(title)}</h2>
+    <p style="white-space:pre-wrap">${esc(msg)}</p>
+    <div class="divider"></div>
+    <div class="btn bevel" data-ok="1">OK</div>
+  `;
+  makeWindow({key,title,w:440,h:220,x:160+Math.random()*120,y:90+Math.random()*90,contentHTML:html});
+  openWindow(key);
+  const st = open.get(key);
+  st.el.querySelector("[data-ok]").addEventListener("click", ()=> {
+    st.el.remove(); st.task.remove(); open.delete(key);
+  });
+}
+
+function openNotepad(title, text){
+  const key = "note-" + Math.random().toString(16).slice(2);
+  const html = `
+    <h2>${esc(title)}</h2>
+    <div class="divider"></div>
+    <textarea id="${key}-ta" style="width:100%;height:220px;border:none;outline:none;resize:none;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px" class="bevel-in">${esc(text||"")}</textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <div class="btn bevel" data-copy="1">COPY</div>
+      <div class="btn bevel" data-close="1">CLOSE</div>
+      <div class="btn bevel" data-secret="1">?</div>
+    </div>
+  `;
+  makeWindow({key,title,w:520,h:380,x:140+Math.random()*140,y:80+Math.random()*110,contentHTML:html});
+  openWindow(key);
+  const st = open.get(key);
+  const ta = st.el.querySelector("textarea");
+  st.el.querySelector("[data-copy]").addEventListener("click", async ()=>{
+    try{
+      await navigator.clipboard.writeText(ta.value);
+      messageBox("NOTEPAD", "Copied.");
+    }catch{
+      messageBox("NOTEPAD", "Copy failed (browser blocked).");
     }
-    setInterval(tick, 1000);
-    tick();
-
-    // Start menu
-    function showStartMenu(){ startMenu.style.display = "block"; }
-    function hideStartMenu(){ startMenu.style.display = "none"; }
-    function toggleStartMenu(){
-      startMenu.style.display === "block" ? hideStartMenu() : showStartMenu();
+  });
+  st.el.querySelector("[data-close]").addEventListener("click", ()=> closeWindow(key));
+  st.el.querySelector("[data-secret]").addEventListener("click", ()=> {
+    if(ta.value.trim().toLowerCase().includes("fog")){
+      messageBox("FOUND", "You typed fog.\n\nTry: run → 'mist' or cmd → 'list hidden'");
+    }else{
+      messageBox("HINT", "Write something true.\n(Or type: fog)");
     }
-    startBtn.addEventListener("click", toggleStartMenu);
-    startBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleStartMenu(); } });
+  });
+}
 
-    document.addEventListener("mousedown", (e)=>{
-      if (e.target.closest("#startMenu") || e.target.closest("#startBtn")) return;
-      hideStartMenu();
-    });
+function youtubeEmbed(url){
+  const id = (url.match(/[?&]v=([^&]+)/)||[])[1] || "";
+  return id ? `https://www.youtube.com/embed/${id}` : "";
+}
 
-    // Start menu items
-    startMenu.addEventListener("click", (e)=>{
-      const item = e.target.closest(".menuItem");
-      if(!item) return;
-      const key = item.dataset.open;
-      if (key){ openWindow(key); hideStartMenu(); }
-      if (item.id === "menuArrange"){ arrangeIcons(); hideStartMenu(); }
-      if (item.id === "menuShutdown"){
-        hideStartMenu();
-        openMessageBox("SYSTEM", "Nice try. No shutting down. Go build something.");
-      }
-    });
+function openVideoPlayer(title, url){
+  const key = "vid-" + Math.random().toString(16).slice(2);
+  const embed = youtubeEmbed(url);
+  const html = `
+    <h2>${esc(title)}</h2>
+    <p class="muted">Playing from YouTube</p>
+    <div class="divider"></div>
+    ${embed ? `<iframe class="bevel-in" style="width:100%;height:260px;border:0" src="${embed}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+            : `<p>Bad link.</p>`}
+    <div class="divider"></div>
+    <div class="btn bevel" data-open="1">OPEN IN NEW TAB</div>
+  `;
+  makeWindow({key,title:"MEDIA PLAYER",w:640,h:420,x:120+Math.random()*120,y:70+Math.random()*90,contentHTML:html});
+  openWindow(key);
+  const st = open.get(key);
+  st.el.querySelector("[data-open]").addEventListener("click", ()=> window.open(url, "_blank"));
+}
 
-    // Icons: click selects, double-click opens
-    document.querySelectorAll(".icon").forEach((ic)=>{
-      ic.addEventListener("click", ()=>{
-        clearIconSelection();
-        ic.classList.add("selected");
-      });
-      ic.addEventListener("dblclick", ()=>{
-        const key = ic.dataset.open;
-        if (key) openWindow(key);
-      });
-      ic.addEventListener("keydown", (e)=>{
-        if(e.key==="Enter"){ const key = ic.dataset.open; if (key) openWindow(key); }
-      });
-    });
-
-    // Build project list + windows
-    function buildProjectExplorer(){
-      projectList.innerHTML = "";
-      PROJECTS.forEach(p => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `
-          <svg class="pix" width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
-            <rect x="2" y="3" width="12" height="10" fill="#ffffff" stroke="#000"/>
-            <rect x="2" y="3" width="12" height="3" fill="#d7d7d7" stroke="#000"/>
-          </svg>
-          <div class="name"><b>${p.id}</b> — ${p.title}</div>
-          <div class="tag">${p.year}</div>
-        `;
-        row.addEventListener("dblclick", ()=> openProject(p.id));
-        projectList.appendChild(row);
-      });
+function secretPrompt(){
+  const html = `
+    <h2>???</h2>
+    <p class="muted">Enter password.</p>
+    <div class="fieldrow">
+      <input id="pw" class="bevel-in" type="text" placeholder="password" />
+      <div class="btn bevel" id="go">OK</div>
+    </div>
+    <div class="divider"></div>
+    <p class="muted">Hint: it’s not a password. it’s a place.</p>
+  `;
+  const key = "pw-" + Math.random().toString(16).slice(2);
+  makeWindow({key,title:"SECURITY",w:420,h:220,x:180+Math.random()*120,y:90+Math.random()*120,contentHTML:html});
+  openWindow(key);
+  const st = open.get(key);
+  const go = st.el.querySelector("#go");
+  const pw = st.el.querySelector("#pw");
+  function check(){
+    const v = pw.value.trim().toLowerCase();
+    if(["berkeley","ced","grotto","woodlab","fog","mist"].includes(v)){
+      closeWindow(key);
+      messageBox("ACCESS", "Unlocked.\n\n(You’ll know when you see it.)");
+      if(v === "grotto") revealGrotto();
+      if(v === "mist") openWindow("archive");
+    }else{
+      messageBox("DENIED", "Nope.");
     }
+  }
+  go.addEventListener("click", check);
+  pw.addEventListener("keydown",(e)=>{ if(e.key==="Enter") check(); });
+}
 
-    function openProject(id){
-      const p = PROJECTS.find(x => x.id === id);
-      if(!p) return;
+/* =========================
+   CORE WINDOWS
+========================= */
+function buildWorksWindow(){
+  const types = [...new Set(PROJECTS.map(p=>p.type))].sort();
+  const html = `
+    <h2>WORKS</h2>
+    <p class="muted">Search and open projects. Double-click a row to open.</p>
+    <div class="divider"></div>
 
-      const key = "proj-" + id;
-      if (openState.has(key)){
-        focusWindow(key);
-        return;
-      }
+    <div class="fieldrow">
+      <input id="works-q" class="bevel-in" type="text" placeholder="Search (e.g. sauna, light, chair, 016…)" />
+      <div class="btn bevel" id="works-clear">CLEAR</div>
+      <span class="muted">Filter:</span>
+      <select id="works-type" class="bevel-in" style="padding:6px 8px;border:none;outline:none;font-family:var(--font)">
+        <option value="">ALL</option>
+        ${types.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("")}
+      </select>
+      <div class="btn bevel" id="works-random">RANDOM</div>
+    </div>
 
-      const w = document.createElement("div");
-      w.className = "window bevel";
-      w.dataset.win = key;
-      w.style.width = "640px";
-      w.style.height = "420px";
-      w.style.left = Math.round(140 + Math.random()*120) + "px";
-      w.style.top  = Math.round(70  + Math.random()*90) + "px";
-      w.style.zIndex = (++zTop);
+    <div class="divider"></div>
+    <div id="works-list" class="grid"></div>
 
-      const imgs = (p.images && p.images.length)
-        ? `<div class="divider"></div>
-           <div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
-             ${p.images.map(src => `<img src="${src}" alt="${p.title}" style="width:100%;height:auto;border:1px solid #000;image-rendering:auto;">`).join("")}
-           </div>`
-        : `<div class="divider"></div>
-           <p style="font-size:12px;opacity:.8;">No images yet. Add paths in <code>PROJECTS[n].images</code>.</p>`;
+    <div class="divider"></div>
+    <p class="muted">
+      Hidden: try <span class="k">Ctrl+K</span> (Command Prompt), <span class="k">Win+R</span> (Run…), or Konami code.
+    </p>
+  `;
 
-      w.innerHTML = `
-        <div class="titlebar">
-          <div class="left">
-            <span aria-hidden="true">🗂️</span>
-            <div class="title">${p.id} — ${p.title}</div>
-          </div>
-          <div class="winbtns">
-            <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
-            <div class="winbtn bevel" data-act="close" title="Close">×</div>
-          </div>
+  makeWindow({key:"works",title:"WORKS",w:720,h:520,x:120,y:60,contentHTML:html});
+  const st = open.get("works");
+  const q = st.el.querySelector("#works-q");
+  const list = st.el.querySelector("#works-list");
+  const sel = st.el.querySelector("#works-type");
+
+  function render(){
+    const term = q.value.trim().toLowerCase();
+    const tfilter = sel.value;
+    const filtered = PROJECTS
+      .filter(p => !tfilter || p.type === tfilter)
+      .filter(p => {
+        if(!term) return true;
+        const blob = `${p.id} ${p.title} ${p.year} ${p.type} ${p.desc}`.toLowerCase();
+        return blob.includes(term);
+      })
+      .sort((a,b)=> a.id.localeCompare(b.id));
+
+    list.innerHTML = filtered.map(p=>`
+      <div class="row" data-id="${esc(p.id)}" title="Double-click to open">
+        <div style="width:58px"><b>${esc(p.id)}</b></div>
+        <div style="flex:1"><b>${esc(p.title)}</b><div class="muted" style="font-size:12px">${esc(p.desc)}</div></div>
+        <div class="pill">${esc(p.year)}</div>
+        <div class="pill">${esc(p.type)}</div>
+      </div>
+    `).join("") || `<p class="muted">No matches.</p>`;
+  }
+
+  list.addEventListener("dblclick",(e)=>{
+    const row = e.target.closest(".row");
+    if(!row) return;
+    openProject(row.dataset.id);
+  });
+
+  q.addEventListener("input", render);
+  sel.addEventListener("change", render);
+  st.el.querySelector("#works-clear").addEventListener("click", ()=>{ q.value=""; sel.value=""; render(); });
+  st.el.querySelector("#works-random").addEventListener("click", ()=>{
+    const pool = PROJECTS.filter(p=> !sel.value || p.type===sel.value);
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    if(pick) openProject(pick.id);
+  });
+
+  render();
+}
+
+function openProject(id){
+  const p = PROJECTS.find(x=>x.id===id);
+  if(!p){ messageBox("ERROR", "Project not found."); return; }
+
+  const key = "proj-" + id;
+  if(open.has(key) && open.get(key).el.isConnected){
+    openWindow(key);
+    focusWindow(key);
+    return;
+  }
+
+  const html = `
+    <h2>${esc(p.title)} <span class="muted">(${esc(p.year)})</span></h2>
+    <div class="fieldrow" style="margin-bottom:6px">
+      <span class="pill"><b>${esc(p.id)}</b></span>
+      <span class="pill">${esc(p.type)}</span>
+      <div class="btn bevel" data-copy="1">COPY BLURB</div>
+      <div class="btn bevel" data-pin="1">PIN TO DESKTOP</div>
+    </div>
+    <div class="divider"></div>
+    <p>${esc(p.desc)}</p>
+    <div class="divider"></div>
+    <p class="muted">Tip: add images later by extending this project object with an <code>images</code> array.</p>
+  `;
+  makeWindow({key,title:`${p.id} — ${p.title}`,w:560,h:360,x:140+Math.random()*160,y:70+Math.random()*140,contentHTML:html});
+  openWindow(key);
+
+  const st = open.get(key);
+  st.el.querySelector('[data-copy]').addEventListener("click", async ()=>{
+    try{
+      await navigator.clipboard.writeText(p.desc);
+      messageBox("COPIED", "Project description copied.");
+    }catch{
+      messageBox("COPIED", "Copy failed (browser blocked).");
+    }
+  });
+  st.el.querySelector('[data-pin]').addEventListener("click", ()=>{
+    pinProjectIcon(p);
+    messageBox("DESKTOP", `Pinned ${p.id}.`);
+  });
+}
+
+function pinProjectIcon(p){
+  const ic = document.createElement("div");
+  ic.className = "icon";
+  ic.tabIndex = 0;
+  ic.dataset.open = "works";
+  ic.innerHTML = `
+    <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#000" stroke-width="1"/>
+      <rect x="8" y="8" width="16" height="6" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
+      <rect x="9" y="17" width="14" height="2" fill="#000" opacity=".2"/>
+      <rect x="9" y="21" width="10" height="2" fill="#000" opacity=".16"/>
+    </svg>
+    <div class="label">${p.id}</div>
+  `;
+  desktop.appendChild(ic);
+
+  ic.addEventListener("click", ()=>{
+    clearIconSelection();
+    ic.classList.add("selected");
+  });
+  ic.addEventListener("dblclick", ()=>{
+    openProject(p.id);
+  });
+  ic.addEventListener("keydown",(e)=>{ if(e.key==="Enter") openProject(p.id); });
+
+  arrangeIcons();
+}
+
+function buildAboutWindow(){
+  const html = `
+    <h2 id="aboutHeader">${esc(PROFILE.name)}</h2>
+    <p>${esc(PROFILE.statement)}</p>
+
+    <div class="divider"></div>
+    <h3>Goals</h3>
+    <p><b>Display WORKS.</b> Display who I am.</p>
+
+    <div class="divider"></div>
+    <h3>Awards + Honors</h3>
+    <div class="grid">
+      ${PROFILE.awards.map(a=>`<div class="row"><div style="width:70px"><b>${esc(a.year)}</b></div><div>${esc(a.title)}</div></div>`).join("")}
+    </div>
+
+    <div class="divider"></div>
+    <h3>Experience</h3>
+    <div class="grid">
+      ${PROFILE.experience.map(x=>`
+        <div class="row">
+          <div style="width:120px"><b>${esc(x.when)}</b></div>
+          <div style="flex:1">${esc(x.role)} ${x.link?`<div class="muted" style="font-size:12px"><a href="${esc(x.link)}" target="_blank" rel="noreferrer">${esc(x.link)}</a></div>`:""}</div>
         </div>
-        <div class="content">
-          <div class="pane bevel-in">
-            <h2>${p.title} <span style="font-weight:400;opacity:.7;">(${p.year})</span></h2>
-            <p>${p.blurb}</p>
-            <div style="display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 0;">
-              ${(p.tags||[]).map(t => `<span class="tag">${t}</span>`).join("")}
-            </div>
-            ${imgs}
-          </div>
+      `).join("")}
+    </div>
+
+    <div class="divider"></div>
+    <p class="muted">Hidden: click my name 7 times.</p>
+  `;
+  makeWindow({key:"about",title:"WHO I AM",w:660,h:520,x:160,y:70,contentHTML:html});
+  const st = open.get("about");
+  const header = st.el.querySelector("#aboutHeader");
+  let clicks = 0;
+  header.style.cursor = "pointer";
+  header.addEventListener("click", ()=>{
+    clicks++;
+    if(clicks === 7){
+      clicks = 0;
+      messageBox("FOUND", "Hidden folder unlocked:\nARCHIVE");
+      openWindow("archive");
+    }
+  });
+}
+
+function buildArtWindow(){
+  const html = `
+    <h2>ART + FILM</h2>
+    <p class="muted">Paintings + short works. Double-click a film to play.</p>
+
+    <div class="divider"></div>
+    <h3>Paintings</h3>
+    <div class="grid">
+      ${ART.paintings.map(n=>`<div class="row" data-note="${esc(n)}"><div style="width:18px">🎨</div><div><b>${esc(n)}</b></div></div>`).join("")}
+    </div>
+
+    <div class="divider"></div>
+    <h3>Films</h3>
+    <div class="grid" id="filmList">
+      ${ART.films.map(f=>`
+        <div class="row" data-url="${esc(f.url)}">
+          <div style="width:18px">📼</div>
+          <div style="flex:1"><b>${esc(f.title)}</b><div class="muted" style="font-size:12px">${esc(f.url)}</div></div>
+          <div class="pill">PLAY</div>
         </div>
-      `;
+      `).join("")}
+    </div>
+  `;
+  makeWindow({key:"art",title:"ART + FILM",w:720,h:520,x:120,y:90,contentHTML:html});
+  const st = open.get("art");
+  st.el.querySelector("#filmList").addEventListener("dblclick",(e)=>{
+    const row = e.target.closest(".row");
+    if(!row) return;
+    openVideoPlayer(row.querySelector("b").textContent, row.dataset.url);
+  });
+  st.el.querySelectorAll('[data-note]').forEach(r=>{
+    r.addEventListener("dblclick", ()=> openNotepad("PAINTING NOTE", `TITLE: ${r.dataset.note}\n\nWhat is it about?\nWhere did it start?\nWhat changed while you worked?`));
+  });
+}
 
-      dynamicWindows.appendChild(w);
-      wireWindow(w, key, `${p.id} — ${p.title}`);
-      addTask(key, `${p.id} — ${p.title}`);
-      focusWindow(key);
+function buildBuildWindow(){
+  const buildTypes = ["Furniture","Lighting","Structure","Build"];
+  const html = `
+    <h2>BUILD</h2>
+    <p class="muted">Objects + spaces. Quick jump into categories.</p>
+
+    <div class="divider"></div>
+    <div class="fieldrow">
+      ${buildTypes.map(t=>`<div class="btn bevel" data-t="${esc(t)}">${esc(t).toUpperCase()}</div>`).join("")}
+      <div class="btn bevel" data-t="ALL">ALL</div>
+    </div>
+
+    <div class="divider"></div>
+    <div id="buildList" class="grid"></div>
+
+    <div class="divider"></div>
+    <p class="muted">Hidden: type <code>fog</code> into a new note and press the <b>?</b> button.</p>
+  `;
+  makeWindow({key:"build",title:"BUILD",w:700,h:500,x:190,y:90,contentHTML:html});
+  const st = open.get("build");
+  const list = st.el.querySelector("#buildList");
+
+  function render(filter){
+    const items = PROJECTS.filter(p => {
+      if(filter === "ALL") return ["Furniture","Lighting","Structure","Build"].includes(p.type);
+      return p.type === filter;
+    }).sort((a,b)=>a.id.localeCompare(b.id));
+
+    list.innerHTML = items.map(p=>`
+      <div class="row" data-id="${esc(p.id)}">
+        <div style="width:58px"><b>${esc(p.id)}</b></div>
+        <div style="flex:1"><b>${esc(p.title)}</b><div class="muted" style="font-size:12px">${esc(p.desc)}</div></div>
+        <div class="pill">${esc(p.year)}</div>
+      </div>
+    `).join("") || `<p class="muted">No items.</p>`;
+  }
+
+  st.el.querySelectorAll("[data-t]").forEach(b=>{
+    b.addEventListener("click", ()=> render(b.dataset.t));
+  });
+  list.addEventListener("dblclick",(e)=>{
+    const r = e.target.closest(".row");
+    if(!r) return;
+    openProject(r.dataset.id);
+  });
+  render("ALL");
+}
+
+function buildDesignWindow(){
+  const html = `
+    <h2>DESIGN</h2>
+    <p class="muted">Competitions, school work, and systems thinking. (Add more here.)</p>
+
+    <div class="divider"></div>
+    <h3>Design Competitions</h3>
+    <div class="grid">
+      <div class="row"><div style="width:18px">🏁</div><div><b>Between the Lines</b></div></div>
+      <div class="row"><div style="width:18px">🏁</div><div><b>Thomas Church Design Competition</b></div></div>
+    </div>
+
+    <div class="divider"></div>
+    <h3>School</h3>
+    <div class="grid">
+      <div class="row"><div style="width:18px">📐</div><div><b>SF Studio Class</b> <span class="muted">(add details)</span></div></div>
+    </div>
+
+    <div class="divider"></div>
+    <h3>Work</h3>
+    <div class="grid">
+      <div class="row"><div style="width:18px">🧩</div><div><b>Project Systems</b> <span class="muted">(add details)</span></div></div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="muted">Hidden: Konami code unlocks something design-adjacent.</p>
+  `;
+  makeWindow({key:"design",title:"DESIGN",w:660,h:500,x:240,y:70,contentHTML:html});
+}
+
+function buildResumeWindow(){
+  const html = `
+    <h2>RESUME</h2>
+    <p class="muted">Drop a <code>resume.pdf</code> in your site folder and link it here.</p>
+    <div class="divider"></div>
+    <p><b>Download:</b> <a href="resume.pdf" target="_blank" rel="noreferrer">resume.pdf</a></p>
+    <div class="divider"></div>
+    <p class="muted">Hidden: the Run dialog has commands.</p>
+  `;
+  makeWindow({key:"resume",title:"RESUME",w:520,h:280,x:320,y:110,contentHTML:html});
+}
+
+function buildRunWindow(){
+  const html = `
+    <h2>RUN…</h2>
+    <p class="muted">Type a command and press Enter.</p>
+    <div class="divider"></div>
+    <div class="fieldrow">
+      <input id="runCmd" class="bevel-in" type="text" placeholder="works / about / art / build / design / cmd / note / grotto / mist" />
+      <div class="btn bevel" id="runGo">OK</div>
+      <div class="btn bevel" id="runCancel">CANCEL</div>
+    </div>
+    <div class="divider"></div>
+    <p class="muted">Commands: <span class="k">works</span><span class="k">about</span><span class="k">art</span><span class="k">build</span><span class="k">design</span><span class="k">cmd</span><span class="k">note</span><span class="k">grotto</span><span class="k">mist</span></p>
+  `;
+  makeWindow({key:"run",title:"RUN…",w:520,h:260,x:150,y:170,contentHTML:html});
+  const st = open.get("run");
+  const inp = st.el.querySelector("#runCmd");
+
+  function execRun(){
+    const v = inp.value.trim().toLowerCase();
+    if(!v) return;
+    if(v === "works") openWindow("works");
+    else if(v === "about") openWindow("about");
+    else if(v === "art") openWindow("art");
+    else if(v === "build") openWindow("build");
+    else if(v === "design") openWindow("design");
+    else if(v === "cmd") openWindow("cmd");
+    else if(v === "note") openNotepad("NOTE", "");
+    else if(v === "mist"){ openWindow("archive"); }
+    else if(v === "grotto"){ revealGrotto(); }
+    else messageBox("RUN", `Unknown command: ${v}`);
+    closeWindow("run");
+  }
+
+  st.el.querySelector("#runGo").addEventListener("click", execRun);
+  st.el.querySelector("#runCancel").addEventListener("click", ()=> closeWindow("run"));
+  inp.addEventListener("keydown",(e)=>{ if(e.key==="Enter") execRun(); });
+}
+
+function buildCmdWindow(){
+  const html = `
+    <h2>COMMAND PROMPT</h2>
+    <p class="muted">Type <code>help</code>.</p>
+    <div class="divider"></div>
+    <div id="termOut" class="bevel-in" style="height:260px;overflow:auto;padding:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;background:#000;color:#0f0;white-space:pre-wrap;"></div>
+    <div class="fieldrow" style="margin-top:10px">
+      <span class="muted">C:\\></span>
+      <input id="termIn" class="bevel-in" type="text" placeholder="help" style="flex:1;min-width:220px" />
+      <div class="btn bevel" id="termSend">ENTER</div>
+    </div>
+  `;
+  makeWindow({key:"cmd",title:"CMD.EXE",w:720,h:430,x:120,y:120,contentHTML:html});
+  const st = open.get("cmd");
+  const out = st.el.querySelector("#termOut");
+  const inn = st.el.querySelector("#termIn");
+  const send = st.el.querySelector("#termSend");
+
+  function println(s){ out.textContent += s + "\n"; out.scrollTop = out.scrollHeight; }
+
+  function runCmd(line){
+    const raw = line.trim();
+    const cmd = raw.toLowerCase();
+    if(!raw) return;
+
+    println("C:\\> " + raw);
+
+    if(cmd === "help"){
+      println("Commands:");
+      println("  help            show this list");
+      println("  works           open WORKS");
+      println("  open 016        open project by id");
+      println("  find sauna      search works");
+      println("  list types      show project types");
+      println("  list hidden     hints");
+      println("  note            open notepad");
+      println("  clear           clear screen");
+      return;
     }
-
-    // Basic message box popup
-    function openMessageBox(title, message){
-      const key = "msg-" + Math.random().toString(16).slice(2);
-      const w = document.createElement("div");
-      w.className = "window bevel";
-      w.dataset.win = key;
-      w.style.width = "420px";
-      w.style.height = "180px";
-      w.style.left = Math.round(180 + Math.random()*120) + "px";
-      w.style.top  = Math.round(110 + Math.random()*90) + "px";
-      w.style.zIndex = (++zTop);
-      w.innerHTML = `
-        <div class="titlebar">
-          <div class="left"><span aria-hidden="true">ℹ️</span><div class="title">${title}</div></div>
-          <div class="winbtns">
-            <div class="winbtn bevel" data-act="close" title="Close">×</div>
-          </div>
-        </div>
-        <div class="content">
-          <div class="pane bevel-in" style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;">
-            <div style="font-size:28px;line-height:1;">💬</div>
-            <div>
-              <p style="margin:0 0 12px 0;">${message}</p>
-              <div class="bevel" style="display:inline-block;padding:6px 14px;cursor:pointer;" data-ok="1">OK</div>
-            </div>
-          </div>
-        </div>
-      `;
-      dynamicWindows.appendChild(w);
-
-      wireWindow(w, key, title);
-      addTask(key, title);
-      focusWindow(key);
-
-      w.addEventListener("click", (e)=>{
-        if (e.target.closest("[data-ok]")) closeWindow(key);
-      });
+    if(cmd === "clear"){ out.textContent=""; return; }
+    if(cmd === "works"){ openWindow("works"); println("Opened WORKS."); return; }
+    if(cmd === "note"){ openNotepad("NOTE", ""); println("Opened NOTEPAD."); return; }
+    if(cmd.startsWith("open ")){
+      const id = raw.split(" ")[1];
+      if(PROJECTS.some(p=>p.id===id)){ openProject(id); println("Opened " + id + "."); }
+      else println("Project not found.");
+      return;
     }
-
-    // Open fixed windows (projects/about/contact/resume)
-    function openWindow(key){
-      if (key.startsWith("proj-")) return;
-
-      // special: projects opens explorer list
-      if(key === "projects") buildProjectExplorer();
-
-      const el = document.querySelector(`.window[data-win="${key}"]`) || document.getElementById("win-" + key);
-      const winEl = el && el.classList.contains("window") ? el : document.querySelector(`.window[data-win="${key}"]`);
-
-      // fixed windows are present by id (win-about etc)
-      const fixed = document.querySelector(`#win-${key}`);
-      const target = fixed || winEl;
-
-      if (!target) return;
-
-      // if already tracked, just restore/focus
-      if (openState.has(key)){
-        const st = openState.get(key);
-        st.el.style.display = "block";
-        st.el.classList.remove("minimized");
-        st.minimized = false;
-        focusWindow(key);
-        setTaskActive(key);
-        return;
-      }
-
-      target.style.display = "block";
-      target.style.left = target.style.left || Math.round(120 + Math.random()*160) + "px";
-      target.style.top  = target.style.top  || Math.round(70  + Math.random()*120) + "px";
-      target.style.zIndex = (++zTop);
-
-      wireWindow(target, key, key.toUpperCase());
-      addTask(key, key.toUpperCase());
-      focusWindow(key);
+    if(cmd.startsWith("find ")){
+      const q = raw.slice(5);
+      const hits = PROJECTS.filter(p => (`${p.id} ${p.title} ${p.desc}`.toLowerCase().includes(q.toLowerCase())));
+      if(!hits.length){ println("No matches."); return; }
+      hits.slice(0,12).forEach(p=> println(`${p.id}  ${p.title}  (${p.year})`));
+      println("Tip: open <id> to open.");
+      return;
     }
-
-    function wireWindow(winEl, key, label){
-      // bring to front on mousedown
-      winEl.addEventListener("mousedown", ()=> focusWindow(key));
-
-      // buttons
-      winEl.querySelectorAll(".winbtn").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const act = btn.dataset.act;
-          if (act === "close") closeWindow(key);
-          if (act === "min") minimizeWindow(key);
-        });
-      });
-
-      // drag
-      const bar = winEl.querySelector(".titlebar");
-      let dragging = false, ox=0, oy=0;
-
-      bar.addEventListener("mousedown", (e)=>{
-        dragging = true;
-        const r = winEl.getBoundingClientRect();
-        ox = e.clientX - r.left;
-        oy = e.clientY - r.top;
-        focusWindow(key);
-      });
-
-      window.addEventListener("mousemove", (e)=>{
-        if(!dragging) return;
-        const maxX = desktop.clientWidth - winEl.offsetWidth;
-        const maxY = desktop.clientHeight - winEl.offsetHeight;
-        const x = Math.max(0, Math.min(maxX, e.clientX - ox));
-        const y = Math.max(0, Math.min(maxY, e.clientY - oy));
-        winEl.style.left = x + "px";
-        winEl.style.top  = y + "px";
-      });
-
-      window.addEventListener("mouseup", ()=> dragging = false);
-
-      // register
-      openState.set(key, { el: winEl, taskEl: null, minimized: false, label });
+    if(cmd === "list types"){
+      [...new Set(PROJECTS.map(p=>p.type))].sort().forEach(t=>println("- " + t));
+      return;
     }
-
-    function focusWindow(key){
-      const st = openState.get(key);
-      if(!st) return;
-      st.el.style.zIndex = (++zTop);
-      setTaskActive(key);
+    if(cmd === "list hidden"){
+      println("Hidden hints:");
+      println("  - Right-click desktop → ???");
+      println("  - Click clock 5 times");
+      println("  - Shift + double-click desktop");
+      println("  - Konami code");
+      println("  - Run… → grotto");
+      return;
     }
+    println("Unknown command. Type 'help'.");
+  }
 
-    function minimizeWindow(key){
-      const st = openState.get(key);
-      if(!st) return;
-      st.minimized = true;
-      st.el.classList.add("minimized");
-      st.el.style.display = "none";
-      setTaskActive(null);
-    }
+  function submit(){
+    const v = inn.value;
+    inn.value = "";
+    runCmd(v);
+  }
 
-    function closeWindow(key){
-      const st = openState.get(key);
-      if(!st) return;
+  println("JVT SYSTEM READY.");
+  println("Type 'help'.");
 
-      // if it's a dynamic project/message window, remove node
-      if (key.startsWith("proj-") || key.startsWith("msg-")){
-        st.el.remove();
-      } else {
-        st.el.style.display = "none";
-      }
+  send.addEventListener("click", submit);
+  inn.addEventListener("keydown",(e)=>{ if(e.key==="Enter") submit(); });
+}
 
-      if (st.taskEl) st.taskEl.remove();
-      openState.delete(key);
-      setTaskActive(null);
-    }
+/* =========================
+   HIDDEN WINDOWS
+========================= */
+function buildArchiveWindow(){
+  const html = `
+    <h2>ARCHIVE</h2>
+    <p class="muted">Old drafts, fragments, hidden folders.</p>
+    <div class="divider"></div>
 
-    function addTask(key, label){
-      const btn = document.createElement("div");
-      btn.className = "task bevel";
-      btn.textContent = label;
-      btn.addEventListener("click", ()=>{
-        const st = openState.get(key);
-        if(!st) return;
-        if (st.minimized){
-          st.minimized = false;
-          st.el.style.display = "block";
-          st.el.classList.remove("minimized");
-        }
-        focusWindow(key);
-      });
-      tasks.appendChild(btn);
+    <div class="grid">
+      <div class="row" data-a="a"><div style="width:18px">📁</div><div><b>FIELD NOTES</b><div class="muted" style="font-size:12px">material / weather / mistakes</div></div></div>
+      <div class="row" data-a="b"><div style="width:18px">📁</div><div><b>JOINTS</b><div class="muted" style="font-size:12px">dovetail / half-lap / shōji</div></div></div>
+      <div class="row" data-a="c"><div style="width:18px">📁</div><div><b>RUMORS</b><div class="muted" style="font-size:12px">not for everyone</div></div></div>
+    </div>
 
-      const st = openState.get(key);
-      if(st) st.taskEl = btn;
-      setTaskActive(key);
-    }
-
-    function setTaskActive(key){
-      document.querySelectorAll(".task").forEach(t => t.classList.remove("active"));
-      if(!key) return;
-      const st = openState.get(key);
-      if(st && st.taskEl) st.taskEl.classList.add("active");
-    }
-
-    // Initial layout
-    arrangeIcons();
-    window.addEventListener("resize", arrangeIcons);
-
-    // Desktop “right click” vibe: open a tiny context box (optional)
-    desktop.addEventListener("contextmenu", (e)=>{
-      e.preventDefault();
-      openMessageBox("DESKTOP", "Tip: double-click PROJECTS to add new work.");
+    <div class="divider"></div>
+    <p class="muted">Double-click a folder.</p>
+  `;
+  makeWindow({key:"archive",title:"ARCHIVE",w:520,h:360,x:260,y:140,contentHTML:html});
+  const st = open.get("archive");
+  st.el.querySelectorAll(".row").forEach(r=>{
+    r.addEventListener("dblclick", ()=>{
+      if(r.dataset.a==="a") openNotepad("FIELD NOTES", "CUT.\nFILL.\nWIND.\nSTEAM.\n\nEverything is a structure if you stay long enough.");
+      if(r.dataset.a==="b") openNotepad("JOINTS", "JOINT = DECISION.\n\nA good joint holds the load.\nA great joint holds the story.");
+      if(r.dataset.a==="c") messageBox("RUMORS", "Some pages only appear when you stop looking for them.");
     });
+  });
+}
 
-    // Make projects explorer open on first load (comment out if you want a clean desktop)
-    // openWindow("projects");
-  </script>
+function buildHiddenGrotto(){
+  const html = `
+    <h2>GUERRILLA GROTTO</h2>
+    <p class="muted">A secretive/experimental design-build society (prototype window).</p>
+    <div class="divider"></div>
+
+    <p><b>RULE 001:</b> nothing is finished. everything is installable.</p>
+    <p><b>RULE 002:</b> reclaimed material > new material (unless precision demands it).</p>
+    <p><b>RULE 003:</b> build the prototype first. explain later.</p>
+
+    <div class="divider"></div>
+    <div class="fieldrow">
+      <div class="btn bevel" data-g="manifesto">OPEN MANIFESTO</div>
+      <div class="btn bevel" data-g="map">OPEN MAP</div>
+      <div class="btn bevel" data-g="door">OPEN DOOR</div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="muted">Hint: in CMD type <code>list hidden</code>.</p>
+  `;
+  makeWindow({key:"grotto",title:"GROTTO.EXE",w:640,h:420,x:160,y:80,contentHTML:html});
+  const st = open.get("grotto");
+  st.el.querySelectorAll("[data-g]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const a = b.dataset.g;
+      if(a==="manifesto") openNotepad("GROTTO MANIFESTO", "WE BUILD WITH WHAT'S LEFT.\nWE DRAW WITH WHAT'S TRUE.\nWE LEAVE MARKERS.\n\n(continue)");
+      if(a==="map") messageBox("MAP", "Map feature placeholder.\n\nLater: link to your site map / projects index.");
+      if(a==="door") secretPrompt();
+    });
+  });
+}
+
+/* =========================
+   BOOT
+========================= */
+function boot(){
+  arrangeIcons();
+  window.addEventListener("resize", arrangeIcons);
+
+  // Build windows once
+  buildWorksWindow();
+  buildAboutWindow();
+  buildArtWindow();
+  buildBuildWindow();
+  buildDesignWindow();
+  buildResumeWindow();
+  buildRunWindow();
+  buildCmdWindow();
+  buildArchiveWindow();
+
+  // Don’t auto-open (desktop-first vibe)
+  // openWindow("works");
+
+  // Arrange start menu actions
+  document.getElementById("arrangeIcons").addEventListener("click", ()=> arrangeIcons());
+  document.getElementById("fakeShutdown").addEventListener("click", ()=>{});
+}
+boot();
+
+/* =========================
+   START MENU ROUTING
+========================= */
+startMenu.addEventListener("click",(e)=>{
+  const it = e.target.closest(".menuItem");
+  if(!it) return;
+  const k = it.dataset.open;
+  if(k){
+    openWindow(k);
+    hideStart();
+  }
+});
+
+/* =========================
+   RUN ICON + DESKTOP
+========================= */
+function openFromKey(key){
+  if(!open.has(key)) return;
+  openWindow(key);
+}
+document.querySelectorAll(".icon").forEach(ic=>{
+  const k = ic.dataset.open;
+  if(!k) return;
+  ic.addEventListener("dblclick", ()=> openFromKey(k));
+});
+
+/* =========================
+   SECRET: "MIST" BACKGROUND SHIFT
+========================= */
+let mist = false;
+function toggleMist(){
+  mist = !mist;
+  document.body.style.background = mist ? "#001a4a" : "var(--desk)";
+  messageBox("DESKTOP", mist ? "MIST MODE ENABLED." : "MIST MODE DISABLED.");
+}
+function secretMistIf(){
+  // subtle: if user opens Archive, then Run "mist"
+}
+
+/* =========================
+   EXTRA: CLICK DESKTOP 12 TIMES TO TOGGLE MIST (quiet)
+========================= */
+let tapCount = 0;
+desktop.addEventListener("click",(e)=>{
+  if(e.target.closest(".icon") || e.target.closest(".window")) return;
+  tapCount++;
+  clearTimeout(bgTimer);
+  bgTimer = setTimeout(()=> tapCount=0, 1200);
+  if(tapCount === 12){
+    tapCount = 0;
+    toggleMist();
+  }
+});
+</script>
 </body>
 </html>
