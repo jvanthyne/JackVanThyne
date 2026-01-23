@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JACK VAN THYNE — DESKTOP</title>
+
+  <!-- Favicon (pixel-ish) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23007bd6'/%3E%3Crect x='10' y='10' width='44' height='44' fill='%23c0c0c0'/%3E%3Crect x='14' y='14' width='36' height='10' fill='%23000080'/%3E%3Crect x='18' y='30' width='28' height='20' fill='%23ffffff'/%3E%3C/svg%3E" />
+
+  <style>
+    :root{
+      /* Reference image vibes: deep OS/2-ish blue + grey chrome */
+      --desk:#0a41c9;
+      --chrome:#c0c0c0;
+      --chrome2:#d7d7d7;
+      --shadow:#000;
+      --shadow2:#404040;
+      --highlight:#fff;
+      --title:#000080;
+      --text:#000;
+
+      --taskbar-h: 44px;
+      --icon: 64px;
+
+      /* pixel-ish font stack */
+      --ui: "MS Sans Serif","Microsoft Sans Serif","Tahoma","Verdana",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--desk);
+      font-family:var(--ui);
+      color:var(--text);
+      overflow:hidden;
+      user-select:none;
+    }
+
+    /* CRT-ish subtle texture */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.04), rgba(255,255,255,0)) ,
+        repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0, rgba(0,0,0,.05) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px);
+      mix-blend-mode:overlay;
+      opacity:.35;
+    }
+
+    /* Window bevel helpers */
+    .bevel{
+      background:var(--chrome);
+      border-top:2px solid var(--highlight);
+      border-left:2px solid var(--highlight);
+      border-right:2px solid var(--shadow2);
+      border-bottom:2px solid var(--shadow2);
+    }
+    .bevel-in{
+      background:var(--chrome2);
+      border-top:2px solid var(--shadow2);
+      border-left:2px solid var(--shadow2);
+      border-right:2px solid var(--highlight);
+      border-bottom:2px solid var(--highlight);
+    }
+
+    /* Desktop */
+    #desktop{
+      position:relative;
+      height:calc(100% - var(--taskbar-h));
+      padding:18px 18px 10px;
+    }
+
+    .icon{
+      width:var(--icon);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      cursor:default;
+      position:absolute;
+    }
+    .icon .glyph{
+      width:48px; height:48px;
+      image-rendering: pixelated;
+      filter: drop-shadow(1px 1px 0 rgba(0,0,0,.35));
+    }
+    .icon .label{
+      max-width:84px;
+      text-align:center;
+      font-size:12px;
+      color:#fff;
+      text-shadow:1px 1px 0 rgba(0,0,0,.45);
+      line-height:1.1;
+      padding:2px 4px;
+      border:1px solid transparent;
+    }
+    .icon.selected .label{
+      background:rgba(0,0,128,.9);
+      border-color:#fff;
+    }
+
+    /* Taskbar */
+    #taskbar{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      height:var(--taskbar-h);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:6px 8px;
+      z-index:9999;
+      background:var(--chrome);
+      border-top:2px solid var(--highlight);
+    }
+    #startBtn{
+      display:flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      font-weight:700;
+      font-size:13px;
+      cursor:pointer;
+    }
+    #startBtn .dot{
+      width:14px; height:14px;
+      border-radius:2px;
+      background:#00b050;
+      border:1px solid rgba(0,0,0,.35);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.35);
+    }
+    #tasks{
+      flex:1;
+      display:flex;
+      gap:6px;
+      overflow:hidden;
+    }
+    .task{
+      min-width:160px;
+      max-width:240px;
+      padding:6px 10px;
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .task.active{
+      background:var(--chrome2);
+      border-top:2px solid var(--shadow2);
+      border-left:2px solid var(--shadow2);
+      border-right:2px solid var(--highlight);
+      border-bottom:2px solid var(--highlight);
+    }
+    #clock{
+      padding:6px 10px;
+      font-size:12px;
+      min-width:76px;
+      text-align:center;
+    }
+
+    /* Start menu */
+    #startMenu{
+      position:fixed;
+      left:8px;
+      bottom:calc(var(--taskbar-h) + 8px);
+      width:260px;
+      display:none;
+      z-index:10000;
+    }
+    #startMenu .head{
+      background:var(--title);
+      color:#fff;
+      padding:10px 12px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    #startMenu .menu{
+      padding:8px;
+      background:var(--chrome);
+    }
+    .menuItem{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .menuItem:hover{
+      background:rgba(0,0,128,.12);
+      outline:1px dotted rgba(0,0,0,.6);
+      outline-offset:-3px;
+    }
+    .menuItem svg{width:18px;height:18px;image-rendering:pixelated}
+
+    /* Windows */
+    .window{
+      position:absolute;
+      width:520px;
+      height:360px;
+      z-index:20;
+    }
+    .window.minimized{display:none}
+    .titlebar{
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 8px;
+      background:var(--title);
+      color:#fff;
+      cursor:move;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .titlebar .left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+    .titlebar .title{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:320px;
+    }
+    .winbtns{
+      display:flex;
+      gap:6px;
+    }
+    .winbtn{
+      width:20px; height:18px;
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .winbtn:active{transform:translate(1px,1px)}
+    .content{
+      height:calc(100% - 28px);
+      padding:10px;
+    }
+
+    .pane{
+      height:100%;
+      padding:10px;
+      background:#fff;
+      overflow:auto;
+      font-size:13px;
+    }
+    .pane h2{
+      margin:0 0 8px 0;
+      font-size:16px;
+    }
+    .pane p{margin:0 0 10px 0; line-height:1.35}
+    .divider{
+      height:1px;
+      background:#8a8a8a;
+      margin:10px 0;
+    }
+
+    /* Explorer-ish list */
+    .list{
+      display:grid;
+      gap:6px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:6px;
+      cursor:pointer;
+      border:1px solid transparent;
+    }
+    .row:hover{
+      background:rgba(0,0,128,.08);
+      border-color:rgba(0,0,0,.15);
+    }
+    .row .name{flex:1}
+    .tag{
+      font-size:11px;
+      padding:2px 6px;
+      background:#f3f3f3;
+      border:1px solid #cfcfcf;
+    }
+
+    /* Tiny pixel svg helpers */
+    .pix{image-rendering:pixelated}
+
+    /* Mobile fallback */
+    @media (max-width: 720px){
+      .window{width:min(92vw,520px); height:min(60vh,360px)}
+      .icon{position:relative}
+      #desktop{overflow:auto}
+    }
+  </style>
+</head>
+
+<body>
+  <div id="desktop" aria-label="desktop">
+    <!-- Icons (positioned by JS) -->
+    <div class="icon" data-open="projects" tabindex="0" aria-label="Projects">
+      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="3" y="7" width="26" height="20" fill="#e6c24a" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="7" width="12" height="6" fill="#f5d56f" stroke="#000" stroke-width="1"/>
+        <rect x="6" y="15" width="20" height="2" fill="#000" opacity=".25"/>
+        <rect x="6" y="19" width="16" height="2" fill="#000" opacity=".18"/>
+      </svg>
+      <div class="label">PROJECTS</div>
+    </div>
+
+    <div class="icon" data-open="about" tabindex="0" aria-label="About">
+      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="5" width="20" height="22" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="6" y="5" width="20" height="5" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
+        <circle cx="12" cy="16" r="3" fill="#0a41c9" stroke="#000" stroke-width="1"/>
+        <rect x="16" y="14" width="8" height="2" fill="#000" opacity=".35"/>
+        <rect x="10" y="22" width="14" height="2" fill="#000" opacity=".25"/>
+      </svg>
+      <div class="label">ABOUT</div>
+    </div>
+
+    <div class="icon" data-open="contact" tabindex="0" aria-label="Contact">
+      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="5" y="8" width="22" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <path d="M5 9l11 9 11-9" fill="none" stroke="#000" stroke-width="1.2"/>
+        <rect x="8" y="12" width="4" height="2" fill="#0a41c9"/>
+        <rect x="8" y="16" width="10" height="2" fill="#000" opacity=".2"/>
+      </svg>
+      <div class="label">CONTACT</div>
+    </div>
+
+    <div class="icon" data-open="resume" tabindex="0" aria-label="Resume">
+      <svg class="glyph pix" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="7" y="5" width="18" height="22" fill="#ffffff" stroke="#000" stroke-width="1"/>
+        <rect x="10" y="10" width="12" height="2" fill="#000" opacity=".25"/>
+        <rect x="10" y="14" width="10" height="2" fill="#000" opacity=".2"/>
+        <rect x="10" y="18" width="12" height="2" fill="#000" opacity=".18"/>
+        <rect x="10" y="22" width="8" height="2" fill="#000" opacity=".16"/>
+        <rect x="19" y="6" width="5" height="5" fill="#d7d7d7" stroke="#000" stroke-width="1"/>
+      </svg>
+      <div class="label">RESUME</div>
+    </div>
+
+    <!-- Windows (hidden until opened) -->
+    <div class="window bevel" id="win-projects" data-win="projects" style="display:none;">
+      <div class="titlebar">
+        <div class="left">
+          <span aria-hidden="true">📁</span>
+          <div class="title">PROJECTS</div>
+        </div>
+        <div class="winbtns">
+          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
+          <div class="winbtn bevel" data-act="close" title="Close">×</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="pane bevel-in">
+          <h2>Projects</h2>
+          <p>Double-click a project to open its window. (Edit the list in the JS <code>PROJECTS</code> array.)</p>
+          <div class="divider"></div>
+          <div class="list" id="projectList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="window bevel" id="win-about" data-win="about" style="display:none; width:480px; height:320px;">
+      <div class="titlebar">
+        <div class="left">
+          <span aria-hidden="true">🗒️</span>
+          <div class="title">ABOUT</div>
+        </div>
+        <div class="winbtns">
+          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
+          <div class="winbtn bevel" data-act="close" title="Close">×</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="pane bevel-in">
+          <h2>Jack Van Thyne</h2>
+          <p>
+            Replace this with your real bio. Keep it short, punchy, and a little “desktop-era”.
+          </p>
+          <p>
+            <b>Focus:</b> design-build, landscape + housing, reclaimed materials, furniture, prototypes, field research.
+          </p>
+          <div class="divider"></div>
+          <p style="font-size:12px;opacity:.8;">
+            Tip: add images by dropping <code>&lt;img&gt;</code> tags into the project windows (created dynamically in JS).
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="window bevel" id="win-contact" data-win="contact" style="display:none; width:460px; height:260px;">
+      <div class="titlebar">
+        <div class="left">
+          <span aria-hidden="true">✉️</span>
+          <div class="title">CONTACT</div>
+        </div>
+        <div class="winbtns">
+          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
+          <div class="winbtn bevel" data-act="close" title="Close">×</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="pane bevel-in">
+          <h2>Contact</h2>
+          <p><b>Email:</b> <span style="opacity:.7;">you@domain.com</span></p>
+          <p><b>Instagram:</b> <span style="opacity:.7;">@yourhandle</span></p>
+          <p><b>PDF Portfolio:</b> <span style="opacity:.7;">/portfolio.pdf</span></p>
+          <div class="divider"></div>
+          <p style="font-size:12px;opacity:.8;">(Swap these for real links.)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="window bevel" id="win-resume" data-win="resume" style="display:none; width:520px; height:340px;">
+      <div class="titlebar">
+        <div class="left">
+          <span aria-hidden="true">📄</span>
+          <div class="title">RESUME</div>
+        </div>
+        <div class="winbtns">
+          <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
+          <div class="winbtn bevel" data-act="close" title="Close">×</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="pane bevel-in">
+          <h2>Resume</h2>
+          <p>Drop a PDF in your site folder and link it here, or paste a short resume snapshot.</p>
+          <div class="divider"></div>
+          <p><b>Download:</b> <a href="#" onclick="alert('Replace this with a real /resume.pdf link.'); return false;">resume.pdf</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project window template gets cloned into here -->
+    <div id="dynamicWindows"></div>
+  </div>
+
+  <!-- Taskbar -->
+  <div id="taskbar" class="bevel" role="navigation" aria-label="taskbar">
+    <div id="startBtn" class="bevel" tabindex="0" aria-label="Start">
+      <div class="dot" aria-hidden="true"></div>
+      START
+    </div>
+
+    <div id="tasks" aria-label="open windows"></div>
+
+    <div id="clock" class="bevel-in" aria-label="clock">--:--</div>
+  </div>
+
+  <!-- Start menu -->
+  <div id="startMenu" class="bevel" aria-label="start menu">
+    <div class="head">JACK — MENU</div>
+    <div class="menu">
+      <div class="menuItem" data-open="projects">
+        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
+          <rect x="1" y="4" width="14" height="10" fill="#e6c24a" stroke="#000"/>
+          <rect x="1" y="4" width="6" height="3" fill="#f5d56f" stroke="#000"/>
+        </svg>
+        Projects
+      </div>
+      <div class="menuItem" data-open="about">
+        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
+          <rect x="3" y="2" width="10" height="12" fill="#fff" stroke="#000"/>
+          <rect x="3" y="2" width="10" height="3" fill="#d7d7d7" stroke="#000"/>
+        </svg>
+        About
+      </div>
+      <div class="menuItem" data-open="contact">
+        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
+          <rect x="2" y="4" width="12" height="8" fill="#fff" stroke="#000"/>
+          <path d="M2 4l6 5 6-5" stroke="#000" fill="none"/>
+        </svg>
+        Contact
+      </div>
+      <div class="menuItem" id="menuArrange">
+        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
+          <rect x="2" y="2" width="5" height="5" fill="#fff" stroke="#000"/>
+          <rect x="9" y="2" width="5" height="5" fill="#fff" stroke="#000"/>
+          <rect x="2" y="9" width="5" height="5" fill="#fff" stroke="#000"/>
+          <rect x="9" y="9" width="5" height="5" fill="#fff" stroke="#000"/>
+        </svg>
+        Arrange Icons
+      </div>
+      <div class="menuItem" id="menuShutdown">
+        <svg viewBox="0 0 16 16" class="pix" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" fill="#ff4d4d" stroke="#000"/>
+          <rect x="7" y="3" width="2" height="7" fill="#fff"/>
+        </svg>
+        “Shut Down”
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== CONTENT YOU EDIT ======
+    const PROJECTS = [
+      {
+        id: "001",
+        title: "CRITIQUE",
+        year: "2026",
+        blurb: "Simple platform seat on a retaining wall. A pause between concrete + canopy.",
+        tags: ["FURNITURE", "SITE"],
+        images: [] // e.g. ["images/001_1.jpg","images/001_2.jpg"]
+      },
+      {
+        id: "002",
+        title: "GRASSHOPPER",
+        year: "2026",
+        blurb: "Parametric studies, joints, iterations — a toolkit for building systems.",
+        tags: ["DIGITAL", "PROTOTYPE"],
+        images: []
+      },
+      {
+        id: "003",
+        title: "MINI",
+        year: "2025",
+        blurb: "Small intervention, tight constraints, clear move.",
+        tags: ["MODEL"],
+        images: []
+      },
+      {
+        id: "004",
+        title: "STUMP",
+        year: "2025",
+        blurb: "Found material, precise cut, new use.",
+        tags: ["RECLAIMED"],
+        images: []
+      },
+      {
+        id: "005",
+        title: "CORNERSTONE",
+        year: "2025",
+        blurb: "A datum and a decision — framing a site through one grounded object.",
+        tags: ["LANDSCAPE"],
+        images: []
+      },
+      {
+        id: "006",
+        title: "RUINS",
+        year: "2025",
+        blurb: "Present rests atop history. Brick carries wood. Time does the detailing.",
+        tags: ["INSTALLATION"],
+        images: []
+      },
+      {
+        id: "007",
+        title: "OVERHANG",
+        year: "2025",
+        blurb: "Shelter as edge-condition. Shade, dripline, threshold.",
+        tags: ["STRUCTURE"],
+        images: []
+      },
+      {
+        id: "008",
+        title: "RIM",
+        year: "2025",
+        blurb: "Set along the rim, overlooking the game — gathering at the boundary.",
+        tags: ["PLACE"],
+        images: []
+      }
+    ];
+
+    // ====== UI CORE ======
+    const desktop = document.getElementById("desktop");
+    const tasks = document.getElementById("tasks");
+    const startBtn = document.getElementById("startBtn");
+    const startMenu = document.getElementById("startMenu");
+    const projectList = document.getElementById("projectList");
+    const dynamicWindows = document.getElementById("dynamicWindows");
+
+    let zTop = 50;
+    const openState = new Map(); // winKey -> { el, taskEl, minimized }
+
+    // Arrange icons in a tidy grid (like old desktops)
+    function arrangeIcons(){
+      const icons = [...document.querySelectorAll(".icon")];
+      const padX = 18, padY = 18;
+      const colW = 92, rowH = 92;
+      const maxH = desktop.clientHeight - 12;
+      let x = padX, y = padY;
+
+      icons.forEach((ic) => {
+        ic.style.left = x + "px";
+        ic.style.top  = y + "px";
+        y += rowH;
+        if (y + rowH > maxH){
+          y = padY;
+          x += colW;
+        }
+      });
+    }
+
+    // Selection behavior
+    function clearIconSelection(){
+      document.querySelectorAll(".icon.selected").forEach(i => i.classList.remove("selected"));
+    }
+    desktop.addEventListener("mousedown", (e)=>{
+      if (e.target.closest(".icon") || e.target.closest(".window")) return;
+      clearIconSelection();
+      hideStartMenu();
+    });
+
+    // Clock
+    function tick(){
+      const d = new Date();
+      let h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2,"0");
+      const ap = h >= 12 ? "PM" : "AM";
+      h = h % 12; if (h === 0) h = 12;
+      document.getElementById("clock").textContent = `${h}:${m} ${ap}`;
+    }
+    setInterval(tick, 1000);
+    tick();
+
+    // Start menu
+    function showStartMenu(){ startMenu.style.display = "block"; }
+    function hideStartMenu(){ startMenu.style.display = "none"; }
+    function toggleStartMenu(){
+      startMenu.style.display === "block" ? hideStartMenu() : showStartMenu();
+    }
+    startBtn.addEventListener("click", toggleStartMenu);
+    startBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggleStartMenu(); } });
+
+    document.addEventListener("mousedown", (e)=>{
+      if (e.target.closest("#startMenu") || e.target.closest("#startBtn")) return;
+      hideStartMenu();
+    });
+
+    // Start menu items
+    startMenu.addEventListener("click", (e)=>{
+      const item = e.target.closest(".menuItem");
+      if(!item) return;
+      const key = item.dataset.open;
+      if (key){ openWindow(key); hideStartMenu(); }
+      if (item.id === "menuArrange"){ arrangeIcons(); hideStartMenu(); }
+      if (item.id === "menuShutdown"){
+        hideStartMenu();
+        openMessageBox("SYSTEM", "Nice try. No shutting down. Go build something.");
+      }
+    });
+
+    // Icons: click selects, double-click opens
+    document.querySelectorAll(".icon").forEach((ic)=>{
+      ic.addEventListener("click", ()=>{
+        clearIconSelection();
+        ic.classList.add("selected");
+      });
+      ic.addEventListener("dblclick", ()=>{
+        const key = ic.dataset.open;
+        if (key) openWindow(key);
+      });
+      ic.addEventListener("keydown", (e)=>{
+        if(e.key==="Enter"){ const key = ic.dataset.open; if (key) openWindow(key); }
+      });
+    });
+
+    // Build project list + windows
+    function buildProjectExplorer(){
+      projectList.innerHTML = "";
+      PROJECTS.forEach(p => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <svg class="pix" width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
+            <rect x="2" y="3" width="12" height="10" fill="#ffffff" stroke="#000"/>
+            <rect x="2" y="3" width="12" height="3" fill="#d7d7d7" stroke="#000"/>
+          </svg>
+          <div class="name"><b>${p.id}</b> — ${p.title}</div>
+          <div class="tag">${p.year}</div>
+        `;
+        row.addEventListener("dblclick", ()=> openProject(p.id));
+        projectList.appendChild(row);
+      });
+    }
+
+    function openProject(id){
+      const p = PROJECTS.find(x => x.id === id);
+      if(!p) return;
+
+      const key = "proj-" + id;
+      if (openState.has(key)){
+        focusWindow(key);
+        return;
+      }
+
+      const w = document.createElement("div");
+      w.className = "window bevel";
+      w.dataset.win = key;
+      w.style.width = "640px";
+      w.style.height = "420px";
+      w.style.left = Math.round(140 + Math.random()*120) + "px";
+      w.style.top  = Math.round(70  + Math.random()*90) + "px";
+      w.style.zIndex = (++zTop);
+
+      const imgs = (p.images && p.images.length)
+        ? `<div class="divider"></div>
+           <div style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+             ${p.images.map(src => `<img src="${src}" alt="${p.title}" style="width:100%;height:auto;border:1px solid #000;image-rendering:auto;">`).join("")}
+           </div>`
+        : `<div class="divider"></div>
+           <p style="font-size:12px;opacity:.8;">No images yet. Add paths in <code>PROJECTS[n].images</code>.</p>`;
+
+      w.innerHTML = `
+        <div class="titlebar">
+          <div class="left">
+            <span aria-hidden="true">🗂️</span>
+            <div class="title">${p.id} — ${p.title}</div>
+          </div>
+          <div class="winbtns">
+            <div class="winbtn bevel" data-act="min" title="Minimize">_</div>
+            <div class="winbtn bevel" data-act="close" title="Close">×</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="pane bevel-in">
+            <h2>${p.title} <span style="font-weight:400;opacity:.7;">(${p.year})</span></h2>
+            <p>${p.blurb}</p>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin:8px 0 0;">
+              ${(p.tags||[]).map(t => `<span class="tag">${t}</span>`).join("")}
+            </div>
+            ${imgs}
+          </div>
+        </div>
+      `;
+
+      dynamicWindows.appendChild(w);
+      wireWindow(w, key, `${p.id} — ${p.title}`);
+      addTask(key, `${p.id} — ${p.title}`);
+      focusWindow(key);
+    }
+
+    // Basic message box popup
+    function openMessageBox(title, message){
+      const key = "msg-" + Math.random().toString(16).slice(2);
+      const w = document.createElement("div");
+      w.className = "window bevel";
+      w.dataset.win = key;
+      w.style.width = "420px";
+      w.style.height = "180px";
+      w.style.left = Math.round(180 + Math.random()*120) + "px";
+      w.style.top  = Math.round(110 + Math.random()*90) + "px";
+      w.style.zIndex = (++zTop);
+      w.innerHTML = `
+        <div class="titlebar">
+          <div class="left"><span aria-hidden="true">ℹ️</span><div class="title">${title}</div></div>
+          <div class="winbtns">
+            <div class="winbtn bevel" data-act="close" title="Close">×</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="pane bevel-in" style="display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;">
+            <div style="font-size:28px;line-height:1;">💬</div>
+            <div>
+              <p style="margin:0 0 12px 0;">${message}</p>
+              <div class="bevel" style="display:inline-block;padding:6px 14px;cursor:pointer;" data-ok="1">OK</div>
+            </div>
+          </div>
+        </div>
+      `;
+      dynamicWindows.appendChild(w);
+
+      wireWindow(w, key, title);
+      addTask(key, title);
+      focusWindow(key);
+
+      w.addEventListener("click", (e)=>{
+        if (e.target.closest("[data-ok]")) closeWindow(key);
+      });
+    }
+
+    // Open fixed windows (projects/about/contact/resume)
+    function openWindow(key){
+      if (key.startsWith("proj-")) return;
+
+      // special: projects opens explorer list
+      if(key === "projects") buildProjectExplorer();
+
+      const el = document.querySelector(`.window[data-win="${key}"]`) || document.getElementById("win-" + key);
+      const winEl = el && el.classList.contains("window") ? el : document.querySelector(`.window[data-win="${key}"]`);
+
+      // fixed windows are present by id (win-about etc)
+      const fixed = document.querySelector(`#win-${key}`);
+      const target = fixed || winEl;
+
+      if (!target) return;
+
+      // if already tracked, just restore/focus
+      if (openState.has(key)){
+        const st = openState.get(key);
+        st.el.style.display = "block";
+        st.el.classList.remove("minimized");
+        st.minimized = false;
+        focusWindow(key);
+        setTaskActive(key);
+        return;
+      }
+
+      target.style.display = "block";
+      target.style.left = target.style.left || Math.round(120 + Math.random()*160) + "px";
+      target.style.top  = target.style.top  || Math.round(70  + Math.random()*120) + "px";
+      target.style.zIndex = (++zTop);
+
+      wireWindow(target, key, key.toUpperCase());
+      addTask(key, key.toUpperCase());
+      focusWindow(key);
+    }
+
+    function wireWindow(winEl, key, label){
+      // bring to front on mousedown
+      winEl.addEventListener("mousedown", ()=> focusWindow(key));
+
+      // buttons
+      winEl.querySelectorAll(".winbtn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const act = btn.dataset.act;
+          if (act === "close") closeWindow(key);
+          if (act === "min") minimizeWindow(key);
+        });
+      });
+
+      // drag
+      const bar = winEl.querySelector(".titlebar");
+      let dragging = false, ox=0, oy=0;
+
+      bar.addEventListener("mousedown", (e)=>{
+        dragging = true;
+        const r = winEl.getBoundingClientRect();
+        ox = e.clientX - r.left;
+        oy = e.clientY - r.top;
+        focusWindow(key);
+      });
+
+      window.addEventListener("mousemove", (e)=>{
+        if(!dragging) return;
+        const maxX = desktop.clientWidth - winEl.offsetWidth;
+        const maxY = desktop.clientHeight - winEl.offsetHeight;
+        const x = Math.max(0, Math.min(maxX, e.clientX - ox));
+        const y = Math.max(0, Math.min(maxY, e.clientY - oy));
+        winEl.style.left = x + "px";
+        winEl.style.top  = y + "px";
+      });
+
+      window.addEventListener("mouseup", ()=> dragging = false);
+
+      // register
+      openState.set(key, { el: winEl, taskEl: null, minimized: false, label });
+    }
+
+    function focusWindow(key){
+      const st = openState.get(key);
+      if(!st) return;
+      st.el.style.zIndex = (++zTop);
+      setTaskActive(key);
+    }
+
+    function minimizeWindow(key){
+      const st = openState.get(key);
+      if(!st) return;
+      st.minimized = true;
+      st.el.classList.add("minimized");
+      st.el.style.display = "none";
+      setTaskActive(null);
+    }
+
+    function closeWindow(key){
+      const st = openState.get(key);
+      if(!st) return;
+
+      // if it's a dynamic project/message window, remove node
+      if (key.startsWith("proj-") || key.startsWith("msg-")){
+        st.el.remove();
+      } else {
+        st.el.style.display = "none";
+      }
+
+      if (st.taskEl) st.taskEl.remove();
+      openState.delete(key);
+      setTaskActive(null);
+    }
+
+    function addTask(key, label){
+      const btn = document.createElement("div");
+      btn.className = "task bevel";
+      btn.textContent = label;
+      btn.addEventListener("click", ()=>{
+        const st = openState.get(key);
+        if(!st) return;
+        if (st.minimized){
+          st.minimized = false;
+          st.el.style.display = "block";
+          st.el.classList.remove("minimized");
+        }
+        focusWindow(key);
+      });
+      tasks.appendChild(btn);
+
+      const st = openState.get(key);
+      if(st) st.taskEl = btn;
+      setTaskActive(key);
+    }
+
+    function setTaskActive(key){
+      document.querySelectorAll(".task").forEach(t => t.classList.remove("active"));
+      if(!key) return;
+      const st = openState.get(key);
+      if(st && st.taskEl) st.taskEl.classList.add("active");
+    }
+
+    // Initial layout
+    arrangeIcons();
+    window.addEventListener("resize", arrangeIcons);
+
+    // Desktop “right click” vibe: open a tiny context box (optional)
+    desktop.addEventListener("contextmenu", (e)=>{
+      e.preventDefault();
+      openMessageBox("DESKTOP", "Tip: double-click PROJECTS to add new work.");
+    });
+
+    // Make projects explorer open on first load (comment out if you want a clean desktop)
+    // openWindow("projects");
+  </script>
+</body>
+</html>
