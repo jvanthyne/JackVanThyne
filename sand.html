@@ -9,7 +9,7 @@
     :root{
       --bg:#000;
       --fg:#fff;
-      --muted:rgba(255,255,255,.65);
+      --muted:rgba(255,255,255,.6);
     }
 
     html, body{
@@ -17,8 +17,8 @@
       margin:0;
       background:var(--bg);
       color:var(--fg);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      letter-spacing: .02em;
+      font-family: system-ui, -apple-system, Helvetica, Arial, sans-serif;
+      letter-spacing:.03em;
     }
 
     .wrap{
@@ -29,80 +29,59 @@
     }
 
     .frame{
-      width:min(980px, 92vw);
+      width:min(1000px, 94vw);
       aspect-ratio: 4 / 3;
       position:relative;
       overflow:hidden;
-      border-radius:18px;
-      box-shadow: 0 12px 50px rgba(0,0,0,.55);
+      border-radius:16px;
     }
 
-    /* The cycling image */
     #cycleImg{
       position:absolute;
       inset:0;
       width:100%;
       height:100%;
       object-fit:cover;
-      transform: scale(1.01);
       opacity:0;
-      filter: contrast(1.02) saturate(1.02);
-      transition: opacity 160ms linear, transform 420ms ease;
+      transform:scale(1.02);
+      transition: opacity 120ms linear, transform 400ms ease;
       user-select:none;
       -webkit-user-drag:none;
     }
 
-    /* “Quick animation”: a tiny breath / drift each frame */
-    .on{
+    #cycleImg.on{
       opacity:1;
-      transform: scale(1.04);
+      transform:scale(1.05);
     }
 
-    /* Soft vignette + subtle grit */
     .overlay{
       position:absolute;
       inset:0;
       pointer-events:none;
       background:
-        radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%),
-        linear-gradient(to bottom, rgba(0,0,0,.28), rgba(0,0,0,.15) 40%, rgba(0,0,0,.32));
-      mix-blend-mode: multiply;
+        radial-gradient(circle at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
     }
 
     .meta{
-      width:min(980px, 92vw);
-      margin-top:14px;
+      width:min(1000px, 94vw);
+      margin-top:12px;
       display:flex;
       justify-content:space-between;
-      gap:12px;
       font-size:12px;
-      color:var(--muted);
       text-transform:uppercase;
-    }
-
-    .meta a{
       color:var(--muted);
-      text-decoration:none;
-      border-bottom:1px solid rgba(255,255,255,.18);
-      padding-bottom:2px;
-    }
-    .meta a:hover{
-      color:var(--fg);
-      border-bottom-color: rgba(255,255,255,.55);
     }
 
-    /* Small helper hint */
     .hint{
       position:absolute;
-      left:14px;
       bottom:14px;
+      left:14px;
       font-size:12px;
-      color:rgba(255,255,255,.65);
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;
       border-radius:999px;
-      padding:7px 10px;
-      backdrop-filter: blur(6px);
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.15);
+      backdrop-filter:blur(6px);
     }
   </style>
 </head>
@@ -110,143 +89,62 @@
 <body>
   <div class="wrap">
     <div class="frame" id="frame">
-      <img id="cycleImg" alt="land art frame" />
+      <img id="cycleImg" alt="land art animation frame" />
       <div class="overlay"></div>
-      <div class="hint">space = pause · click = next</div>
+      <div class="hint">click = next · space = pause</div>
     </div>
 
     <div class="meta">
       <div id="counter">LOADING…</div>
-      <div>
-        <a href="index.html">BACK</a>
-      </div>
+      <div><a href="index.html" style="color:inherit;text-decoration:none;">BACK</a></div>
     </div>
   </div>
 
   <script>
-    // Put this HTML file in the same folder as your images,
-    // or change `pathPrefix` if they're in a subfolder like "images/".
-    const pathPrefix = ""; // e.g. "images/" or "assets/"
+    const totalFrames = 10;
+    const frameDelay = 90; // ms between frames
 
-    // You said 11 photos, but also listed ...001 to ...010.
-    // This will try 001–011. Missing files will be skipped automatically.
-    const expectedCount = 11;
-
-    const pad3 = (n) => String(n).padStart(3, "0");
-    const makeName = (i) => `${pathPrefix}LAsandanim${pad3(i)}.png`;
-
-    const imgEl = document.getElementById("cycleImg");
-    const counterEl = document.getElementById("counter");
-    const frameEl = document.getElementById("frame");
+    const img = document.getElementById("cycleImg");
+    const counter = document.getElementById("counter");
+    const frame = document.getElementById("frame");
 
     let frames = [];
-    let idx = 0;
+    let index = 0;
     let playing = true;
 
-    // Tune these:
-    const frameMs = 90;        // how fast it cycles
-    const fadeOffMs = 40;      // tiny dip between frames for a “flicker”
-    const prefetchTimeoutMs = 2500;
+    const pad = n => String(n).padStart(3, "0");
 
-    function setCounter() {
-      if (!frames.length) {
-        counterEl.textContent = "NO FRAMES FOUND";
-        return;
-      }
-      counterEl.textContent = `FRAME ${idx + 1} / ${frames.length}`;
+    for (let i = 1; i <= totalFrames; i++) {
+      frames.push(`LAsandanim${pad(i)}.png`);
     }
 
-    function show(i) {
-      if (!frames.length) return;
-
-      idx = (i + frames.length) % frames.length;
-      setCounter();
-
-      // quick flash-off then on for a snappy animation
-      imgEl.classList.remove("on");
-      window.setTimeout(() => {
-        imgEl.src = frames[idx];
-        // ensure the "on" class applies after src swap
-        requestAnimationFrame(() => imgEl.classList.add("on"));
-      }, fadeOffMs);
+    function show(i){
+      index = (i + frames.length) % frames.length;
+      img.classList.remove("on");
+      setTimeout(() => {
+        img.src = frames[index];
+        requestAnimationFrame(() => img.classList.add("on"));
+        counter.textContent = `FRAME ${index + 1} / ${frames.length}`;
+      }, 30);
     }
 
-    function next() { show(idx + 1); }
-    function prev() { show(idx - 1); }
+    setInterval(() => {
+      if (playing) show(index + 1);
+    }, frameDelay);
 
-    function loop() {
-      if (playing) next();
-    }
+    frame.addEventListener("click", () => show(index + 1));
 
-    // Prefetch frames; skip any missing files gracefully.
-    function loadFrames() {
-      const candidates = Array.from({ length: expectedCount }, (_, k) => makeName(k + 1));
-
-      let loaded = 0;
-      let done = 0;
-
-      candidates.forEach((src) => {
-        const im = new Image();
-        let finished = false;
-
-        const finish = (ok) => {
-          if (finished) return;
-          finished = true;
-          done++;
-          if (ok) {
-            frames.push(src);
-            loaded++;
-          }
-          // When all candidates are processed, start.
-          if (done === candidates.length) start();
-        };
-
-        im.onload = () => finish(true);
-        im.onerror = () => finish(false);
-        im.src = src;
-
-        // Safety timeout (in case the browser hangs on a request)
-        setTimeout(() => finish(false), prefetchTimeoutMs);
-      });
-
-      counterEl.textContent = "LOADING FRAMES…";
-    }
-
-    function start() {
-      if (!frames.length) {
-        counterEl.textContent = "NO FRAMES FOUND (CHECK FILENAMES/PATH)";
-        return;
-      }
-
-      // Sort by filename (in case loads finish out of order)
-      frames.sort();
-
-      // Prime first frame
-      imgEl.src = frames[0];
-      requestAnimationFrame(() => imgEl.classList.add("on"));
-      setCounter();
-
-      // Start cycling
-      setInterval(loop, frameMs);
-    }
-
-    // Controls: click to advance, space to pause, arrows for prev/next
-    frameEl.addEventListener("click", () => next());
-
-    window.addEventListener("keydown", (e) => {
+    window.addEventListener("keydown", e => {
       if (e.code === "Space") {
         e.preventDefault();
         playing = !playing;
-        counterEl.textContent = playing
-          ? `PLAYING — FRAME ${idx + 1} / ${frames.length}`
-          : `PAUSED — FRAME ${idx + 1} / ${frames.length}`;
-        return;
       }
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") prev();
     });
 
-    loadFrames();
+    // start
+    img.src = frames[0];
+    img.onload = () => img.classList.add("on");
+    counter.textContent = `FRAME 1 / ${frames.length}`;
   </script>
 </body>
 </html>
