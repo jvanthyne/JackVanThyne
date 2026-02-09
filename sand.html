@@ -29,11 +29,11 @@
     }
 
     .frame{
-      width:min(1000px, 94vw);
-      aspect-ratio: 4 / 3;
+      width:min(90vmin, 900px);
+      aspect-ratio: 1 / 1;
       position:relative;
       overflow:hidden;
-      border-radius:16px;
+      /* no border-radius */
     }
 
     #cycleImg{
@@ -41,19 +41,20 @@
       inset:0;
       width:100%;
       height:100%;
-      object-fit:cover;
+      object-fit:contain; /* no cropping */
       opacity:0;
-      transform:scale(1.02);
+      transform:scale(1.01);
       transition:
-        opacity 220ms linear,
-        transform 700ms ease;
+        opacity 260ms linear,
+        transform 800ms ease;
       user-select:none;
       -webkit-user-drag:none;
+      background:#000;
     }
 
     #cycleImg.on{
       opacity:1;
-      transform:scale(1.05);
+      transform:scale(1.04);
     }
 
     .overlay{
@@ -62,12 +63,12 @@
       pointer-events:none;
       background:
         radial-gradient(circle at center,
-          rgba(0,0,0,0) 55%,
-          rgba(0,0,0,.55) 100%);
+          rgba(0,0,0,0) 60%,
+          rgba(0,0,0,.45) 100%);
     }
 
     .meta{
-      width:min(1000px, 94vw);
+      width:min(90vmin, 900px);
       margin-top:12px;
       display:flex;
       justify-content:space-between;
@@ -95,7 +96,7 @@
 
   <script>
     const totalFrames = 10;
-    const frameDelay = 180; // slower + calmer
+    const frameDelay = 180; // slow, perceptual
 
     const img = document.getElementById("cycleImg");
     const counter = document.getElementById("counter");
@@ -116,10 +117,10 @@
         img.src = frames[index];
         requestAnimationFrame(() => img.classList.add("on"));
         counter.textContent = `FRAME ${index + 1} / ${frames.length}`;
-      }, 60);
+      }, 80);
     }
 
-    // start
+    // init
     img.src = frames[0];
     img.onload = () => img.classList.add("on");
     counter.textContent = `FRAME 1 / ${frames.length}`;
