@@ -2,127 +2,255 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title><^> fly to the sun</title>
-  <!-- Favicon: simple white triangle -->
-  <link rel="icon" href="data:image/svg+xml,
-  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
-    <polygon points='50,10 10,90 90,90' fill='white'/>
-  </svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jack Van Thyne</title>
   <style>
-    :root { --bg:#0a0a0a; --fg:#eaeaea; }
-    html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
-    * { cursor:none !important; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    /* Fixed nav in top-left (scaled down) */
-    .wrap { position:fixed; top:1vh; left:1vw; display:flex; flex-direction:column; gap:0.5rem; z-index:1000; }
-    a.nav { text-decoration:none; color:var(--fg); font-size:clamp(2rem,4vw,4rem); line-height:1; }
-    a.nav:hover { color:var(--fg); }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #f7f4ee;
+      color: #111;
+      font-family: "Times New Roman", Times, serif;
+    }
 
-    /* Triangle cursor (scaled down) */
-    #custom-cursor { position:fixed; top:0; left:0; width:16px; height:16px; pointer-events:none; z-index:9999; clip-path:polygon(50% 0%, 0% 100%, 100% 100%); background:#fff; mix-blend-mode:difference; }
+    body {
+      position: relative;
+      overflow: hidden;
+    }
 
-    /* WORLD: 2 screens wide */
-    .world { position:absolute; top:0; left:0; width:200vw; height:100vh; display:flex; will-change:transform; }
-    .main-area { width:100vw; height:100vh; }
+    .page {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      padding: 32px;
+    }
 
-    .hidden-page { width:100vw; height:100vh; display:grid; place-items:center; background:#000; }
-    /* Simple yellow circle (scaled down) */
-    .sun { width:110px; height:110px; border-radius:50%; background: #ffd400; cursor:pointer; }
+    .name {
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      font-size: 20px;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      text-transform: lowercase;
+      cursor: pointer;
+      text-decoration: none;
+      color: #111;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
 
-    /* Bird (scaled down) */
-    #bird { position:fixed; width:20px; height:20px; z-index:500; pointer-events:none; }
+    .name:hover {
+      border-color: #111;
+    }
+
+    .projects-link {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      font-size: 20px;
+      font-weight: normal;
+      text-transform: lowercase;
+      text-decoration: none;
+      color: #111;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .projects-link:hover {
+      border-color: #111;
+    }
+
+    .bottom-links {
+      position: absolute;
+      bottom: 28px;
+      left: 32px;
+      right: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .bottom-links a {
+      font-size: 16px;
+      text-decoration: none;
+      color: #111;
+      text-transform: lowercase;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .bottom-links a:hover {
+      border-color: #111;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.08);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    .popup-overlay.active {
+      display: flex;
+    }
+
+    .popup {
+      width: min(640px, 90vw);
+      background: #fdfbf6;
+      border: 1px solid #111;
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.08);
+      padding: 22px 22px 26px 22px;
+      position: relative;
+    }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #111;
+    }
+
+    .popup-title {
+      font-size: 16px;
+      text-transform: lowercase;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid #111;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 14px;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: #111;
+    }
+
+    .close-btn:hover {
+      background: #111;
+      color: #fdfbf6;
+    }
+
+    .popup-text {
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        overflow: auto;
+      }
+
+      .page {
+        min-height: 100vh;
+        height: auto;
+        padding: 24px;
+      }
+
+      .name,
+      .projects-link {
+        position: static;
+        display: inline-block;
+        margin-bottom: 18px;
+      }
+
+      .projects-link {
+        float: right;
+      }
+
+      .bottom-links {
+        position: static;
+        margin-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .popup-text {
+        font-size: 17px;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Fixed navigation -->
-  <div class="wrap" role="navigation" aria-label="Main">
-    <a class="nav" href="jack-van-thyne.html">JACK VAN THYNE</a>
-    <a class="nav" href="archives.html">ARCHIVES</a>
-    <a class="nav" href="art.html">DIGITAL GALLERY</a>
-  </div>
+  <div class="page">
+    <a href="#" class="name" id="openPopup">Jack van thyne</a>
 
-  <!-- World with hidden page to the right -->
-  <div class="world" id="world">
-    <div class="main-area"></div>
-    <div class="hidden-page">
-      <div class="sun" id="sun" title="Click to fly"></div>
+    <a
+      class="projects-link"
+      href="https://jackvanthyne.org/projects.html"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      projects
+    </a>
+
+    <div class="bottom-links">
+      <a href="https://meadband.com/" target="_blank" rel="noopener noreferrer">mead</a>
+      <a href="http://tiemmachine.co/" target="_blank" rel="noopener noreferrer">time machine</a>
+      <a href="https://guerrillagrotto.space/" target="_blank" rel="noopener noreferrer">guerilla grotto</a>
+      <a href="https://jackvanthyne.org/FallentoFunctional.html" target="_blank" rel="noopener noreferrer">Fallen-to-Functional</a>
     </div>
   </div>
 
-  <!-- Bird & custom cursor -->
-  <img id="bird" src="bird.png" alt="bird" />
-  <div id="custom-cursor"></div>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+      <div class="popup-header">
+        <div class="popup-title" id="popupTitle">about me</div>
+        <button class="close-btn" id="closePopup">close</button>
+      </div>
+      <div class="popup-text">
+        “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
+        I am an artist and builder, drawn to designing and creating spaces and objects that shape how
+        people interact with the world and with each other. Wood is central to my practice — alive yet
+        static, full of character, and responsive to manipulation. I am fascinated by the entire process,
+        from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
+        using them to expand how experience and perception can be shaped and understood.”
+      </div>
+    </div>
+  </div>
 
   <script>
-    const cursor = document.getElementById('custom-cursor');
-    const bird = document.getElementById('bird');
-    const world = document.getElementById('world');
-    const sun = document.getElementById('sun');
+    const openPopup = document.getElementById("openPopup");
+    const closePopup = document.getElementById("closePopup");
+    const popupOverlay = document.getElementById("popupOverlay");
 
-    // Cursor follow
-    document.addEventListener('mousemove', (e) => {
-      cursor.style.transform = `translate(${e.clientX - 8}px, ${e.clientY - 4}px)`;
+    openPopup.addEventListener("click", function (e) {
+      e.preventDefault();
+      popupOverlay.classList.add("active");
     });
 
-    // Movement state
-    let birdX = Math.round(window.innerWidth * 0.6);
-    let birdY = Math.round(window.innerHeight * 0.5);
-    const step = 13; // px per key press frame (50% of original)
-    const birdSize = 20; // scaled down
-
-    // World sliding when pushing right edge
-    let offsetX = 0;
-    const maxOffset = () => Math.max(0, world.scrollWidth - window.innerWidth);
-
-    const keys = { ArrowUp:false, ArrowDown:false, ArrowLeft:false, ArrowRight:false };
-    addEventListener('keydown', (e) => { if (e.key in keys) { keys[e.key] = true; e.preventDefault(); } }, {passive:false});
-    addEventListener('keyup', (e) => { if (e.key in keys) keys[e.key] = false; });
-
-    function clamp(v,min,max){ return v<min?min:v>max?max:v; }
-
-    function tick(){
-      let moved = false;
-      if (keys.ArrowLeft){
-        if (offsetX > 0) { offsetX = Math.max(0, offsetX - step); moved = true; }
-        else if (birdX > 0) { birdX = Math.max(0, birdX - step); moved = true; }
-      }
-      if (keys.ArrowRight){
-        const atRightEdge = birdX >= (window.innerWidth - birdSize);
-        if (!atRightEdge) { birdX = Math.min(window.innerWidth - birdSize, birdX + step); moved = true; }
-        else if (offsetX < maxOffset()) { offsetX = Math.min(maxOffset(), offsetX + step); moved = true; }
-      }
-      if (keys.ArrowUp){ birdY = Math.max(0, birdY - step); moved = true; }
-      if (keys.ArrowDown){ birdY = Math.min(window.innerHeight - birdSize, birdY + step); moved = true; }
-
-      if (moved){
-        bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-        world.style.transform = `translateX(${-offsetX}px)`;
-      }
-      requestAnimationFrame(tick);
-    }
-
-    bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-    world.style.transform = `translateX(0)`;
-    requestAnimationFrame(tick);
-
-    sun.addEventListener('click', () => {
-      window.open("https://jackvanthyne.org/clue_001.html", "_blank");
+    closePopup.addEventListener("click", function () {
+      popupOverlay.classList.remove("active");
     });
 
-    addEventListener('resize', () => {
-      birdX = clamp(birdX, 0, window.innerWidth - birdSize);
-      birdY = clamp(birdY, 0, window.innerHeight - birdSize);
-      offsetX = clamp(offsetX, 0, maxOffset());
-      bird.style.transform = `translate(${birdX}px, ${birdY}px)`;
-      world.style.transform = `translateX(${-offsetX}px)`;
+    popupOverlay.addEventListener("click", function (e) {
+      if (e.target === popupOverlay) {
+        popupOverlay.classList.remove("active");
+      }
     });
 
-    bird.onerror = () => {
-      bird.style.background = 'white';
-      bird.style.clipPath = 'polygon(0% 100%, 50% 0%, 100% 100%)';
-      bird.removeAttribute('src');
-    };
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        popupOverlay.classList.remove("active");
+      }
+    });
   </script>
 </body>
 </html>
