@@ -41,7 +41,6 @@
 
     .main-link {
       font-size: 16px;
-      font-weight: normal;
     }
 
     .headshot {
@@ -91,7 +90,7 @@
       width: 18px;
       height: 18px;
       border: 1px solid #000;
-      background: #dcdcdc;
+      background: #ff4d4d;
       color: #000;
       font-size: 12px;
       line-height: 16px;
@@ -104,19 +103,6 @@
       padding: 12px;
       font-size: 13px;
       line-height: 1.4;
-    }
-
-    .popup-footer {
-      padding: 0 12px 12px 12px;
-    }
-
-    .popup-button {
-      background: #dcdcdc;
-      border: 1px solid #000;
-      padding: 3px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      font-family: serif;
     }
 
     .site-footer {
@@ -176,7 +162,7 @@
   <div class="wrap">
     <div class="left">
       <a href="#" class="main-link" id="openPopup">Jack van thyne</a>
-      <a href="https://jackvanthyne.org/projects.html" target="_blank" rel="noopener noreferrer" class="main-link">projects</a>
+      <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link">projects</a>
     </div>
 
     <img src="proheadshot.png" alt="Jack Van Thyne" class="headshot" />
@@ -185,7 +171,7 @@
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup" id="popup">
       <div class="popup-header" id="popupHeader">
-        <span>About</span>
+        <span>Jack Van Thyne</span>
         <button class="popup-close" id="closeTop">×</button>
       </div>
 
@@ -196,10 +182,6 @@
         static, full of character, and responsive to manipulation. I am fascinated by the entire process,
         from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
         using them to expand how experience and perception can be shaped and understood.”
-      </div>
-
-      <div class="popup-footer">
-        <button class="popup-button" id="closeBottom">OK</button>
       </div>
     </div>
   </div>
@@ -215,7 +197,6 @@
     const popup = document.getElementById("popup");
     const popupHeader = document.getElementById("popupHeader");
     const closeTop = document.getElementById("closeTop");
-    const closeBottom = document.getElementById("closeBottom");
 
     let isDragging = false;
     let startX = 0;
@@ -223,102 +204,62 @@
     let startLeft = 0;
     let startTop = 0;
 
-    function openAbout(e) {
+    openPopup.onclick = (e) => {
       e.preventDefault();
       popupOverlay.classList.add("active");
+      popup.style.left = "12px";
+      popup.style.top = "70px";
+    };
 
-      if (window.innerWidth <= 600) {
-        popup.style.left = "10px";
-        popup.style.top = "56px";
-      } else {
-        popup.style.left = "12px";
-        popup.style.top = "70px";
-      }
-    }
-
-    function closeAbout() {
+    function closePopup() {
       popupOverlay.classList.remove("active");
       isDragging = false;
     }
 
-    function startDrag(clientX, clientY) {
+    closeTop.onclick = closePopup;
+
+    popupOverlay.onclick = (e) => {
+      if (e.target === popupOverlay) closePopup();
+    };
+
+    document.onkeydown = (e) => {
+      if (e.key === "Escape") closePopup();
+    };
+
+    function startDrag(x, y) {
       isDragging = true;
-      startX = clientX;
-      startY = clientY;
+      startX = x;
+      startY = y;
       startLeft = popup.offsetLeft;
       startTop = popup.offsetTop;
     }
 
-    function moveDrag(clientX, clientY) {
+    function moveDrag(x, y) {
       if (!isDragging) return;
-
-      const dx = clientX - startX;
-      const dy = clientY - startY;
-
-      let newLeft = startLeft + dx;
-      let newTop = startTop + dy;
-
-      const maxLeft = window.innerWidth - popup.offsetWidth;
-      const maxTop = window.innerHeight - popup.offsetHeight;
-
-      if (newLeft < 0) newLeft = 0;
-      if (newTop < 0) newTop = 0;
-      if (newLeft > maxLeft) newLeft = Math.max(0, maxLeft);
-      if (newTop > maxTop) newTop = Math.max(0, maxTop);
-
-      popup.style.left = newLeft + "px";
-      popup.style.top = newTop + "px";
+      popup.style.left = startLeft + (x - startX) + "px";
+      popup.style.top = startTop + (y - startY) + "px";
     }
 
-    openPopup.addEventListener("click", openAbout);
-    closeTop.addEventListener("click", closeAbout);
-    closeBottom.addEventListener("click", closeAbout);
-
-    popupOverlay.addEventListener("click", function (e) {
-      if (e.target === popupOverlay) closeAbout();
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeAbout();
-    });
-
-    popupHeader.addEventListener("mousedown", function (e) {
+    popupHeader.onmousedown = (e) => {
       if (e.target === closeTop) return;
       startDrag(e.clientX, e.clientY);
-      e.preventDefault();
-    });
+    };
 
-    document.addEventListener("mousemove", function (e) {
-      moveDrag(e.clientX, e.clientY);
-    });
+    document.onmousemove = (e) => moveDrag(e.clientX, e.clientY);
+    document.onmouseup = () => isDragging = false;
 
-    document.addEventListener("mouseup", function () {
-      isDragging = false;
-    });
-
-    popupHeader.addEventListener("touchstart", function (e) {
+    popupHeader.ontouchstart = (e) => {
       if (e.target === closeTop) return;
-      const touch = e.touches[0];
-      startDrag(touch.clientX, touch.clientY);
-    }, { passive: true });
+      const t = e.touches[0];
+      startDrag(t.clientX, t.clientY);
+    };
 
-    document.addEventListener("touchmove", function (e) {
-      if (!isDragging) return;
-      const touch = e.touches[0];
-      moveDrag(touch.clientX, touch.clientY);
-    }, { passive: true });
+    document.ontouchmove = (e) => {
+      const t = e.touches[0];
+      moveDrag(t.clientX, t.clientY);
+    };
 
-    document.addEventListener("touchend", function () {
-      isDragging = false;
-    });
-
-    window.addEventListener("resize", function () {
-      const maxLeft = Math.max(0, window.innerWidth - popup.offsetWidth);
-      const maxTop = Math.max(0, window.innerHeight - popup.offsetHeight);
-
-      if (popup.offsetLeft > maxLeft) popup.style.left = maxLeft + "px";
-      if (popup.offsetTop > maxTop) popup.style.top = maxTop + "px";
-    });
+    document.ontouchend = () => isDragging = false;
 
     function updateClock() {
       document.getElementById("clock").textContent = new Date().toLocaleString();
