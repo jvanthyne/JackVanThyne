@@ -5,466 +5,280 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jack Van Thyne</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #111111;
-      --panel: #c9c3b8;
-      --panel-dark: #8f8a80;
-      --panel-light: #dfd8cc;
-      --text: #f2eee6;
-      --dark-text: #111111;
-      --line: #2b2b2b;
-      --link: #e7dfd0;
-      --muted: #b9b2a6;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: "Times New Roman", Times, serif;
-      overflow: hidden;
-      cursor: default;
-    }
-
     body {
-      position: relative;
-      background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(255,255,255,0.02), transparent 25%),
-        var(--bg);
+      background: #dcdcdc;
+      color: #000;
+      font-family: serif;
+      font-size: 18px;
+      line-height: 1.35;
+      margin: 0;
+      padding: 24px 10px 70px 10px;
     }
 
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.06;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 3px 3px, 5px 5px;
-      mix-blend-mode: screen;
-      z-index: 1;
-    }
-
-    .page {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      padding: 28px;
-      z-index: 3;
-    }
-
-    .top-left {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-    }
-
-    .name-button {
-      background: none;
-      border: none;
-      color: var(--text);
-      font-family: "Times New Roman", Times, serif;
-      font-size: 22px;
-      letter-spacing: 0.03em;
-      text-transform: lowercase;
+    a {
+      color: #0000cc;
+      text-decoration: underline;
       cursor: pointer;
-      padding: 0;
-      border-bottom: 1px solid transparent;
     }
 
-    .name-button:hover {
-      border-bottom: 1px solid var(--text);
+    a:visited {
+      color: #551a8b;
     }
 
-    .center-link-wrap {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 5;
-      text-align: center;
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .name-link {
+      font-size: 28px;
+      font-weight: bold;
     }
 
     .projects-link {
-      color: var(--text);
-      text-decoration: none;
-      font-size: clamp(28px, 5vw, 64px);
-      letter-spacing: 0.08em;
-      text-transform: lowercase;
-      position: relative;
-      display: inline-block;
-      padding: 4px 10px;
-      border: 1px solid transparent;
+      font-size: 28px;
+      font-weight: bold;
     }
 
-    .projects-link:hover {
-      border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.03);
+    .content {
+      max-width: 900px;
     }
 
-    .projects-sub {
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .line {
+      border-top: 1px solid #666;
+      margin: 18px 0;
     }
 
-    .bottom-links {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      z-index: 5;
+    .intro {
+      margin-bottom: 18px;
     }
 
-    .bottom-links a {
-      color: var(--link);
-      text-decoration: none;
-      font-size: 15px;
-      text-transform: lowercase;
-      border-bottom: 1px solid transparent;
-      opacity: 0.95;
-    }
-
-    .bottom-links a:hover {
-      border-bottom: 1px solid var(--link);
-    }
-
-    .hover-preview {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-
-    .hover-preview.active {
-      opacity: 1;
-    }
-
-    .flash-image {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      filter: blur(14px) grayscale(10%) contrast(1.05);
-      transform: scale(1.04);
-      mix-blend-mode: screen;
-    }
-
-    .flash-image.show {
-      opacity: 0.26;
-    }
-
-    /* old school popup */
     .popup-overlay {
       position: fixed;
       inset: 0;
+      background: rgba(0, 0, 0, 0.15);
       display: none;
       align-items: flex-start;
       justify-content: flex-start;
-      padding: 60px;
-      background: rgba(0,0,0,0.25);
-      z-index: 20;
+      padding: 80px 40px;
     }
 
     .popup-overlay.active {
       display: flex;
     }
 
-    .window {
-      width: min(680px, 92vw);
-      background: var(--panel);
-      color: var(--dark-text);
+    .popup {
+      width: 520px;
+      max-width: calc(100vw - 40px);
+      background: #ffffff;
       border: 2px solid #000;
-      box-shadow:
-        3px 3px 0 #000,
-        inset 1px 1px 0 var(--panel-light),
-        inset -1px -1px 0 #6d685f;
+      box-shadow: 4px 4px 0 #777;
     }
 
-    .window-bar {
-      background: linear-gradient(to right, #2a2a2a, #4d4d4d);
-      color: #f5f1e8;
-      height: 28px;
+    .popup-header {
+      background: #000080;
+      color: white;
+      padding: 6px 10px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0 6px 0 10px;
-      border-bottom: 2px solid #000;
+      align-items: center;
+      font-family: sans-serif;
       font-size: 14px;
-      letter-spacing: 0.03em;
     }
 
-    .window-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .window-controls {
-      display: flex;
-      gap: 4px;
-    }
-
-    .control-btn {
-      width: 18px;
-      height: 18px;
+    .popup-close {
+      background: #dcdcdc;
       border: 1px solid #000;
-      background: #d8d1c6;
-      color: #000;
+      width: 20px;
+      height: 20px;
       font-size: 12px;
       line-height: 16px;
       text-align: center;
       cursor: pointer;
-      font-family: sans-serif;
       padding: 0;
     }
 
-    .control-btn:hover {
-      background: #bdb5aa;
+    .popup-body {
+      padding: 18px;
+      font-size: 17px;
+      line-height: 1.45;
     }
 
-    .window-body {
-      padding: 18px 18px 22px 18px;
-      background:
-        linear-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
-        var(--panel);
-      font-size: 19px;
-      line-height: 1.55;
-      border-top: 1px solid #e8e1d5;
-    }
-
-    .window-footer {
-      display: flex;
-      justify-content: flex-end;
+    .popup-footer {
       padding: 0 18px 18px 18px;
-      background: var(--panel);
     }
 
-    .ok-btn {
-      min-width: 78px;
-      padding: 6px 14px;
+    .popup-button {
+      background: #dcdcdc;
       border: 1px solid #000;
-      background: #d8d1c6;
-      color: #000;
-      font-family: "Times New Roman", Times, serif;
+      padding: 4px 12px;
       font-size: 15px;
       cursor: pointer;
-      box-shadow:
-        inset 1px 1px 0 #f3ede2,
-        inset -1px -1px 0 #857f75;
     }
 
-    .ok-btn:hover {
-      background: #c6beb2;
+    .site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #dcdcdc;
+      border-top: 1px solid #666;
+      padding: 6px 10px;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .status-line {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      z-index: 5;
+    .footer-left,
+    .footer-right {
+      white-space: nowrap;
     }
 
-    @media (max-width: 800px) {
-      html, body {
-        overflow: auto;
-      }
-
-      .page {
-        min-height: 100vh;
-        height: auto;
-        padding: 20px;
-      }
-
-      .top-left,
-      .status-line,
-      .center-link-wrap,
-      .bottom-links {
-        position: static;
-      }
-
-      .center-link-wrap {
-        transform: none;
-        margin-top: 22vh;
-        margin-bottom: 16vh;
-      }
-
-      .bottom-links {
-        margin-top: 80px;
-        display: flex;
+    @media (max-width: 700px) {
+      .top {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .name-link,
+      .projects-link {
+        font-size: 24px;
       }
 
       .popup-overlay {
-        padding: 18px;
-        align-items: center;
-        justify-content: center;
+        padding: 30px 10px;
       }
 
-      .window-body {
-        font-size: 17px;
+      .site-footer {
+        position: static;
+        margin-top: 30px;
+      }
+
+      body {
+        padding-bottom: 30px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="noise"></div>
-
-  <!-- flashing hover images -->
-  <div class="hover-preview" id="hoverPreview">
-    <img src="images/project1.jpg" class="flash-image" alt="">
-    <img src="images/project2.jpg" class="flash-image" alt="">
-    <img src="images/project3.jpg" class="flash-image" alt="">
-    <img src="images/project4.jpg" class="flash-image" alt="">
-    <img src="images/project5.jpg" class="flash-image" alt="">
-    <img src="images/project6.jpg" class="flash-image" alt="">
-  </div>
-
-  <div class="page">
-    <div class="top-left">
-      <button class="name-button" id="openPopup">Jack van thyne</button>
+  <div class="content">
+    <div class="top">
+      <a href="#" class="name-link" id="openPopup">Jack Van Thyne</a>
+      <a href="https://jackvanthyne.org/projects.html" target="_blank" rel="noopener noreferrer" class="projects-link">projects</a>
     </div>
 
-    <div class="status-line">index / personal archive / 2026</div>
-
-    <div class="center-link-wrap">
-      <a
-        href="https://jackvanthyne.org/projects.html"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="projects-link"
-        id="projectsLink"
-      >
-        projects
-      </a>
-      <div class="projects-sub">selected works / objects / spaces / experiments</div>
+    <div class="intro">
+      <a href="#" id="openPopupText">Jack Van Thyne</a> |
+      <a href="https://jackvanthyne.org/projects.html" target="_blank" rel="noopener noreferrer">projects</a>
     </div>
 
-    <div class="bottom-links">
-      <a href="https://meadband.com/" target="_blank" rel="noopener noreferrer">mead</a>
-      <a href="http://tiemmachine.co/" target="_blank" rel="noopener noreferrer">time machine</a>
-      <a href="https://guerrillagrotto.space/" target="_blank" rel="noopener noreferrer">guerilla grotto</a>
+    <div class="line"></div>
+
+    <p>
+      Welcome to my website.
+    </p>
+
+    <p>
+      This page is a simple entry point to my work, projects, and other ongoing things.
+    </p>
+
+    <div class="line"></div>
+
+    <p>
+      Other links:
+      <a href="https://meadband.com/" target="_blank" rel="noopener noreferrer">mead</a> --
+      <a href="http://tiemmachine.co/" target="_blank" rel="noopener noreferrer">time machine</a> --
+      <a href="https://guerrillagrotto.space/" target="_blank" rel="noopener noreferrer">guerilla grotto</a> --
       <a href="https://jackvanthyne.org/FallentoFunctional.html" target="_blank" rel="noopener noreferrer">Fallen-to-Functional</a>
-    </div>
+    </p>
   </div>
 
-  <!-- popup -->
   <div class="popup-overlay" id="popupOverlay">
-    <div class="window" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-      <div class="window-bar">
-        <div class="window-title" id="aboutTitle">About Jack Van Thyne</div>
-        <div class="window-controls">
-          <button class="control-btn" aria-label="minimize">_</button>
-          <button class="control-btn" aria-label="maximize">□</button>
-          <button class="control-btn" id="closePopupTop" aria-label="close">×</button>
-        </div>
+    <div class="popup">
+      <div class="popup-header">
+        <span>About Jack Van Thyne</span>
+        <button class="popup-close" id="closePopupTop">×</button>
       </div>
-
-      <div class="window-body">
-        “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
-        I am an artist and builder, drawn to designing and creating spaces and objects that shape how
-        people interact with the world and with each other. Wood is central to my practice — alive yet
-        static, full of character, and responsive to manipulation. I am fascinated by the entire process,
-        from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
-        using them to expand how experience and perception can be shaped and understood.”
+      <div class="popup-body">
+        <p>
+          “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
+          I am an artist and builder, drawn to designing and creating spaces and objects that shape how
+          people interact with the world and with each other. Wood is central to my practice — alive yet
+          static, full of character, and responsive to manipulation. I am fascinated by the entire process,
+          from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
+          using them to expand how experience and perception can be shaped and understood.”
+        </p>
       </div>
-
-      <div class="window-footer">
-        <button class="ok-btn" id="closePopupBottom">OK</button>
+      <div class="popup-footer">
+        <button class="popup-button" id="closePopupBottom">OK</button>
       </div>
     </div>
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-left">
+      contact:
+      <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a>
+    </div>
+    <div class="footer-right">
+      <span id="clock"></span>
+    </div>
+  </footer>
 
   <script>
     const popupOverlay = document.getElementById("popupOverlay");
     const openPopup = document.getElementById("openPopup");
+    const openPopupText = document.getElementById("openPopupText");
     const closePopupTop = document.getElementById("closePopupTop");
     const closePopupBottom = document.getElementById("closePopupBottom");
 
-    openPopup.addEventListener("click", () => {
+    function showPopup(e) {
+      e.preventDefault();
       popupOverlay.classList.add("active");
-    });
+    }
 
-    closePopupTop.addEventListener("click", () => {
+    function hidePopup() {
       popupOverlay.classList.remove("active");
-    });
+    }
 
-    closePopupBottom.addEventListener("click", () => {
-      popupOverlay.classList.remove("active");
-    });
+    openPopup.addEventListener("click", showPopup);
+    openPopupText.addEventListener("click", showPopup);
+    closePopupTop.addEventListener("click", hidePopup);
+    closePopupBottom.addEventListener("click", hidePopup);
 
-    popupOverlay.addEventListener("click", (e) => {
+    popupOverlay.addEventListener("click", function(e) {
       if (e.target === popupOverlay) {
-        popupOverlay.classList.remove("active");
+        hidePopup();
       }
     });
 
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", function(e) {
       if (e.key === "Escape") {
-        popupOverlay.classList.remove("active");
+        hidePopup();
       }
     });
 
-    // flashing project hover images
-    const projectsLink = document.getElementById("projectsLink");
-    const hoverPreview = document.getElementById("hoverPreview");
-    const flashImages = document.querySelectorAll(".flash-image");
-
-    let flashInterval = null;
-    let currentIndex = 0;
-
-    function clearFlashImages() {
-      flashImages.forEach(img => img.classList.remove("show"));
+    function updateClock() {
+      const now = new Date();
+      const options = {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      };
+      document.getElementById("clock").textContent = now.toLocaleString([], options);
     }
 
-    function startFlashing() {
-      hoverPreview.classList.add("active");
-
-      flashInterval = setInterval(() => {
-        clearFlashImages();
-        flashImages[currentIndex].classList.add("show");
-        currentIndex = (currentIndex + 1) % flashImages.length;
-      }, 120);
-    }
-
-    function stopFlashing() {
-      hoverPreview.classList.remove("active");
-      clearFlashImages();
-      clearInterval(flashInterval);
-      flashInterval = null;
-    }
-
-    projectsLink.addEventListener("mouseenter", () => {
-      if (!flashInterval) startFlashing();
-    });
-
-    projectsLink.addEventListener("mouseleave", () => {
-      stopFlashing();
-    });
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
