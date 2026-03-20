@@ -41,6 +41,11 @@
 
     .main-link {
       font-size: 16px;
+      cursor: pointer;
+    }
+
+    .visited {
+      color: #551a8b !important;
     }
 
     .headshot {
@@ -82,7 +87,6 @@
       justify-content: space-between;
       cursor: move;
       user-select: none;
-      -webkit-user-select: none;
       touch-action: none;
     }
 
@@ -90,13 +94,12 @@
       width: 18px;
       height: 18px;
       border: 1px solid #000;
-      background: #ff4d4d;
-      color: #000;
+      background: #e00000;
+      color: #fff;
       font-size: 12px;
       line-height: 16px;
       padding: 0;
       cursor: pointer;
-      flex-shrink: 0;
     }
 
     .popup-body {
@@ -115,25 +118,11 @@
       font-size: 12px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .site-footer div {
-      white-space: nowrap;
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 14px 10px 16px 10px;
-      }
-
       .wrap {
         gap: 12px;
-      }
-
-      .main-link {
-        font-size: 15px;
       }
 
       .headshot {
@@ -149,8 +138,6 @@
       .site-footer {
         position: static;
         margin-top: 20px;
-        padding: 0;
-        display: flex;
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
@@ -165,7 +152,7 @@
       <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link">projects</a>
     </div>
 
-    <img src="proheadshot.png" alt="Jack Van Thyne" class="headshot" />
+    <img src="proheadshot.png" class="headshot" />
   </div>
 
   <div class="popup-overlay" id="popupOverlay">
@@ -199,14 +186,12 @@
     const closeTop = document.getElementById("closeTop");
 
     let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let startLeft = 0;
-    let startTop = 0;
+    let startX, startY, startLeft, startTop;
 
     openPopup.onclick = (e) => {
       e.preventDefault();
       popupOverlay.classList.add("active");
+      openPopup.classList.add("visited");
       popup.style.left = "12px";
       popup.style.top = "70px";
     };
@@ -226,37 +211,38 @@
       if (e.key === "Escape") closePopup();
     };
 
-    function startDrag(x, y) {
-      isDragging = true;
-      startX = x;
-      startY = y;
-      startLeft = popup.offsetLeft;
-      startTop = popup.offsetTop;
-    }
-
-    function moveDrag(x, y) {
-      if (!isDragging) return;
-      popup.style.left = startLeft + (x - startX) + "px";
-      popup.style.top = startTop + (y - startY) + "px";
-    }
-
     popupHeader.onmousedown = (e) => {
       if (e.target === closeTop) return;
-      startDrag(e.clientX, e.clientY);
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = popup.offsetLeft;
+      startTop = popup.offsetTop;
     };
 
-    document.onmousemove = (e) => moveDrag(e.clientX, e.clientY);
+    document.onmousemove = (e) => {
+      if (!isDragging) return;
+      popup.style.left = startLeft + (e.clientX - startX) + "px";
+      popup.style.top = startTop + (e.clientY - startY) + "px";
+    };
+
     document.onmouseup = () => isDragging = false;
 
     popupHeader.ontouchstart = (e) => {
       if (e.target === closeTop) return;
       const t = e.touches[0];
-      startDrag(t.clientX, t.clientY);
+      isDragging = true;
+      startX = t.clientX;
+      startY = t.clientY;
+      startLeft = popup.offsetLeft;
+      startTop = popup.offsetTop;
     };
 
     document.ontouchmove = (e) => {
+      if (!isDragging) return;
       const t = e.touches[0];
-      moveDrag(t.clientX, t.clientY);
+      popup.style.left = startLeft + (t.clientX - startX) + "px";
+      popup.style.top = startTop + (t.clientY - startY) + "px";
     };
 
     document.ontouchend = () => isDragging = false;
