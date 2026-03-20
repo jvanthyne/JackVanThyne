@@ -1,1 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects - Jack Van Thyne</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 18px 12px 64px 12px;
+      background: #dcdcdc;
+      color: #000;
+      font-family: serif;
+      font-size: 14px;
+      line-height: 1.3;
+    }
 
+    a,
+    button {
+      color: #0000cc;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    a:visited {
+      color: #551a8b;
+    }
+
+    .visited {
+      color: #551a8b !important;
+    }
+
+    .wrap {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      max-width: 1100px;
+    }
+
+    .left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .name-link {
+      display: inline-block;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .tree {
+      display: block;
+    }
+
+    .tree-row {
+      margin: 2px 0;
+      white-space: nowrap;
+    }
+
+    .tree-btn,
+    .project-btn {
+      display: inline;
+    }
+
+    .level-0 .tree-btn {
+      font-size: 16px;
+    }
+
+    .level-1 {
+      padding-left: 18px;
+    }
+
+    .level-2 {
+      padding-left: 36px;
+    }
+
+    .children {
+      display: none;
+    }
+
+    .children.open {
+      display: block;
+    }
+
+    .preview {
+      width: 320px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 18px;
+    }
+
+    .preview-box {
+      display: none;
+      width: 100%;
+    }
+
+    .preview-box.active {
+      display: block;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 2px solid #000;
+      background: #fff;
+    }
+
+    .preview-caption {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 1000;
+    }
+
+    .popup-overlay.active {
+      display: block;
+    }
+
+    .popup {
+      position: fixed;
+      top: 70px;
+      left: 12px;
+      width: min(520px, calc(100vw - 24px));
+      background: #fff;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #777;
+    }
+
+    .popup-header {
+      background: #000080;
+      color: #fff;
+      padding: 5px 8px;
+      font-family: sans-serif;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .popup-close {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #000;
+      background: #c40000;
+      color: #fff;
+      font-size: 12px;
+      line-height: 16px;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .popup-body {
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .popup-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-bottom: 10px;
+      border: 1px solid #000;
+      background: #fff;
+    }
+
+    .popup-meta {
+      margin-bottom: 8px;
+    }
+
+    .site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #dcdcdc;
+      padding: 6px 10px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    @media (max-width: 800px) {
+      .wrap {
+        display: block;
+      }
+
+      .preview {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .popup {
+        width: calc(100vw - 20px);
+        left: 10px;
+        top: 56px;
+      }
+
+      .site-footer {
+        position: static;
+        margin-top: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="left">
+      <a href="index.html" class="name-link" id="homeLink">Jack Van Thyne</a>
+      <div class="tree" id="tree"></div>
+    </div>
+
+    <aside class="preview">
+      <div class="preview-box" id="previewBox">
+        <img id="previewImage" class="preview-image" src="" alt="" />
+        <div class="preview-caption" id="previewCaption"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popup">
+      <div class="popup-header" id="popupHeader">
+        <span id="popupTitle">Project</span>
+        <button class="popup-close" id="closeTop">×</button>
+      </div>
+
+      <div class="popup-body">
+        <img id="popupImage" class="popup-image" src="" alt="" />
+        <div class="popup-meta" id="popupMeta"></div>
+        <div id="popupDescription"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
+    <div id="clock"></div>
+  </footer>
+
+  <script>
+    const data = [
+      {
+        title: "Design",
+        children: [
+          {
+            title: "Architecture",
+            children: [
+              {
+                title: "Floating Pavilion",
+                year: "2026",
+                image: "images/design/floating-pavilion-1.jpg",
+                description: "Project page content coming soon."
+              },
+              {
+                title: "Fog Pavilion",
+                year: "2024",
+                image: "images/design/fog-pavilion-1.jpg",
+                description: "Project page content coming soon."
+              }
+            ]
+          },
+          {
+            title: "Landscape",
+            children: [
+              {
+                title: "Stormwater Master Plan",
+                year: "2024",
+                image: "images/design/stormwater-master-plan-1.jpg",
+                description: "Project page content coming soon."
+              }
+            ]
+          },
+          {
+            title: "Research",
+            children: [
+              {
+                title: "Invisible Forces",
+                year: "2024",
+                image: "images/design/invisible-forces-1.jpg",
+                description: "Project page content coming soon."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        title: "Build",
+        children: [
+          {
+            title: "Furnature",
+            children: [
+              { title: "Plywood Dovetail Chair", year: "", image: "images/build/furniture/plywood-dovetail-chair-1.jpg", description: "Project page content coming soon." },
+              { title: "CED Plywood Chair", year: "", image: "images/build/furniture/ced-plywood-chair-1.jpg", description: "Project page content coming soon." },
+              { title: "Drafting and Compting Table", year: "", image: "images/build/furniture/drafting-and-compting-table-1.jpg", description: "Project page content coming soon." },
+              { title: "Curved Oak Chair", year: "", image: "images/build/furniture/curved-oak-chair-1.jpg", description: "Project page content coming soon." },
+              { title: "Outdoor Tables", year: "", image: "images/build/furniture/outdoor-tables-1.jpg", description: "Project page content coming soon." },
+              { title: "Solid Oak Chair", year: "", image: "images/build/furniture/solid-oak-chair-1.jpg", description: "Project page content coming soon." },
+              { title: "Solid Pine Chair", year: "", image: "images/build/furniture/solid-pine-chair-1.jpg", description: "Project page content coming soon." },
+              { title: "Plywood Grid Tables", year: "", image: "images/build/furniture/plywood-grid-tables-1.jpg", description: "Project page content coming soon." },
+              { title: "Redwood Bench", year: "", image: "images/build/furniture/redwood-bench-1.jpg", description: "Project page content coming soon." },
+              { title: "Redwood Beam Stool", year: "", image: "images/build/furniture/redwood-beam-stool-1.jpg", description: "Project page content coming soon." },
+              { title: "Scrap Benach", year: "", image: "images/build/furniture/scrap-benach-1.jpg", description: "Project page content coming soon." }
+            ]
+          },
+          {
+            title: "Structures",
+            children: [
+              { title: "Sauna", year: "", image: "images/build/structures/sauna-1.jpg", description: "Project page content coming soon." },
+              { title: "Archway", year: "", image: "images/build/structures/archway-1.jpg", description: "Project page content coming soon." },
+              { title: "Wood Water Feature", year: "", image: "images/build/structures/wood-water-feature-1.jpg", description: "Project page content coming soon." }
+            ]
+          },
+          {
+            title: "Lighting",
+            children: [
+              { title: "Steel Pendant Light", year: "", image: "images/build/lighting/steel-pendant-light-1.jpg", description: "Project page content coming soon." },
+              { title: "Grid Light", year: "", image: "images/build/lighting/grid-light-1.jpg", description: "Project page content coming soon." },
+              { title: "Linear Light", year: "", image: "images/build/lighting/linear-light-1.jpg", description: "Project page content coming soon." }
+            ]
+          },
+          {
+            title: "Random",
+            children: [
+              { title: "Curtain Rods", year: "", image: "images/build/random/curtain-rods-1.jpg", description: "Project page content coming soon." },
+              { title: "Sit Stand Desk", year: "", image: "images/build/random/sit-stand-desk-1.jpg", description: "Project page content coming soon." }
+            ]
+          }
+        ]
+      },
+      {
+        title: "Art",
+        children: [
+          {
+            title: "Paintings",
+            children: [
+              { title: "Redwood", year: "2025", image: "images/art/paintings/redwood-1.jpg", description: "Painting project page content coming soon." },
+              { title: "Dance", year: "2023", image: "images/art/paintings/dance-1.jpg", description: "Painting project page content coming soon." },
+              { title: "Blue", year: "2025", image: "images/art/paintings/blue-1.jpg", description: "Painting project page content coming soon." },
+              { title: "Fire", year: "2025", image: "images/art/paintings/fire-1.jpg", description: "Painting project page content coming soon." }
+            ]
+          },
+          {
+            title: "Films",
+            children: [
+              { title: "Treetops", year: "2024", image: "images/art/films/treetops-1.jpg", description: "Film project page content coming soon." },
+              { title: "Cykel", year: "2024", image: "images/art/films/cykel-1.jpg", description: "Film project page content coming soon." },
+              { title: "Color and Sound - Mead", year: "2025", image: "images/art/films/color-and-sound-mead-1.jpg", description: "Film project page content coming soon." },
+              { title: "Day of the Dead - Mead", year: "2025", image: "images/art/films/day-of-the-dead-mead-1.jpg", description: "Film project page content coming soon." },
+              { title: "Deckhand - Mead", year: "2025", image: "images/art/films/deckhand-mead-1.jpg", description: "Film project page content coming soon." },
+              { title: "Chapter 1 - Mead", year: "2026", image: "images/art/films/chapter-1-mead-1.jpg", description: "Film project page content coming soon." },
+              { title: "Dig", year: "2026", image: "images/art/films/dig-1.jpg", description: "Film project page content coming soon." }
+            ]
+          },
+          {
+            title: "Exibitions",
+            children: [
+              { title: "Sand Rooom", year: "2026", image: "images/art/exibitions/sand-roooom-1.jpg", description: "Exhibition project page content coming soon." },
+              { title: "Gurilla Gratto", year: "2025", image: "images/art/exibitions/gurilla-gratto-1.jpg", description: "Exhibition project page content coming soon." },
+              { title: "Abandon Spaces", year: "2025", image: "images/art/exibitions/abandon-spaces-1.jpg", description: "Exhibition project page content coming soon." }
+            ]
+          },
+          {
+            title: "Sculpture",
+            children: [
+              { title: "Curved Beam", year: "", image: "images/art/sculpture/curved-beam-1.jpg", description: "Sculpture project page content coming soon." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const tree = document.getElementById("tree");
+    const previewBox = document.getElementById("previewBox");
+    const previewImage = document.getElementById("previewImage");
+    const previewCaption = document.getElementById("previewCaption");
+
+    const popupOverlay = document.getElementById("popupOverlay");
+    const popup = document.getElementById("popup");
+    const popupHeader = document.getElementById("popupHeader");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupImage = document.getElementById("popupImage");
+    const popupMeta = document.getElementById("popupMeta");
+    const popupDescription = document.getElementById("popupDescription");
+    const closeTop = document.getElementById("closeTop");
+
+    const homeLink = document.getElementById("homeLink");
+
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
+
+    homeLink.onclick = () => {
+      homeLink.classList.add("visited");
+    };
+
+    function slug(text) {
+      return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+
+    function showPreview(item, button) {
+      if (!item.image) return;
+      previewImage.src = item.image;
+      previewImage.alt = item.title;
+      previewCaption.textContent = item.year ? item.title + " (" + item.year + ")" : item.title;
+      previewBox.classList.add("active");
+      button.classList.add("visited");
+    }
+
+    function hidePreview() {
+      previewBox.classList.remove("active");
+    }
+
+    function openPopup(item, button) {
+      popupTitle.textContent = item.title;
+      popupImage.src = item.image || "";
+      popupImage.alt = item.title || "";
+      popupMeta.innerHTML = `
+        <div>${item.categoryPath || ""}</div>
+        <div>${item.year ? item.year : ""}</div>
+      `;
+      popupDescription.textContent = item.description || "";
+      popupOverlay.classList.add("active");
+      popup.style.left = "12px";
+      popup.style.top = "70px";
+      button.classList.add("visited");
+    }
+
+    function closePopup() {
+      popupOverlay.classList.remove("active");
+      isDragging = false;
+    }
+
+    closeTop.onclick = closePopup;
+
+    popupOverlay.onclick = (e) => {
+      if (e.target === popupOverlay) closePopup();
+    };
+
+    document.onkeydown = (e) => {
+      if (e.key === "Escape") closePopup();
+    };
+
+    popupHeader.onmousedown = (e) => {
+      if (e.target === closeTop) return;
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startLeft = popup.offsetLeft;
+      startTop = popup.offsetTop;
+    };
+
+    document.onmousemove = (e) => {
+      if (!isDragging) return;
+      popup.style.left = startLeft + (e.clientX - startX) + "px";
+      popup.style.top = startTop + (e.clientY - startY) + "px";
+    };
+
+    document.onmouseup = () => {
+      isDragging = false;
+    };
+
+    popupHeader.ontouchstart = (e) => {
+      if (e.target === closeTop) return;
+      const t = e.touches[0];
+      isDragging = true;
+      startX = t.clientX;
+      startY = t.clientY;
+      startLeft = popup.offsetLeft;
+      startTop = popup.offsetTop;
+    };
+
+    document.ontouchmove = (e) => {
+      if (!isDragging) return;
+      const t = e.touches[0];
+      popup.style.left = startLeft + (t.clientX - startX) + "px";
+      popup.style.top = startTop + (t.clientY - startY) + "px";
+    };
+
+    document.ontouchend = () => {
+      isDragging = false;
+    };
+
+    function createNode(item, level, path) {
+      const row = document.createElement("div");
+      row.className = "tree-row level-" + level;
+
+      if (item.children && item.children.length) {
+        const btn = document.createElement("button");
+        btn.className = "tree-btn";
+        btn.textContent = item.title;
+
+        const childrenWrap = document.createElement("div");
+        childrenWrap.className = "children";
+
+        btn.onclick = () => {
+          childrenWrap.classList.toggle("open");
+          btn.classList.add("visited");
+        };
+
+        row.appendChild(btn);
+
+        item.children.forEach((child) => {
+          const nextPath = [...path, item.title];
+          childrenWrap.appendChild(createNode(child, level + 1, nextPath));
+        });
+
+        row.appendChild(childrenWrap);
+      } else {
+        const btn = document.createElement("button");
+        btn.className = "project-btn";
+        btn.textContent = item.title;
+        item.categoryPath = path.join(" / ");
+
+        btn.onmouseenter = () => showPreview(item, btn);
+        btn.onclick = () => openPopup(item, btn);
+
+        row.appendChild(btn);
+      }
+
+      return row;
+    }
+
+    data.forEach((section) => {
+      tree.appendChild(createNode(section, 0, []));
+    });
+
+    function updateClock() {
+      document.getElementById("clock").textContent = new Date().toLocaleString();
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
