@@ -11,195 +11,358 @@
       padding: 0;
     }
 
+    :root {
+      --bg: #111111;
+      --panel: #c9c3b8;
+      --panel-dark: #8f8a80;
+      --panel-light: #dfd8cc;
+      --text: #f2eee6;
+      --dark-text: #111111;
+      --line: #2b2b2b;
+      --link: #e7dfd0;
+      --muted: #b9b2a6;
+    }
+
     html, body {
       width: 100%;
       height: 100%;
-      background: #f7f4ee;
-      color: #111;
+      background: var(--bg);
+      color: var(--text);
       font-family: "Times New Roman", Times, serif;
+      overflow: hidden;
+      cursor: default;
     }
 
     body {
       position: relative;
-      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.03), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.02), transparent 25%),
+        var(--bg);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 3px 3px, 5px 5px;
+      mix-blend-mode: screen;
+      z-index: 1;
     }
 
     .page {
+      position: relative;
       width: 100%;
       height: 100vh;
-      position: relative;
-      padding: 32px;
+      padding: 28px;
+      z-index: 3;
     }
 
-    .name {
+    .top-left {
       position: absolute;
-      top: 32px;
-      left: 32px;
-      font-size: 20px;
-      font-weight: normal;
-      letter-spacing: 0.02em;
+      top: 24px;
+      left: 24px;
+    }
+
+    .name-button {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: "Times New Roman", Times, serif;
+      font-size: 22px;
+      letter-spacing: 0.03em;
       text-transform: lowercase;
       cursor: pointer;
-      text-decoration: none;
-      color: #111;
+      padding: 0;
       border-bottom: 1px solid transparent;
-      transition: border-color 0.2s ease;
     }
 
-    .name:hover {
-      border-color: #111;
+    .name-button:hover {
+      border-bottom: 1px solid var(--text);
+    }
+
+    .center-link-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      text-align: center;
     }
 
     .projects-link {
-      position: absolute;
-      top: 32px;
-      right: 32px;
-      font-size: 20px;
-      font-weight: normal;
-      text-transform: lowercase;
+      color: var(--text);
       text-decoration: none;
-      color: #111;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s ease;
+      font-size: clamp(28px, 5vw, 64px);
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      position: relative;
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid transparent;
     }
 
     .projects-link:hover {
-      border-color: #111;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .projects-sub {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .bottom-links {
       position: absolute;
-      bottom: 28px;
-      left: 32px;
-      right: 32px;
+      left: 24px;
+      right: 24px;
+      bottom: 20px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-      gap: 18px;
+      gap: 16px;
       flex-wrap: wrap;
+      z-index: 5;
     }
 
     .bottom-links a {
-      font-size: 16px;
+      color: var(--link);
       text-decoration: none;
-      color: #111;
+      font-size: 15px;
       text-transform: lowercase;
       border-bottom: 1px solid transparent;
-      transition: border-color 0.2s ease;
-      white-space: nowrap;
+      opacity: 0.95;
     }
 
     .bottom-links a:hover {
-      border-color: #111;
+      border-bottom: 1px solid var(--link);
     }
 
+    .hover-preview {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .hover-preview.active {
+      opacity: 1;
+    }
+
+    .flash-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      filter: blur(14px) grayscale(10%) contrast(1.05);
+      transform: scale(1.04);
+      mix-blend-mode: screen;
+    }
+
+    .flash-image.show {
+      opacity: 0.26;
+    }
+
+    /* old school popup */
     .popup-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.08);
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 999;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 60px;
+      background: rgba(0,0,0,0.25);
+      z-index: 20;
     }
 
     .popup-overlay.active {
       display: flex;
     }
 
-    .popup {
-      width: min(640px, 90vw);
-      background: #fdfbf6;
-      border: 1px solid #111;
-      box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.08);
-      padding: 22px 22px 26px 22px;
-      position: relative;
+    .window {
+      width: min(680px, 92vw);
+      background: var(--panel);
+      color: var(--dark-text);
+      border: 2px solid #000;
+      box-shadow:
+        3px 3px 0 #000,
+        inset 1px 1px 0 var(--panel-light),
+        inset -1px -1px 0 #6d685f;
     }
 
-    .popup-header {
+    .window-bar {
+      background: linear-gradient(to right, #2a2a2a, #4d4d4d);
+      color: #f5f1e8;
+      height: 28px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #111;
-    }
-
-    .popup-title {
-      font-size: 16px;
-      text-transform: lowercase;
-    }
-
-    .close-btn {
-      background: none;
-      border: 1px solid #111;
-      font-family: "Times New Roman", Times, serif;
+      justify-content: space-between;
+      padding: 0 6px 0 10px;
+      border-bottom: 2px solid #000;
       font-size: 14px;
-      padding: 4px 8px;
+      letter-spacing: 0.03em;
+    }
+
+    .window-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 4px;
+    }
+
+    .control-btn {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #000;
+      background: #d8d1c6;
+      color: #000;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
       cursor: pointer;
-      color: #111;
+      font-family: sans-serif;
+      padding: 0;
     }
 
-    .close-btn:hover {
-      background: #111;
-      color: #fdfbf6;
+    .control-btn:hover {
+      background: #bdb5aa;
     }
 
-    .popup-text {
-      font-size: 18px;
+    .window-body {
+      padding: 18px 18px 22px 18px;
+      background:
+        linear-gradient(rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+        var(--panel);
+      font-size: 19px;
       line-height: 1.55;
+      border-top: 1px solid #e8e1d5;
     }
 
-    @media (max-width: 700px) {
-      body {
+    .window-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 18px 18px 18px;
+      background: var(--panel);
+    }
+
+    .ok-btn {
+      min-width: 78px;
+      padding: 6px 14px;
+      border: 1px solid #000;
+      background: #d8d1c6;
+      color: #000;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow:
+        inset 1px 1px 0 #f3ede2,
+        inset -1px -1px 0 #857f75;
+    }
+
+    .ok-btn:hover {
+      background: #c6beb2;
+    }
+
+    .status-line {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 5;
+    }
+
+    @media (max-width: 800px) {
+      html, body {
         overflow: auto;
       }
 
       .page {
         min-height: 100vh;
         height: auto;
-        padding: 24px;
+        padding: 20px;
       }
 
-      .name,
-      .projects-link {
+      .top-left,
+      .status-line,
+      .center-link-wrap,
+      .bottom-links {
         position: static;
-        display: inline-block;
-        margin-bottom: 18px;
       }
 
-      .projects-link {
-        float: right;
+      .center-link-wrap {
+        transform: none;
+        margin-top: 22vh;
+        margin-bottom: 16vh;
       }
 
       .bottom-links {
-        position: static;
         margin-top: 80px;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
       }
 
-      .popup-text {
+      .popup-overlay {
+        padding: 18px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .window-body {
         font-size: 17px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <a href="#" class="name" id="openPopup">Jack van thyne</a>
+  <div class="noise"></div>
 
-    <a
-      class="projects-link"
-      href="https://jackvanthyne.org/projects.html"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      projects
-    </a>
+  <!-- flashing hover images -->
+  <div class="hover-preview" id="hoverPreview">
+    <img src="images/project1.jpg" class="flash-image" alt="">
+    <img src="images/project2.jpg" class="flash-image" alt="">
+    <img src="images/project3.jpg" class="flash-image" alt="">
+    <img src="images/project4.jpg" class="flash-image" alt="">
+    <img src="images/project5.jpg" class="flash-image" alt="">
+    <img src="images/project6.jpg" class="flash-image" alt="">
+  </div>
+
+  <div class="page">
+    <div class="top-left">
+      <button class="name-button" id="openPopup">Jack van thyne</button>
+    </div>
+
+    <div class="status-line">index / personal archive / 2026</div>
+
+    <div class="center-link-wrap">
+      <a
+        href="https://jackvanthyne.org/projects.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="projects-link"
+        id="projectsLink"
+      >
+        projects
+      </a>
+      <div class="projects-sub">selected works / objects / spaces / experiments</div>
+    </div>
 
     <div class="bottom-links">
       <a href="https://meadband.com/" target="_blank" rel="noopener noreferrer">mead</a>
@@ -209,13 +372,19 @@
     </div>
   </div>
 
+  <!-- popup -->
   <div class="popup-overlay" id="popupOverlay">
-    <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-      <div class="popup-header">
-        <div class="popup-title" id="popupTitle">about me</div>
-        <button class="close-btn" id="closePopup">close</button>
+    <div class="window" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="window-bar">
+        <div class="window-title" id="aboutTitle">About Jack Van Thyne</div>
+        <div class="window-controls">
+          <button class="control-btn" aria-label="minimize">_</button>
+          <button class="control-btn" aria-label="maximize">□</button>
+          <button class="control-btn" id="closePopupTop" aria-label="close">×</button>
+        </div>
       </div>
-      <div class="popup-text">
+
+      <div class="window-body">
         “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
         I am an artist and builder, drawn to designing and creating spaces and objects that shape how
         people interact with the world and with each other. Wood is central to my practice — alive yet
@@ -223,33 +392,78 @@
         from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
         using them to expand how experience and perception can be shaped and understood.”
       </div>
+
+      <div class="window-footer">
+        <button class="ok-btn" id="closePopupBottom">OK</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const openPopup = document.getElementById("openPopup");
-    const closePopup = document.getElementById("closePopup");
     const popupOverlay = document.getElementById("popupOverlay");
+    const openPopup = document.getElementById("openPopup");
+    const closePopupTop = document.getElementById("closePopupTop");
+    const closePopupBottom = document.getElementById("closePopupBottom");
 
-    openPopup.addEventListener("click", function (e) {
-      e.preventDefault();
+    openPopup.addEventListener("click", () => {
       popupOverlay.classList.add("active");
     });
 
-    closePopup.addEventListener("click", function () {
+    closePopupTop.addEventListener("click", () => {
       popupOverlay.classList.remove("active");
     });
 
-    popupOverlay.addEventListener("click", function (e) {
+    closePopupBottom.addEventListener("click", () => {
+      popupOverlay.classList.remove("active");
+    });
+
+    popupOverlay.addEventListener("click", (e) => {
       if (e.target === popupOverlay) {
         popupOverlay.classList.remove("active");
       }
     });
 
-    document.addEventListener("keydown", function (e) {
+    document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         popupOverlay.classList.remove("active");
       }
+    });
+
+    // flashing project hover images
+    const projectsLink = document.getElementById("projectsLink");
+    const hoverPreview = document.getElementById("hoverPreview");
+    const flashImages = document.querySelectorAll(".flash-image");
+
+    let flashInterval = null;
+    let currentIndex = 0;
+
+    function clearFlashImages() {
+      flashImages.forEach(img => img.classList.remove("show"));
+    }
+
+    function startFlashing() {
+      hoverPreview.classList.add("active");
+
+      flashInterval = setInterval(() => {
+        clearFlashImages();
+        flashImages[currentIndex].classList.add("show");
+        currentIndex = (currentIndex + 1) % flashImages.length;
+      }, 120);
+    }
+
+    function stopFlashing() {
+      hoverPreview.classList.remove("active");
+      clearFlashImages();
+      clearInterval(flashInterval);
+      flashInterval = null;
+    }
+
+    projectsLink.addEventListener("mouseenter", () => {
+      if (!flashInterval) startFlashing();
+    });
+
+    projectsLink.addEventListener("mouseleave", () => {
+      stopFlashing();
     });
   </script>
 </body>
