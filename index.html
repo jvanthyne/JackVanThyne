@@ -1,276 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Jack Van Thyne</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jack Van Thyne</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 18px 12px 64px 12px;
+      background: #dcdcdc;
+      color: #000;
+      font-family: serif;
+      font-size: 14px;
+      line-height: 1.3;
+    }
 
-<style>
-  body {
-    background: #dcdcdc;
-    color: #000;
-    font-family: serif;
-    font-size: 18px;
-    line-height: 1.35;
-    margin: 0;
-    padding: 24px 12px 80px 12px;
-  }
+    a {
+      color: #0000cc;
+      text-decoration: underline;
+    }
 
-  a {
-    color: #0000cc;
-    text-decoration: underline;
-  }
+    a:visited {
+      color: #551a8b;
+    }
 
-  a:visited {
-    color: #551a8b;
-  }
+    .wrap {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 900px;
+    }
 
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .left {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .name {
-    font-size: clamp(24px, 4vw, 32px);
-    font-weight: bold;
-  }
-
-  .projects {
-    font-size: clamp(20px, 3vw, 26px);
-  }
-
-  .headshot {
-    width: clamp(70px, 12vw, 120px);
-    height: auto;
-  }
-
-  .line {
-    border-top: 1px solid #666;
-    margin: 20px 0;
-  }
-
-  /* popup */
-  .popup-overlay {
-    position: fixed;
-    inset: 0;
-    display: none;
-    z-index: 1000;
-  }
-
-  .popup-overlay.active {
-    display: block;
-  }
-
-  .popup {
-    position: absolute;
-    width: min(600px, 90vw);
-    background: #fff;
-    border: 2px solid #000;
-    box-shadow: 4px 4px 0 #777;
-  }
-
-  .popup-header {
-    background: #000080;
-    color: #fff;
-    padding: 6px 10px;
-    font-family: sans-serif;
-    font-size: 14px;
-    cursor: grab;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .popup-header:active {
-    cursor: grabbing;
-  }
-
-  .close {
-    background: #dcdcdc;
-    border: 1px solid #000;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-
-  .popup-body {
-    padding: 18px;
-    font-size: clamp(16px, 2.5vw, 18px);
-  }
-
-  .popup-footer {
-    padding: 0 18px 18px;
-  }
-
-  .btn {
-    background: #dcdcdc;
-    border: 1px solid #000;
-    padding: 4px 12px;
-    cursor: pointer;
-  }
-
-  footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #dcdcdc;
-    border-top: 1px solid #666;
-    padding: 6px 10px;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  @media (max-width: 700px) {
-    .header {
+    .left {
+      display: flex;
       flex-direction: column;
       align-items: flex-start;
+      gap: 4px;
     }
 
-    footer {
-      position: static;
-      margin-top: 30px;
+    .main-link {
+      font-size: 16px;
+      font-weight: normal;
     }
 
-    body {
-      padding-bottom: 20px;
+    .headshot {
+      width: 95px;
+      height: auto;
+      display: block;
+      flex-shrink: 0;
     }
-  }
-</style>
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 1000;
+    }
+
+    .popup-overlay.active {
+      display: block;
+    }
+
+    .popup {
+      position: fixed;
+      top: 70px;
+      left: 12px;
+      width: min(420px, calc(100vw - 24px));
+      background: #fff;
+      border: 2px solid #000;
+      box-shadow: 3px 3px 0 #777;
+    }
+
+    .popup-header {
+      background: #000080;
+      color: #fff;
+      padding: 5px 8px;
+      font-family: sans-serif;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    .popup-close {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #000;
+      background: #dcdcdc;
+      color: #000;
+      font-size: 12px;
+      line-height: 16px;
+      padding: 0;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .popup-body {
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .popup-footer {
+      padding: 0 12px 12px 12px;
+    }
+
+    .popup-button {
+      background: #dcdcdc;
+      border: 1px solid #000;
+      padding: 3px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: serif;
+    }
+
+    .site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #dcdcdc;
+      padding: 6px 10px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .site-footer div {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 14px 10px 16px 10px;
+      }
+
+      .wrap {
+        gap: 12px;
+      }
+
+      .main-link {
+        font-size: 15px;
+      }
+
+      .headshot {
+        width: 110px;
+      }
+
+      .popup {
+        width: calc(100vw - 20px);
+        left: 10px;
+        top: 56px;
+      }
+
+      .site-footer {
+        position: static;
+        margin-top: 20px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
-
-  <div class="header">
+  <div class="wrap">
     <div class="left">
-      <a href="#" class="name" id="openPopup">Jack van thyne</a>
-      <a href="https://jackvanthyne.org/projects.html" target="_blank" class="projects">projects</a>
+      <a href="#" class="main-link" id="openPopup">Jack van thyne</a>
+      <a href="https://jackvanthyne.org/projects.html" target="_blank" rel="noopener noreferrer" class="main-link">projects</a>
     </div>
-    <img src="proheadshot.png" class="headshot" />
+
+    <img src="proheadshot.png" alt="Jack Van Thyne" class="headshot" />
   </div>
 
-  <div class="line"></div>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popup">
+      <div class="popup-header" id="popupHeader">
+        <span>About</span>
+        <button class="popup-close" id="closeTop">×</button>
+      </div>
 
-</div>
+      <div class="popup-body">
+        “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
+        I am an artist and builder, drawn to designing and creating spaces and objects that shape how
+        people interact with the world and with each other. Wood is central to my practice — alive yet
+        static, full of character, and responsive to manipulation. I am fascinated by the entire process,
+        from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
+        using them to expand how experience and perception can be shaped and understood.”
+      </div>
 
-<!-- popup -->
-<div class="popup-overlay" id="overlay">
-  <div class="popup" id="popup" style="top:100px; left:100px;">
-    <div class="popup-header" id="dragHandle">
-      <span>About</span>
-      <button class="close" id="closeTop">×</button>
-    </div>
-
-    <div class="popup-body">
-      “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
-      I am an artist and builder, drawn to designing and creating spaces and objects that shape how
-      people interact with the world and with each other. Wood is central to my practice — alive yet
-      static, full of character, and responsive to manipulation. I am fascinated by the entire process,
-      from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
-      using them to expand how experience and perception can be shaped and understood.”
-    </div>
-
-    <div class="popup-footer">
-      <button class="btn" id="closeBottom">OK</button>
+      <div class="popup-footer">
+        <button class="popup-button" id="closeBottom">OK</button>
+      </div>
     </div>
   </div>
-</div>
 
-<footer>
-  <div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
-  <div id="clock"></div>
-</footer>
+  <footer class="site-footer">
+    <div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
+    <div id="clock"></div>
+  </footer>
 
-<script>
-  const overlay = document.getElementById("overlay");
-  const popup = document.getElementById("popup");
+  <script>
+    const openPopup = document.getElementById("openPopup");
+    const popupOverlay = document.getElementById("popupOverlay");
+    const popup = document.getElementById("popup");
+    const popupHeader = document.getElementById("popupHeader");
+    const closeTop = document.getElementById("closeTop");
+    const closeBottom = document.getElementById("closeBottom");
 
-  document.getElementById("openPopup").onclick = (e) => {
-    e.preventDefault();
-    overlay.classList.add("active");
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
 
-    // center on open
-    popup.style.top = "20%";
-    popup.style.left = "50%";
-    popup.style.transform = "translateX(-50%)";
-  };
+    function openAbout(e) {
+      e.preventDefault();
+      popupOverlay.classList.add("active");
 
-  function closePopup() {
-    overlay.classList.remove("active");
-  }
+      if (window.innerWidth <= 600) {
+        popup.style.left = "10px";
+        popup.style.top = "56px";
+      } else {
+        popup.style.left = "12px";
+        popup.style.top = "70px";
+      }
+    }
 
-  document.getElementById("closeTop").onclick = closePopup;
-  document.getElementById("closeBottom").onclick = closePopup;
+    function closeAbout() {
+      popupOverlay.classList.remove("active");
+      isDragging = false;
+    }
 
-  overlay.onclick = (e) => {
-    if (e.target === overlay) closePopup();
-  };
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      startX = clientX;
+      startY = clientY;
+      startLeft = popup.offsetLeft;
+      startTop = popup.offsetTop;
+    }
 
-  document.onkeydown = (e) => {
-    if (e.key === "Escape") closePopup();
-  };
+    function moveDrag(clientX, clientY) {
+      if (!isDragging) return;
 
-  // drag
-  let isDragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
+      const dx = clientX - startX;
+      const dy = clientY - startY;
 
-  const handle = document.getElementById("dragHandle");
+      let newLeft = startLeft + dx;
+      let newTop = startTop + dy;
 
-  handle.onmousedown = (e) => {
-    isDragging = true;
-    popup.style.transform = "none";
-    offsetX = e.clientX - popup.offsetLeft;
-    offsetY = e.clientY - popup.offsetTop;
-  };
+      const maxLeft = window.innerWidth - popup.offsetWidth;
+      const maxTop = window.innerHeight - popup.offsetHeight;
 
-  document.onmousemove = (e) => {
-    if (!isDragging) return;
-    popup.style.left = (e.clientX - offsetX) + "px";
-    popup.style.top = (e.clientY - offsetY) + "px";
-  };
+      if (newLeft < 0) newLeft = 0;
+      if (newTop < 0) newTop = 0;
+      if (newLeft > maxLeft) newLeft = Math.max(0, maxLeft);
+      if (newTop > maxTop) newTop = Math.max(0, maxTop);
 
-  document.onmouseup = () => isDragging = false;
+      popup.style.left = newLeft + "px";
+      popup.style.top = newTop + "px";
+    }
 
-  // touch drag
-  handle.ontouchstart = (e) => {
-    isDragging = true;
-    popup.style.transform = "none";
-    offsetX = e.touches[0].clientX - popup.offsetLeft;
-    offsetY = e.touches[0].clientY - popup.offsetTop;
-  };
+    openPopup.addEventListener("click", openAbout);
+    closeTop.addEventListener("click", closeAbout);
+    closeBottom.addEventListener("click", closeAbout);
 
-  document.ontouchmove = (e) => {
-    if (!isDragging) return;
-    popup.style.left = (e.touches[0].clientX - offsetX) + "px";
-    popup.style.top = (e.touches[0].clientY - offsetY) + "px";
-  };
+    popupOverlay.addEventListener("click", function (e) {
+      if (e.target === popupOverlay) closeAbout();
+    });
 
-  document.ontouchend = () => isDragging = false;
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAbout();
+    });
 
-  // clock
-  function updateClock() {
-    document.getElementById("clock").textContent = new Date().toLocaleString();
-  }
-  updateClock();
-  setInterval(updateClock, 1000);
-</script>
+    popupHeader.addEventListener("mousedown", function (e) {
+      if (e.target === closeTop) return;
+      startDrag(e.clientX, e.clientY);
+      e.preventDefault();
+    });
 
+    document.addEventListener("mousemove", function (e) {
+      moveDrag(e.clientX, e.clientY);
+    });
+
+    document.addEventListener("mouseup", function () {
+      isDragging = false;
+    });
+
+    popupHeader.addEventListener("touchstart", function (e) {
+      if (e.target === closeTop) return;
+      const touch = e.touches[0];
+      startDrag(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    document.addEventListener("touchmove", function (e) {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      moveDrag(touch.clientX, touch.clientY);
+    }, { passive: true });
+
+    document.addEventListener("touchend", function () {
+      isDragging = false;
+    });
+
+    window.addEventListener("resize", function () {
+      const maxLeft = Math.max(0, window.innerWidth - popup.offsetWidth);
+      const maxTop = Math.max(0, window.innerHeight - popup.offsetHeight);
+
+      if (popup.offsetLeft > maxLeft) popup.style.left = maxLeft + "px";
+      if (popup.offsetTop > maxTop) popup.style.top = maxTop + "px";
+    });
+
+    function updateClock() {
+      document.getElementById("clock").textContent = new Date().toLocaleString();
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
 </body>
 </html>
