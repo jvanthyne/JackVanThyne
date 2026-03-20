@@ -149,7 +149,7 @@
   <div class="wrap">
     <div class="left">
       <a href="#" class="main-link" id="openPopup">Jack van thyne</a>
-      <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link">projects</a>
+      <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link" id="projectsLink">Projects</a>
     </div>
 
     <img src="proheadshot.png" class="headshot" />
@@ -180,6 +180,7 @@
 
   <script>
     const openPopup = document.getElementById("openPopup");
+    const projectsLink = document.getElementById("projectsLink");
     const popupOverlay = document.getElementById("popupOverlay");
     const popup = document.getElementById("popup");
     const popupHeader = document.getElementById("popupHeader");
@@ -194,6 +195,10 @@
       openPopup.classList.add("visited");
       popup.style.left = "12px";
       popup.style.top = "70px";
+    };
+
+    projectsLink.onclick = () => {
+      projectsLink.classList.add("visited");
     };
 
     function closePopup() {
