@@ -24,12 +24,16 @@
       color: #551a8b;
     }
 
+    .visited {
+      color: #551a8b !important;
+    }
+
     .wrap {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 16px;
-      max-width: 900px;
+      gap: 24px;
+      max-width: 980px;
     }
 
     .left {
@@ -37,6 +41,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 4px;
+      flex-shrink: 0;
     }
 
     .main-link {
@@ -44,69 +49,39 @@
       cursor: pointer;
     }
 
-    .visited {
-      color: #551a8b !important;
-    }
-
-    .headshot {
+    .media-box {
       width: 95px;
-      height: auto;
-      display: block;
       flex-shrink: 0;
     }
 
-    .popup-overlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 1000;
-    }
-
-    .popup-overlay.active {
+    .headshot,
+    .headshot-video {
+      width: 95px;
+      height: auto;
       display: block;
     }
 
-    .popup {
-      position: fixed;
-      top: 70px;
-      left: 12px;
-      width: min(420px, calc(100vw - 24px));
-      background: #fff;
-      border: 2px solid #000;
-      box-shadow: 3px 3px 0 #777;
+    .headshot-video {
+      display: none;
     }
 
-    .popup-header {
-      background: #c0c0c0;
-      color: #000;
-      padding: 5px 8px;
-      font-family: sans-serif;
-      font-size: 12px;
+    .info-panel {
+      flex: 1;
+      min-height: 140px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: move;
-      user-select: none;
-      touch-action: none;
-      border-bottom: 1px solid #000;
+      align-items: flex-start;
+      justify-content: flex-start;
     }
 
-    .popup-close {
-      width: 18px;
-      height: 18px;
-      border: 1px solid #000;
-      background: #e00000;
-      color: #fff;
-      font-size: 12px;
-      line-height: 16px;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    .popup-body {
-      padding: 12px;
+    .info-text {
+      display: none;
+      max-width: 520px;
       font-size: 13px;
       line-height: 1.4;
+    }
+
+    .info-text.active {
+      display: block;
     }
 
     .site-footer {
@@ -121,19 +96,24 @@
       justify-content: space-between;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       .wrap {
-        gap: 12px;
+        flex-direction: column;
+        gap: 14px;
       }
 
-      .headshot {
+      .media-box,
+      .headshot,
+      .headshot-video {
         width: 110px;
       }
 
-      .popup {
-        width: calc(100vw - 20px);
-        left: 10px;
-        top: 56px;
+      .info-panel {
+        min-height: auto;
+      }
+
+      .info-text {
+        max-width: 100%;
       }
 
       .site-footer {
@@ -149,21 +129,25 @@
 <body>
   <div class="wrap">
     <div class="left">
-      <a href="#" class="main-link" id="openPopup">Jack van thyne</a>
+      <a href="#" class="main-link" id="openInfo">Jack Van Thyne</a>
       <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link" id="projectsLink">Projects</a>
     </div>
 
-    <img src="proheadshot.png" class="headshot" />
-  </div>
+    <div class="media-box">
+      <img src="proheadshot.png" class="headshot" id="headshotImage" alt="Headshot" />
+      <video
+        src="Headshot.mp4"
+        class="headshot-video"
+        id="headshotVideo"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      ></video>
+    </div>
 
-  <div class="popup-overlay" id="popupOverlay">
-    <div class="popup" id="popup">
-      <div class="popup-header" id="popupHeader">
-        <span>Jack Van Thyne</span>
-        <button class="popup-close" id="closeTop">×</button>
-      </div>
-
-      <div class="popup-body">
+    <div class="info-panel">
+      <div class="info-text" id="infoText">
         “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
         I am an artist and builder, drawn to designing and creating spaces and objects that shape how
         people interact with the world and with each other. Wood is central to my practice — alive yet
@@ -180,78 +164,40 @@
   </footer>
 
   <script>
-    const openPopup = document.getElementById("openPopup");
+    const openInfo = document.getElementById("openInfo");
     const projectsLink = document.getElementById("projectsLink");
-    const popupOverlay = document.getElementById("popupOverlay");
-    const popup = document.getElementById("popup");
-    const popupHeader = document.getElementById("popupHeader");
-    const closeTop = document.getElementById("closeTop");
+    const infoText = document.getElementById("infoText");
+    const headshotImage = document.getElementById("headshotImage");
+    const headshotVideo = document.getElementById("headshotVideo");
 
-    let isDragging = false;
-    let startX, startY, startLeft, startTop;
-
-    openPopup.onclick = (e) => {
-      e.preventDefault();
-      popupOverlay.classList.add("active");
-      openPopup.classList.add("visited");
-      popup.style.left = "12px";
-      popup.style.top = "70px";
-    };
-
-    projectsLink.onclick = () => {
-      projectsLink.classList.add("visited");
-    };
-
-    function closePopup() {
-      popupOverlay.classList.remove("active");
-      isDragging = false;
+    function showVideo() {
+      headshotImage.style.display = "none";
+      headshotVideo.style.display = "block";
+      headshotVideo.play().catch(() => {});
     }
 
-    closeTop.onclick = closePopup;
+    function hideVideo() {
+      headshotVideo.pause();
+      headshotVideo.currentTime = 0;
+      headshotVideo.style.display = "none";
+      headshotImage.style.display = "block";
+    }
 
-    popupOverlay.onclick = (e) => {
-      if (e.target === popupOverlay) closePopup();
-    };
+    openInfo.addEventListener("click", function (e) {
+      e.preventDefault();
+      infoText.classList.add("active");
+      openInfo.classList.add("visited");
+    });
 
-    document.onkeydown = (e) => {
-      if (e.key === "Escape") closePopup();
-    };
+    projectsLink.addEventListener("click", function () {
+      projectsLink.classList.add("visited");
+    });
 
-    popupHeader.onmousedown = (e) => {
-      if (e.target === closeTop) return;
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      startLeft = popup.offsetLeft;
-      startTop = popup.offsetTop;
-    };
+    openInfo.addEventListener("mouseenter", showVideo);
+    openInfo.addEventListener("mouseleave", hideVideo);
 
-    document.onmousemove = (e) => {
-      if (!isDragging) return;
-      popup.style.left = startLeft + (e.clientX - startX) + "px";
-      popup.style.top = startTop + (e.clientY - startY) + "px";
-    };
-
-    document.onmouseup = () => isDragging = false;
-
-    popupHeader.ontouchstart = (e) => {
-      if (e.target === closeTop) return;
-      const t = e.touches[0];
-      isDragging = true;
-      startX = t.clientX;
-      startY = t.clientY;
-      startLeft = popup.offsetLeft;
-      startTop = popup.offsetTop;
-    };
-
-    document.ontouchmove = (e) => {
-      if (!isDragging) return;
-      const t = e.touches[0];
-      popup.style.left = startLeft + (t.clientX - startX) + "px";
-      popup.style.top = startTop + (t.clientY - startY) + "px";
-    };
-
-    document.ontouchend = () => isDragging = false;
+    headshotImage.addEventListener("mouseenter", showVideo);
+    headshotVideo.addEventListener("mouseleave", hideVideo);
 
     function updateClock() {
       document.getElementById("clock").textContent = new Date().toLocaleString();
