@@ -24,6 +24,8 @@ a, button {
   font: inherit;
   cursor: pointer;
   text-align: left;
+  display: block; /* ensures each project is its own line */
+  margin-bottom: 2px;
 }
 
 .visited { color: #551a8b !important; }
@@ -36,7 +38,7 @@ a, button {
 
 .nav { width: 320px; }
 
-.section, .subsection { margin-bottom: 6px; }
+.section, .subsection { margin-bottom: 8px; }
 
 .section-children { padding-left: 14px; }
 .subsection-children { padding-left: 20px; }
@@ -98,7 +100,7 @@ a, button {
 <div class="page">
 
 <div class="nav">
-<a href="index.html">back</a>
+<a href="index.html">Back</a>
 
 <div class="section">
 <button onclick="toggle(this)">Art</button>
@@ -119,6 +121,7 @@ a, button {
 <button onclick="toggle(this)">Films</button>
 <div class="subsection-children">
 <button onclick="loadVideo('hWi82rb9htU',this)">Treetops</button>
+<button onclick="loadVideo('O1BMu3R6Spc',this)">Cykel</button>
 <button onclick="loadVideo('xrAxkaNebeE',this)">Day of the Dead</button>
 <button onclick="loadVideo('1jONL0xIJhI',this)">Deckhand</button>
 <button onclick="loadVideo('ka_RsPmn0Mk',this)">Chapter 1</button>
@@ -137,46 +140,6 @@ a, button {
 <button onclick="loadProject('abandoned',this)">Abandoned Spaces</button>
 <button onclick="loadProject('time',this)">Time Machine</button>
 <button onclick="loadProject('fallen',this)">Fallen to Functional</button>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="section">
-<button onclick="toggle(this)">Design / Build</button>
-<div class="section-children">
-
-<div class="subsection">
-<button onclick="toggle(this)">Furniture</button>
-<div class="subsection-children">
-<button onclick="loadProject('dovetail',this)">Plywood Dovetail Chair</button>
-<button onclick="loadProject('ced',this)">CED Plywood Chair</button>
-<button onclick="loadProject('drafting',this)">Drafting Table</button>
-<button onclick="loadProject('curved',this)">Curved Oak Chair</button>
-<button onclick="loadProject('tables',this)">Outdoor Tables</button>
-<button onclick="loadProject('oak',this)">Solid Oak Chair</button>
-<button onclick="loadProject('pine',this)">Solid Pine Chair</button>
-<button onclick="loadProject('gridtables',this)">Plywood Grid Tables</button>
-<button onclick="loadProject('bench',this)">Redwood Bench</button>
-<button onclick="loadProject('beam',this)">Redwood Beam Stool</button>
-<button onclick="loadProject('scrapbench',this)">Scrap Bench</button>
-</div>
-</div>
-
-<div class="subsection">
-<button onclick="toggle(this)">Structures</button>
-<div class="subsection-children">
-<button onclick="loadProject('container',this)">Shipping Container</button>
-<button onclick="loadProject('pergola',this)">Pergola</button>
-<button onclick="loadProject('sauna',this)">Floating Sauna</button>
-<button onclick="loadProject('steam',this)">Steam Pavilion</button>
-<button onclick="loadProject('greenhouse',this)">Greenhouse</button>
-<button onclick="loadProject('mobilesauna',this)">Mobile Sauna</button>
-<button onclick="loadProject('stage',this)">Circle Stage</button>
-<button onclick="loadProject('shade',this)">Shade Structure II</button>
-<button onclick="loadProject('scrapsauna',this)">Scrap Sauna</button>
-<button onclick="loadProject('dock',this)">Submerged Dock</button>
 </div>
 </div>
 
@@ -225,28 +188,7 @@ function loadProject(key,el){
     grotto:["Guerrilla Grotto","2025","A series of eight guerrilla furniture installations across UC Berkeley built from found materials. Hidden spaces for sitting, gathering, and pause."],
     abandoned:["Abandoned Spaces","2025","Exhibition in a basement space in Denmark exploring occupation and absence."],
     time:["Time Machine","2026","Time and space as lived and recorded examining memory, documentation, and perception."],
-    fallen:["Fallen to Functional","2026","Transforms fallen UC Berkeley trees into site-specific furniture remaining grounded in place."],
-    dovetail:["Plywood Dovetail Chair","2025","Built using a single sheet of plywood. Flat-pack, no glue, assembled through dovetail joinery."],
-    ced:["CED Plywood Chair","2023","Winning UC Berkeley chair competition design, CNC fabricated and installed in the library."],
-    drafting:["Drafting Table","2023","Custom table built from reclaimed wood for hybrid workspace use."],
-    curved:["Curved Oak Chair","2023","Experiment in steam bending and joinery informed by material failure."],
-    tables:["Outdoor Tables","2023","Modular tables built from scrap wood for beach gatherings."],
-    oak:["Solid Oak Chair","2026","Carved from a salvaged campus log retaining original mass."],
-    pine:["Solid Pine Chair","2026","Solid block stool revealing angular geometry from fire-cleared pine."],
-    gridtables:["Plywood Grid Tables","2025","Large tables from construction scrap designed for durability."],
-    bench:["Redwood Bench","2026","Milled from fallen UC Berkeley trees, retaining natural curvature."],
-    beam:["Redwood Beam Stool","2026","Heavy singular object formed from salvaged redwood log."],
-    scrapbench:["Scrap Bench","2025","Built from salvaged redwood siding into a simple durable bench."],
-    container:["Shipping Container","2025","Converted container into compact living space exploring reuse."],
-    pergola:["Pergola","2022","Lattice structure using milled members for shade and growth."],
-    sauna:["Floating Sauna","2025","Wood-fired communal sauna floating in Copenhagen harbor."],
-    steam:["Steam Pavilion","2024","Interactive structure exploring fog, water, and ritual."],
-    greenhouse:["Greenhouse","2025","Built entirely from recycled materials for plant growth."],
-    mobilesauna:["Mobile Sauna","2025","Trailer-mounted sauna designed for communal use."],
-    stage:["Circle Stage","2025","Circular performance stage using plywood grid structure."],
-    shade:["Shade Structure II","2025","Refined pergola using Japanese joinery."],
-    scrapsauna:["Scrap Sauna","2026","Sauna built from found materials and billboard tarp insulation."],
-    dock:["Submerged Dock","2025","Dock designed to partially submerge with the tide."]
+    fallen:["Fallen to Functional","2026","Transforms fallen UC Berkeley trees into site-specific furniture remaining grounded in place."]
   };
 
   const p = data[key];
