@@ -49,21 +49,30 @@
       cursor: pointer;
     }
 
+    /* container stays same */
     .media-box {
-      width: 180px;
+      width: 95px;
       flex-shrink: 0;
+      position: relative;
     }
 
-    .headshot,
-    .headshot-video {
-      width: 180px;
-      height: 180px;
-      object-fit: cover;
+    /* IMAGE stays small */
+    .headshot {
+      width: 95px;
+      height: auto;
       display: block;
     }
 
+    /* VIDEO becomes dominant */
     .headshot-video {
       display: none;
+      width: 220px;
+      height: 220px;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
     }
 
     .info-panel {
@@ -102,18 +111,9 @@
         gap: 16px;
       }
 
-      .media-box {
-        width: 220px;
-      }
-
-      .headshot,
       .headshot-video {
-        width: 220px;
-        height: 220px;
-      }
-
-      .info-text {
-        max-width: 100%;
+        width: 260px;
+        height: 260px;
       }
 
       .site-footer {
@@ -178,11 +178,12 @@
 
       isOpen = !isOpen;
 
+      // FORCE purple after first click
+      openInfo.classList.add("visited");
+
       if (isOpen) {
         infoText.classList.add("active");
-        openInfo.classList.add("visited");
 
-        headshotImage.style.display = "none";
         headshotVideo.style.display = "block";
         headshotVideo.currentTime = 0;
         headshotVideo.play().catch(() => {});
@@ -191,7 +192,6 @@
 
         headshotVideo.pause();
         headshotVideo.style.display = "none";
-        headshotImage.style.display = "block";
       }
     });
 
