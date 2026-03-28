@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,40 +39,52 @@
     .page {
       display: flex;
       align-items: flex-start;
-      gap: 28px;
+      gap: 34px;
       max-width: 1180px;
     }
 
     .nav {
-      width: 300px;
+      width: 320px;
       flex-shrink: 0;
     }
 
     .nav-title {
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .section,
+    .section {
+      margin-bottom: 10px;
+    }
+
     .subsection {
-      margin-bottom: 6px;
+      margin-top: 6px;
     }
 
     .section-title,
     .subsection-title,
     .project-link {
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .section-children,
     .subsection-children {
       display: none;
-      padding-left: 18px;
     }
 
     .section.open > .section-children,
     .subsection.open > .subsection-children {
       display: block;
+    }
+
+    .section-children {
+      padding-left: 16px;
+      margin-top: 5px;
+    }
+
+    .subsection-children {
+      padding-left: 18px;
+      margin-top: 4px;
     }
 
     .content {
@@ -92,10 +103,10 @@
 
     .project-title {
       font-size: 16px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .project-meta {
+    .project-year {
       margin-bottom: 10px;
     }
 
@@ -140,7 +151,7 @@
     @media (max-width: 800px) {
       .page {
         flex-direction: column;
-        gap: 18px;
+        gap: 20px;
       }
 
       .nav {
@@ -166,14 +177,13 @@
   <div class="page">
     <div class="nav">
       <div class="nav-title">
-        <a href="index.html" id="homeLink">Jack Van Thyne</a><br />
-        <a href="#" class="visited">Projects</a>
+        <a href="index.html" id="backLink">back</a>
       </div>
 
-      <div class="section open">
+      <div class="section">
         <button class="link-button section-title" data-toggle="section">Art</button>
         <div class="section-children">
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Paintings</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="redwood">Redwood</button>
@@ -184,7 +194,7 @@
             </div>
           </div>
 
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Films</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="treetops">Treetops</button>
@@ -200,7 +210,7 @@
             </div>
           </div>
 
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Exhibitions</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="guerrilla-grotto">Guerrilla Grotto</button>
@@ -212,10 +222,10 @@
         </div>
       </div>
 
-      <div class="section open">
+      <div class="section">
         <button class="link-button section-title" data-toggle="section">Design / Build</button>
         <div class="section-children">
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Furniture</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="plywood-dovetail-chair">Plywood Dovetail Chair</button>
@@ -232,7 +242,7 @@
             </div>
           </div>
 
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Structures</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="shipping-container-dwelling">Shipping Container Dwelling</button>
@@ -248,7 +258,7 @@
             </div>
           </div>
 
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Lighting</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="steel-pendants">Steel Pendants</button>
@@ -259,7 +269,7 @@
             </div>
           </div>
 
-          <div class="subsection open">
+          <div class="subsection">
             <button class="link-button subsection-title" data-toggle="subsection">Random</button>
             <div class="subsection-children">
               <button class="link-button project-link" data-project="cutting-board">Cutting Board</button>
@@ -286,119 +296,100 @@
     const projects = {
       "redwood": {
         title: "Redwood",
-        number: "1",
         year: "2025",
         description: "Inspired by a road trip through Northern California. Resting within a redwood grove, this piece reflects on scale, stillness, and presence."
       },
       "dance": {
         title: "Dance",
-        number: "2",
         year: "2023",
         description: "An abstract study of movement and the human form exploring rhythm, gesture, and expression."
       },
       "blue": {
         title: "Blue",
-        number: "3",
         year: "2025",
         description: "Inspired by the ocean, a study of subtle movement, depth, and atmosphere."
       },
       "fire": {
         title: "Fire",
-        number: "4",
         year: "2025",
         description: "A response to wildfire focused on force, destruction, and transformation."
       },
       "living-wood": {
         title: "Living Wood",
-        number: "5",
         year: "2025",
         description: "Painting paired with a furniture piece exploring growth and form, waste and life, geometry and the natural."
       },
 
       "treetops": {
         title: "Treetops",
-        number: "1",
         year: "2024",
         youtube: "hWi82rb9htU"
       },
       "cykel": {
         title: "Cykel",
-        number: "2",
         year: "2024",
-        note: "This link is currently a YouTube Studio edit link. Replace it with the public YouTube watch link to embed the film.",
+        note: "Replace this with the public YouTube link to embed the film.",
         externalLink: "https://studio.youtube.com/video/O1BMu3R6Spc/edit"
       },
       "day-of-the-dead": {
         title: "Day of the Dead - MEAD",
-        number: "4",
         year: "2025",
         youtube: "xrAxkaNebeE"
       },
       "deckhand": {
         title: "Deckhand - MEAD",
-        number: "5",
         year: "2025",
         youtube: "1jONL0xIJhI"
       },
       "chapter-1": {
         title: "Chapter 1 - MEAD",
-        number: "6",
         year: "2026",
         youtube: "ka_RsPmn0Mk"
       },
       "dig": {
         title: "Dig",
-        number: "7",
         year: "2026",
         youtube: "vnU5Fm2hM4M"
       },
       "chapter-2": {
         title: "Chapter 2 - MEAD",
-        number: "8",
         year: "2026",
         youtube: "XlLYzm4eAcQ"
       },
       "chapter-3": {
         title: "Chapter 3 - MEAD",
-        number: "9",
         year: "2026",
         youtube: "Qbsi1yu2uzw"
       },
       "comfort": {
         title: "Comfort",
-        number: "10",
         year: "2026",
         youtube: "HOAjy1_L9gU"
       },
       "jargon": {
         title: "Jargon - MEAD",
-        number: "12",
         year: "2026",
         youtube: "uoApaNS5F2I"
       },
 
       "guerrilla-grotto": {
         title: "Guerrilla Grotto",
-        number: "1",
         year: "2025",
         description: "A series of eight guerrilla furniture installations across UC Berkeley built from found materials. Hidden spaces for sitting, gathering, and pause. Accompanied by a book and website.",
         externalLink: "https://guerrillagrotto.space"
       },
       "abandoned-spaces": {
         title: "Abandoned Spaces",
-        number: "2",
         year: "2025",
         description: "Exhibition in a basement space in Denmark including a short film, Fleeting, exploring occupation and absence."
       },
       "time-machine": {
         title: "Time Machine",
-        number: "3",
         year: "2026",
         description: "Time and space as lived and recorded examining memory, documentation, and perception."
       },
       "fallen-to-functional": {
         title: "Fallen to Functional",
-        number: "4",
         year: "2026",
         description: "Transforms fallen UC Berkeley trees into site-specific furniture remaining grounded in place.",
         externalLink: "https://jackvanthyne.org/FallentoFunctional.html"
@@ -406,172 +397,144 @@
 
       "plywood-dovetail-chair": {
         title: "Plywood Dovetail Chair",
-        number: "01001",
         year: "2025",
         description: "Built during a semester in Denmark using a single sheet of plywood. Designed to pack flat, with no glue, and assembled through hand-cut dovetail joinery."
       },
       "ced-plywood-chair": {
         title: "CED Plywood Chair",
-        number: "01002",
         year: "2023",
         description: "Winning design for UC Berkeley’s CED Chair Competition. A modular laminated plywood chair fabricated with CNC, now installed in the Environmental Design Library."
       },
       "drafting-and-computing-table": {
         title: "Drafting and Computing Table",
-        number: "01003",
         year: "2023",
         description: "Custom table built from reclaimed wood, combining workspace for drafting and computing. Designed to fit precisely within the constraints of a small room."
       },
       "curved-oak-chair": {
         title: "Curved Oak Chair",
-        number: "01004",
         year: "2023",
         description: "Experiment in steam bending and joinery. Material failure due to humidity informed a deeper understanding of wood behavior."
       },
       "outdoor-tables": {
         title: "Outdoor Tables",
-        number: "01005",
         year: "2023",
         description: "Modular tables built from scrap wood for a beach gathering. Detachable legs allow transport and reassembly across varied sites."
       },
       "solid-oak-chair": {
         title: "Solid Oak Chair",
-        number: "01006",
         year: "2026",
         description: "Carved from a salvaged campus log using a chainsaw. Retains the mass of the original form; exhibited and awarded in a design showcase."
       },
       "solid-pine-chair": {
         title: "Solid Pine Chair",
-        number: "01007",
         year: "2026",
         description: "Solid block stool made from ponderosa pine removed for fire clearing. Milled and cut to reveal angular geometry."
       },
       "plywood-grid-tables": {
         title: "Plywood Grid Tables",
-        number: "01008",
         year: "2025",
         description: "Set of two 8-foot tables built from construction-site scrap plywood. Traffic control signage repurposed as legs; designed for durability and flat-pack transport."
       },
       "redwood-bench": {
         title: "Redwood Bench",
-        number: "01009",
         year: "2026",
         description: "Milled from fallen UC Berkeley trees. Retains live edge and natural curvature, shaped from a single 12-foot log."
       },
       "redwood-beam-stool": {
         title: "Redwood Beam Stool",
-        number: "01010",
         year: "2026",
         description: "Formed from a salvaged redwood log. Milled, planed, and joined into a heavy, singular object from one 8-foot section."
       },
       "scrap-bench": {
         title: "Scrap Bench",
-        number: "01011",
         year: "2025",
         description: "Built from salvaged redwood siding and framing from a demolished Berkeley Hills house. Milled and assembled into a simple, durable bench."
       },
 
       "shipping-container-dwelling": {
         title: "Shipping Container Dwelling",
-        number: "02001",
         year: "2025",
         description: "Converted a storage container into a compact living space with insulation, windows, electrical, and doors. Explores adaptive reuse and small-scale habitation."
       },
       "2x2-4x4-pergola": {
         title: "2x2 4x4 Pergola",
-        number: "02002",
         year: "2022",
         description: "First larger-scale structure using self-milled 2x2 and 4x4 members. Half-lap joinery and lattice create a framework for shade and plant growth."
       },
       "floating-sauna": {
         title: "Floating Sauna",
-        number: "02003",
         year: "2025",
         description: "Design-build sauna constructed on an old barge in Copenhagen. A wood-fired, communal space floating within the harbor."
       },
       "steam-pavilion": {
         title: "Steam Pavilion",
-        number: "02004",
         year: "2024",
         description: "Built from reclaimed redwood decking and fencing. Inspired by fog and sauna rituals; installed as an interactive structure at the UC Botanical Garden."
       },
       "greenhouse": {
         title: "Greenhouse",
-        number: "02005",
         year: "2025",
         description: "Designed and built using materials sourced entirely from a Copenhagen recycling center. Supports small-scale plant growth."
       },
       "mobile-sauna": {
         title: "Mobile Sauna",
-        number: "02006",
         year: "2025",
         description: "Trailer-mounted sauna built collaboratively in Denmark. Designed to host 8–10 people."
       },
       "circle-stage": {
         title: "Circle Stage",
-        number: "02007",
         year: "2025",
         description: "Circular stage for performances. Constructed from plywood and 2x6 framing in a grid structure."
       },
       "shade-structure-ii": {
         title: "Shade Structure II",
-        number: "02008",
         year: "2025",
         description: "Second iteration of a pergola, incorporating refined Japanese joinery. Built in Berkeley."
       },
       "scrap-sauna": {
         title: "Scrap Sauna",
-        number: "02009",
         year: "2026",
         description: "Built entirely from found materials. Wood frame wrapped in a sewn billboard tarp for insulation, heated by a modified wood stove."
       },
       "submerged-dock": {
         title: "Submerged Dock",
-        number: "02010",
         year: "2025",
         description: "Small dock built in a Copenhagen park using scrap wood. Designed to partially submerge with the tide."
       },
 
       "steel-pendants": {
         title: "Steel Pendants",
-        number: "03001",
         year: "2023",
         description: "Built from scrap steel for a bedroom setting. Hardwired fixtures made from thin plate steel and 1/2&quot; tubing."
       },
       "soji-light": {
         title: "Soji Light",
-        number: "03002",
         year: "2024",
         description: "Lighting fixture inspired by Japanese shōji screens. Built from reclaimed materials after initial failure, balancing fragility and structure."
       },
       "grid-light": {
         title: "Grid Light",
-        number: "03003",
         year: "2024",
         description: "Lighting piece using reclaimed headboard wood and precise joinery. Explores structure, repetition, and light diffusion."
       },
       "mini-wood-mushroom": {
         title: "Mini Wood Mushroom",
-        number: "03004",
         year: "2026",
         description: "Made from scrap wood sourced from Berkeley Hills homes. Uses a laser-cut grid, paper shade, and redwood exterior."
       },
       "standing-grid": {
         title: "Standing Grid",
-        number: "03005",
         year: "2026",
         description: "Self-standing light made from scrap wood and laser-cut cardstock. Plugs directly into the wall."
       },
 
       "cutting-board": {
         title: "Cutting Board",
-        number: "04001",
         year: "2023",
         description: "Made from reclaimed cabinet faces found on the curb. A quick transformation of discarded material into a functional kitchen object."
       },
       "3716-fortunato-way": {
         title: "3716 Fortunato Way",
-        number: "04001",
         year: "2022",
         description: "This project occurred during COVID when I renovated and upgraded my home’s yard. Designed and built a composite deck, custom lighting, irrigation system, and planting scheme, completing all labor myself over three months."
       }
@@ -606,7 +569,7 @@
 
       let html = `
         <div class="project-title">${p.title}</div>
-        <div class="project-meta"># ${p.number}<br />${p.year}</div>
+        <div class="project-year">${p.year}</div>
       `;
 
       if (p.youtube) {
