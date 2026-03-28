@@ -4,24 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jack Van Thyne</title>
+
   <style>
     body {
       margin: 0;
       padding: 18px 12px 64px 12px;
       background: #dcdcdc;
-      color: #000;
       font-family: serif;
       font-size: 14px;
-      line-height: 1.3;
     }
 
     a {
       color: #0000cc;
       text-decoration: underline;
-    }
-
-    a:visited {
-      color: #551a8b;
     }
 
     .visited {
@@ -30,8 +25,6 @@
 
     .wrap {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
       gap: 28px;
       max-width: 1000px;
     }
@@ -39,172 +32,101 @@
     .left {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
       gap: 4px;
-      flex-shrink: 0;
     }
 
-    .main-link {
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* container stays same */
     .media-box {
-      width: 95px;
-      flex-shrink: 0;
       position: relative;
+      width: 95px;
     }
 
-    /* IMAGE stays small */
     .headshot {
       width: 95px;
-      height: auto;
       display: block;
     }
 
-    /* VIDEO becomes dominant */
+    /* BIG VIDEO */
     .headshot-video {
       display: none;
-      width: 220px;
-      height: 220px;
-      object-fit: cover;
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 2;
-    }
-
-    .info-panel {
-      flex: 1;
-      min-height: 180px;
-      display: flex;
-      align-items: flex-start;
+      width: 240px;
+      height: 240px;
+      object-fit: cover;
+      z-index: 10;
     }
 
     .info-text {
       display: none;
-      max-width: 560px;
-      font-size: 13px;
-      line-height: 1.4;
+      max-width: 520px;
     }
 
     .info-text.active {
       display: block;
     }
-
-    .site-footer {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #dcdcdc;
-      padding: 6px 10px;
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    @media (max-width: 700px) {
-      .wrap {
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .headshot-video {
-        width: 260px;
-        height: 260px;
-      }
-
-      .site-footer {
-        position: static;
-        margin-top: 20px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-      }
-    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="left">
-      <a href="#" class="main-link" id="openInfo">Jack Van Thyne</a>
-      <a href="https://jackvanthyne.org/projects.html" target="_blank" class="main-link" id="projectsLink">Projects</a>
-    </div>
 
-    <div class="media-box">
-      <img src="proheadshot.png" class="headshot" id="headshotImage" />
-      <video
-        class="headshot-video"
-        id="headshotVideo"
-        muted
-        loop
-        autoplay
-        playsinline
-      >
-        <source src="headshot.mp4" type="video/mp4" />
-      </video>
-    </div>
+<div class="wrap">
 
-    <div class="info-panel">
-      <div class="info-text" id="infoText">
-        “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
-        I am an artist and builder, drawn to designing and creating spaces and objects that shape how
-        people interact with the world and with each other. Wood is central to my practice — alive yet
-        static, full of character, and responsive to manipulation. I am fascinated by the entire process,
-        from natural forest to crafted form. I also enjoy exploring other mediums, from film to time,
-        using them to expand how experience and perception can be shaped and understood.”
-      </div>
-    </div>
+  <div class="left">
+    <a href="#" id="openInfo">Jack Van Thyne</a>
+    <a href="projects.html" target="_blank">Projects</a>
   </div>
 
-  <footer class="site-footer">
-    <div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
-    <div id="clock"></div>
-  </footer>
+  <div class="media-box">
+    <img src="proheadshot.png" class="headshot" id="img" />
 
-  <script>
-    const openInfo = document.getElementById("openInfo");
-    const projectsLink = document.getElementById("projectsLink");
-    const infoText = document.getElementById("infoText");
-    const headshotImage = document.getElementById("headshotImage");
-    const headshotVideo = document.getElementById("headshotVideo");
+    <video id="vid" class="headshot-video" muted loop playsinline preload="auto">
+      <source src="headshot.mp4" type="video/mp4">
+    </video>
+  </div>
 
-    let isOpen = false;
+  <div class="info-text" id="info">
+    “I am a 21-year-old student living in Berkeley, studying landscape architecture at UC Berkeley.
+    I am an artist and builder...”
+  </div>
 
-    openInfo.addEventListener("click", function (e) {
-      e.preventDefault();
+</div>
 
-      isOpen = !isOpen;
+<script>
+const btn = document.getElementById("openInfo");
+const vid = document.getElementById("vid");
+const img = document.getElementById("img");
+const info = document.getElementById("info");
 
-      // FORCE purple after first click
-      openInfo.classList.add("visited");
+let open = false;
 
-      if (isOpen) {
-        infoText.classList.add("active");
+btn.onclick = (e) => {
+  e.preventDefault();
+  open = !open;
 
-        headshotVideo.style.display = "block";
-        headshotVideo.currentTime = 0;
-        headshotVideo.play().catch(() => {});
-      } else {
-        infoText.classList.remove("active");
+  btn.classList.add("visited");
 
-        headshotVideo.pause();
-        headshotVideo.style.display = "none";
-      }
+  if (open) {
+    info.classList.add("active");
+
+    vid.style.display = "block";
+
+    // IMPORTANT: force load + play
+    vid.load();
+    vid.currentTime = 0;
+
+    vid.play().catch(err => {
+      console.log("play blocked:", err);
     });
 
-    projectsLink.addEventListener("click", function () {
-      projectsLink.classList.add("visited");
-    });
+  } else {
+    info.classList.remove("active");
 
-    function updateClock() {
-      document.getElementById("clock").textContent = new Date().toLocaleString();
-    }
+    vid.pause();
+    vid.style.display = "none";
+  }
+};
+</script>
 
-    updateClock();
-    setInterval(updateClock, 1000);
-  </script>
 </body>
 </html>
