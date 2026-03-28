@@ -43,20 +43,19 @@
       flex-direction: column;
       gap: 8px;
       flex-shrink: 0;
+      width: 240px;
     }
 
-    /* small image */
     .headshot {
       width: 95px;
       height: auto;
       display: block;
     }
 
-    /* LARGE VIDEO (not cropped + not overlapping) */
     .headshot-video {
       display: none;
       width: 240px;
-      height: auto; /* keeps full aspect ratio */
+      height: auto;
     }
 
     .info-panel {
@@ -92,6 +91,10 @@
         flex-direction: column;
       }
 
+      .media-box {
+        width: 200px;
+      }
+
       .headshot-video {
         width: 200px;
       }
@@ -116,7 +119,7 @@
   </div>
 
   <div class="media-box">
-    <img src="proheadshot.png" class="headshot" />
+    <img src="proheadshot.png" class="headshot" id="headshotImage" alt="Headshot" />
 
     <video
       id="video"
@@ -151,6 +154,7 @@
 <script>
 const btn = document.getElementById("openInfo");
 const vid = document.getElementById("video");
+const img = document.getElementById("headshotImage");
 const info = document.getElementById("info");
 
 let open = false;
@@ -164,6 +168,7 @@ btn.onclick = (e) => {
   if (open) {
     info.classList.add("active");
 
+    img.style.display = "none";
     vid.style.display = "block";
     vid.currentTime = 0;
     vid.play().catch(() => {});
@@ -171,7 +176,9 @@ btn.onclick = (e) => {
     info.classList.remove("active");
 
     vid.pause();
+    vid.currentTime = 0;
     vid.style.display = "none";
+    img.style.display = "block";
   }
 };
 
