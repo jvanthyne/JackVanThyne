@@ -49,7 +49,6 @@
       cursor: pointer;
     }
 
-    /* BIGGER + MORE DOMINANT */
     .media-box {
       width: 180px;
       flex-shrink: 0;
@@ -135,7 +134,7 @@
     </div>
 
     <div class="media-box">
-      <img src="proheadshot.png" class="headshot" id="headshotImage" alt="Headshot" />
+      <img src="proheadshot.png" class="headshot" id="headshotImage" />
       <video
         class="headshot-video"
         id="headshotVideo"
@@ -143,7 +142,6 @@
         loop
         autoplay
         playsinline
-        preload="auto"
       >
         <source src="headshot.mp4" type="video/mp4" />
       </video>
@@ -173,20 +171,27 @@
     const headshotImage = document.getElementById("headshotImage");
     const headshotVideo = document.getElementById("headshotVideo");
 
-    let videoShown = false;
+    let isOpen = false;
 
     openInfo.addEventListener("click", function (e) {
       e.preventDefault();
 
-      infoText.classList.add("active");
-      openInfo.classList.add("visited");
+      isOpen = !isOpen;
 
-      if (!videoShown) {
+      if (isOpen) {
+        infoText.classList.add("active");
+        openInfo.classList.add("visited");
+
         headshotImage.style.display = "none";
         headshotVideo.style.display = "block";
         headshotVideo.currentTime = 0;
         headshotVideo.play().catch(() => {});
-        videoShown = true;
+      } else {
+        infoText.classList.remove("active");
+
+        headshotVideo.pause();
+        headshotVideo.style.display = "none";
+        headshotImage.style.display = "block";
       }
     });
 
