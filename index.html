@@ -70,7 +70,6 @@
       min-height: 140px;
       display: flex;
       align-items: flex-start;
-      justify-content: flex-start;
     }
 
     .info-text {
@@ -108,10 +107,6 @@
         width: 110px;
       }
 
-      .info-panel {
-        min-height: auto;
-      }
-
       .info-text {
         max-width: 100%;
       }
@@ -134,7 +129,7 @@
     </div>
 
     <div class="media-box">
-      <img src="proheadshot.png" class="headshot" id="headshotImage" alt="Headshot" />
+      <img src="proheadshot.png" class="headshot" id="headshotImage" />
       <video
         src="Headshot.mp4"
         class="headshot-video"
@@ -142,7 +137,6 @@
         muted
         loop
         playsinline
-        preload="metadata"
       ></video>
     </div>
 
@@ -170,34 +164,25 @@
     const headshotImage = document.getElementById("headshotImage");
     const headshotVideo = document.getElementById("headshotVideo");
 
-    function showVideo() {
-      headshotImage.style.display = "none";
-      headshotVideo.style.display = "block";
-      headshotVideo.play().catch(() => {});
-    }
-
-    function hideVideo() {
-      headshotVideo.pause();
-      headshotVideo.currentTime = 0;
-      headshotVideo.style.display = "none";
-      headshotImage.style.display = "block";
-    }
+    let videoActive = false;
 
     openInfo.addEventListener("click", function (e) {
       e.preventDefault();
+
       infoText.classList.add("active");
       openInfo.classList.add("visited");
+
+      if (!videoActive) {
+        headshotImage.style.display = "none";
+        headshotVideo.style.display = "block";
+        headshotVideo.play().catch(() => {});
+        videoActive = true;
+      }
     });
 
     projectsLink.addEventListener("click", function () {
       projectsLink.classList.add("visited");
     });
-
-    openInfo.addEventListener("mouseenter", showVideo);
-    openInfo.addEventListener("mouseleave", hideVideo);
-
-    headshotImage.addEventListener("mouseenter", showVideo);
-    headshotVideo.addEventListener("mouseleave", hideVideo);
 
     function updateClock() {
       document.getElementById("clock").textContent = new Date().toLocaleString();
