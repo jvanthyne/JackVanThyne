@@ -32,8 +32,8 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 24px;
-      max-width: 980px;
+      gap: 28px;
+      max-width: 1000px;
     }
 
     .left {
@@ -49,15 +49,17 @@
       cursor: pointer;
     }
 
+    /* BIGGER + MORE DOMINANT */
     .media-box {
-      width: 95px;
+      width: 180px;
       flex-shrink: 0;
     }
 
     .headshot,
     .headshot-video {
-      width: 95px;
-      height: auto;
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
       display: block;
     }
 
@@ -67,14 +69,14 @@
 
     .info-panel {
       flex: 1;
-      min-height: 140px;
+      min-height: 180px;
       display: flex;
       align-items: flex-start;
     }
 
     .info-text {
       display: none;
-      max-width: 520px;
+      max-width: 560px;
       font-size: 13px;
       line-height: 1.4;
     }
@@ -98,13 +100,17 @@
     @media (max-width: 700px) {
       .wrap {
         flex-direction: column;
-        gap: 14px;
+        gap: 16px;
       }
 
-      .media-box,
+      .media-box {
+        width: 220px;
+      }
+
       .headshot,
       .headshot-video {
-        width: 110px;
+        width: 220px;
+        height: 220px;
       }
 
       .info-text {
@@ -129,15 +135,18 @@
     </div>
 
     <div class="media-box">
-      <img src="proheadshot.png" class="headshot" id="headshotImage" />
+      <img src="proheadshot.png" class="headshot" id="headshotImage" alt="Headshot" />
       <video
-        src="Headshot.mp4"
         class="headshot-video"
         id="headshotVideo"
         muted
         loop
+        autoplay
         playsinline
-      ></video>
+        preload="auto"
+      >
+        <source src="headshot.mp4" type="video/mp4" />
+      </video>
     </div>
 
     <div class="info-panel">
@@ -164,7 +173,7 @@
     const headshotImage = document.getElementById("headshotImage");
     const headshotVideo = document.getElementById("headshotVideo");
 
-    let videoActive = false;
+    let videoShown = false;
 
     openInfo.addEventListener("click", function (e) {
       e.preventDefault();
@@ -172,11 +181,12 @@
       infoText.classList.add("active");
       openInfo.classList.add("visited");
 
-      if (!videoActive) {
+      if (!videoShown) {
         headshotImage.style.display = "none";
         headshotVideo.style.display = "block";
+        headshotVideo.currentTime = 0;
         headshotVideo.play().catch(() => {});
-        videoActive = true;
+        videoShown = true;
       }
     });
 
@@ -188,7 +198,6 @@
       document.getElementById("clock").textContent = new Date().toLocaleString();
     }
 
-    
     updateClock();
     setInterval(updateClock, 1000);
   </script>
