@@ -21,14 +21,21 @@ a, button {
   background: none;
   border: none;
   padding: 0;
+  margin: 0;
   font: inherit;
   cursor: pointer;
   text-align: left;
-  display: block; /* ensures each project is its own line */
+  display: block;
   margin-bottom: 2px;
 }
 
-.visited { color: #551a8b !important; }
+a:visited {
+  color: #551a8b;
+}
+
+.visited {
+  color: #551a8b !important;
+}
 
 .page {
   display: flex;
@@ -36,12 +43,34 @@ a, button {
   max-width: 1200px;
 }
 
-.nav { width: 320px; }
+.nav {
+  width: 320px;
+  flex-shrink: 0;
+}
 
-.section, .subsection { margin-bottom: 8px; }
+.back-link {
+  margin-bottom: 14px;
+}
 
-.section-children { padding-left: 14px; }
-.subsection-children { padding-left: 20px; }
+.section {
+  margin-bottom: 6px;
+}
+
+.subsection {
+  margin-bottom: 4px;
+}
+
+.section-title {
+  padding-left: 10px;
+}
+
+.subsection-title {
+  padding-left: 20px;
+}
+
+.project-link {
+  padding-left: 32px;
+}
 
 .section-children,
 .subsection-children {
@@ -56,18 +85,28 @@ a, button {
 .content {
   flex: 1;
   max-width: 720px;
+  min-height: 220px;
 }
 
-.project-title { margin-bottom: 6px; }
-.project-year { margin-bottom: 10px; }
-.project-description { max-width: 620px; }
+.project-title {
+  margin-bottom: 6px;
+}
+
+.project-year {
+  margin-bottom: 10px;
+}
+
+.project-description {
+  max-width: 620px;
+}
 
 .video-wrap {
   width: 100%;
   max-width: 700px;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .video-wrap iframe {
@@ -81,6 +120,8 @@ a, button {
 .site-footer {
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   padding: 6px 10px;
   font-size: 12px;
@@ -89,8 +130,21 @@ a, button {
   justify-content: space-between;
 }
 
-@media (max-width: 800px){
-  .page { flex-direction: column; }
+@media (max-width: 800px) {
+  .page {
+    flex-direction: column;
+  }
+
+  .nav {
+    width: 100%;
+  }
+
+  .site-footer {
+    position: static;
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 </style>
 </head>
@@ -99,110 +153,208 @@ a, button {
 
 <div class="page">
 
-<div class="nav">
-<a href="index.html">Back</a>
+  <div class="nav">
+    <a href="index.html" class="back-link">Back</a>
 
-<div class="section">
-<button onclick="toggle(this)">Art</button>
-<div class="section-children">
+    <div class="section open">
+      <button class="section-title" onclick="toggle(this)">^Art</button>
+      <div class="section-children">
 
-<div class="subsection">
-<button onclick="toggle(this)">Paintings</button>
-<div class="subsection-children">
-<button onclick="loadProject('redwood',this)">Redwood</button>
-<button onclick="loadProject('dance',this)">Dance</button>
-<button onclick="loadProject('blue',this)">Blue</button>
-<button onclick="loadProject('fire',this)">Fire</button>
-<button onclick="loadProject('livingwood',this)">Living Wood</button>
-</div>
-</div>
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Paintings</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('redwood',this)">Redwood</button>
+            <button class="project-link" onclick="loadProject('dance',this)">Dance</button>
+            <button class="project-link" onclick="loadProject('blue',this)">Blue</button>
+            <button class="project-link" onclick="loadProject('fire',this)">Fire</button>
+            <button class="project-link" onclick="loadProject('livingwood',this)">Living Wood</button>
+          </div>
+        </div>
 
-<div class="subsection">
-<button onclick="toggle(this)">Films</button>
-<div class="subsection-children">
-<button onclick="loadVideo('hWi82rb9htU',this)">Treetops</button>
-<button onclick="loadVideo('O1BMu3R6Spc',this)">Cykel</button>
-<button onclick="loadVideo('xrAxkaNebeE',this)">Day of the Dead</button>
-<button onclick="loadVideo('1jONL0xIJhI',this)">Deckhand</button>
-<button onclick="loadVideo('ka_RsPmn0Mk',this)">Chapter 1</button>
-<button onclick="loadVideo('vnU5Fm2hM4M',this)">Dig</button>
-<button onclick="loadVideo('XlLYzm4eAcQ',this)">Chapter 2</button>
-<button onclick="loadVideo('Qbsi1yu2uzw',this)">Chapter 3</button>
-<button onclick="loadVideo('HOAjy1_L9gU',this)">Comfort</button>
-<button onclick="loadVideo('uoApaNS5F2I',this)">Jargon</button>
-</div>
-</div>
+        <div class="subsection open">
+          <button class="subsection-title" onclick="toggle(this)">^Films</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadVideo('Treetops','2024','hWi82rb9htU','https://www.youtube.com/watch?v=hWi82rb9htU',this)">Treetops</button>
+            <button class="project-link" onclick="loadVideo('Cykel','2024','O1BMu3R6Spc','https://youtu.be/O1BMu3R6Spc',this)">Cykel</button>
+            <button class="project-link" onclick="loadVideo('Day of the Dead','2025','xrAxkaNebeE','https://www.youtube.com/watch?v=xrAxkaNebeE',this)">Day of the Dead</button>
+            <button class="project-link" onclick="loadVideo('Deckhand','2025','1jONL0xIJhI','https://www.youtube.com/watch?v=1jONL0xIJhI',this)">Deckhand</button>
+            <button class="project-link" onclick="loadVideo('Chapter 1','2026','ka_RsPmn0Mk','https://www.youtube.com/watch?v=ka_RsPmn0Mk&t=3s',this)">Chapter 1</button>
+            <button class="project-link" onclick="loadVideo('Dig','2026','vnU5Fm2hM4M','https://youtu.be/vnU5Fm2hM4M',this)">Dig</button>
+            <button class="project-link" onclick="loadVideo('Chapter 2','2026','XlLYzm4eAcQ','https://www.youtube.com/watch?v=XlLYzm4eAcQ&t=2s',this)">Chapter 2</button>
+            <button class="project-link" onclick="loadVideo('Chapter 3','2026','Qbsi1yu2uzw','https://www.youtube.com/watch?v=Qbsi1yu2uzw',this)">Chapter 3</button>
+            <button class="project-link" onclick="loadVideo('Comfort','2026','HOAjy1_L9gU','https://youtu.be/HOAjy1_L9gU',this)">Comfort</button>
+            <button class="project-link" onclick="loadVideo('Jargon','2026','uoApaNS5F2I','https://www.youtube.com/watch?v=uoApaNS5F2I',this)">Jargon</button>
+          </div>
+        </div>
 
-<div class="subsection">
-<button onclick="toggle(this)">Exhibitions</button>
-<div class="subsection-children">
-<button onclick="loadProject('grotto',this)">Guerrilla Grotto</button>
-<button onclick="loadProject('abandoned',this)">Abandoned Spaces</button>
-<button onclick="loadProject('time',this)">Time Machine</button>
-<button onclick="loadProject('fallen',this)">Fallen to Functional</button>
-</div>
-</div>
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Exhibitions</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('grotto',this)">Guerrilla Grotto</button>
+            <button class="project-link" onclick="loadProject('abandoned',this)">Abandoned Spaces</button>
+            <button class="project-link" onclick="loadProject('time',this)">Time Machine</button>
+            <button class="project-link" onclick="loadProject('fallen',this)">Fallen to Functional</button>
+          </div>
+        </div>
 
-</div>
-</div>
+      </div>
+    </div>
 
-</div>
+    <div class="section">
+      <button class="section-title" onclick="toggle(this)">Design Build</button>
+      <div class="section-children">
 
-<div class="content" id="content">
-Select a project
-</div>
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Furniture</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('dovetail',this)">Plywood Dovetail Chair</button>
+            <button class="project-link" onclick="loadProject('ced',this)">CED Plywood Chair</button>
+            <button class="project-link" onclick="loadProject('drafting',this)">Drafting and Computing Table</button>
+            <button class="project-link" onclick="loadProject('curved',this)">Curved Oak Chair</button>
+            <button class="project-link" onclick="loadProject('tables',this)">Outdoor Tables</button>
+            <button class="project-link" onclick="loadProject('oak',this)">Solid Oak Chair</button>
+            <button class="project-link" onclick="loadProject('pine',this)">Solid Pine Chair</button>
+            <button class="project-link" onclick="loadProject('gridtables',this)">Plywood Grid Tables</button>
+            <button class="project-link" onclick="loadProject('bench',this)">Redwood Bench</button>
+            <button class="project-link" onclick="loadProject('beam',this)">Redwood Beam Stool</button>
+            <button class="project-link" onclick="loadProject('scrapbench',this)">Scrap Bench</button>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Structures</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('container',this)">Shipping Container Dwelling</button>
+            <button class="project-link" onclick="loadProject('pergola',this)">2x2 4x4 Pergola</button>
+            <button class="project-link" onclick="loadProject('sauna',this)">Floating Sauna</button>
+            <button class="project-link" onclick="loadProject('steam',this)">Steam Pavilion</button>
+            <button class="project-link" onclick="loadProject('greenhouse',this)">Greenhouse</button>
+            <button class="project-link" onclick="loadProject('mobilesauna',this)">Mobile Sauna</button>
+            <button class="project-link" onclick="loadProject('stage',this)">Circle Stage</button>
+            <button class="project-link" onclick="loadProject('shade',this)">Shade Structure II</button>
+            <button class="project-link" onclick="loadProject('scrapsauna',this)">Scrap Sauna</button>
+            <button class="project-link" onclick="loadProject('dock',this)">Submerged Dock</button>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Lighting</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('steel',this)">Steel Pendants</button>
+            <button class="project-link" onclick="loadProject('soji',this)">Soji Light</button>
+            <button class="project-link" onclick="loadProject('gridlight',this)">Grid Light</button>
+            <button class="project-link" onclick="loadProject('mushroom',this)">Mini Wood Mushroom</button>
+            <button class="project-link" onclick="loadProject('standinggrid',this)">Standing Grid</button>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Random</button>
+          <div class="subsection-children">
+            <button class="project-link" onclick="loadProject('cuttingboard',this)">Cutting Board</button>
+            <button class="project-link" onclick="loadProject('fortunato',this)">3716 Fortunato Way</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="content"></div>
 
 </div>
 
 <footer class="site-footer">
-<div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
-<div id="clock"></div>
+  <div>contact: <a href="mailto:jjvanthyne@gmail.com">jjvanthyne@gmail.com</a></div>
+  <div id="clock"></div>
 </footer>
 
 <script>
-function toggle(el){
+function toggle(el) {
   el.parentElement.classList.toggle("open");
   el.classList.add("visited");
 }
 
-function loadVideo(id,el){
-  document.querySelectorAll("button").forEach(b=>b.classList.remove("visited"));
+function clearVisited() {
+  document.querySelectorAll("button").forEach(b => b.classList.remove("visited"));
+}
+
+function loadVideo(title, year, id, link, el) {
+  clearVisited();
   el.classList.add("visited");
 
   document.getElementById("content").innerHTML = `
-  <div class="video-wrap">
-  <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&fs=0&disablekb=1"></iframe>
-  </div>`;
+    <div class="project-title">${title}</div>
+    <div class="project-year">${year}</div>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&fs=0&disablekb=1"></iframe>
+    </div>
+    <a class="project-description" href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>
+  `;
 }
 
-function loadProject(key,el){
-  document.querySelectorAll("button").forEach(b=>b.classList.remove("visited"));
+function loadProject(key, el) {
+  clearVisited();
   el.classList.add("visited");
 
   const data = {
-    redwood:["Redwood","2025","Inspired by a road trip through Northern California. Resting within a redwood grove, this piece reflects on scale, stillness, and presence."],
-    dance:["Dance","2023","An abstract study of movement and the human form exploring rhythm, gesture, and expression."],
-    blue:["Blue","2025","Inspired by the ocean, a study of subtle movement, depth, and atmosphere."],
-    fire:["Fire","2025","A response to wildfire focused on force, destruction, and transformation."],
-    livingwood:["Living Wood","2025","Painting paired with a furniture piece exploring growth and form, waste and life, geometry and the natural."],
-    grotto:["Guerrilla Grotto","2025","A series of eight guerrilla furniture installations across UC Berkeley built from found materials. Hidden spaces for sitting, gathering, and pause."],
-    abandoned:["Abandoned Spaces","2025","Exhibition in a basement space in Denmark exploring occupation and absence."],
-    time:["Time Machine","2026","Time and space as lived and recorded examining memory, documentation, and perception."],
-    fallen:["Fallen to Functional","2026","Transforms fallen UC Berkeley trees into site-specific furniture remaining grounded in place."]
+    redwood: ["Redwood", "2025", "Inspired by a road trip through Northern California. Resting within a redwood grove, this piece reflects on scale, stillness, and presence."],
+    dance: ["Dance", "2023", "An abstract study of movement and the human form exploring rhythm, gesture, and expression."],
+    blue: ["Blue", "2025", "Inspired by the ocean, a study of subtle movement, depth, and atmosphere."],
+    fire: ["Fire", "2025", "A response to wildfire focused on force, destruction, and transformation."],
+    livingwood: ["Living Wood", "2025", "Painting paired with a furniture piece exploring growth and form, waste and life, geometry and the natural."],
+
+    grotto: ["Guerrilla Grotto", "2025", "A series of eight guerrilla furniture installations across UC Berkeley built from found materials. Hidden spaces for sitting, gathering, and pause. Accompanied by a book and website: https://guerrillagrotto.space"],
+    abandoned: ["Abandoned Spaces", "2025", "Exhibition in a basement space in Denmark including a short film, Fleeting, exploring occupation and absence."],
+    time: ["Time Machine", "2026", "Time and space as lived and recorded examining memory, documentation, and perception."],
+    fallen: ["Fallen to Functional", "2026", "Transforms fallen UC Berkeley trees into site-specific furniture remaining grounded in place. https://jackvanthyne.org/FallentoFunctional.html"],
+
+    dovetail: ["Plywood Dovetail Chair", "2025", "Built during a semester in Denmark using a single sheet of plywood. Designed to pack flat, with no glue, and assembled through hand-cut dovetail joinery."],
+    ced: ["CED Plywood Chair", "2023", "Winning design for UC Berkeley’s CED Chair Competition. A modular laminated plywood chair fabricated with CNC, now installed in the Environmental Design Library."],
+    drafting: ["Drafting and Computing Table", "2023", "Custom table built from reclaimed wood, combining workspace for drafting and computing. Designed to fit precisely within the constraints of a small room."],
+    curved: ["Curved Oak Chair", "2023", "Experiment in steam bending and joinery. Material failure due to humidity informed a deeper understanding of wood behavior."],
+    tables: ["Outdoor Tables", "2023", "Modular tables built from scrap wood for a beach gathering. Detachable legs allow transport and reassembly across varied sites."],
+    oak: ["Solid Oak Chair", "2026", "Carved from a salvaged campus log using a chainsaw. Retains the mass of the original form; exhibited and awarded in a design showcase."],
+    pine: ["Solid Pine Chair", "2026", "Solid block stool made from ponderosa pine removed for fire clearing. Milled and cut to reveal angular geometry."],
+    gridtables: ["Plywood Grid Tables", "2025", "Set of two 8-foot tables built from construction-site scrap plywood. Traffic control signage repurposed as legs; designed for durability and flat-pack transport."],
+    bench: ["Redwood Bench", "2026", "Milled from fallen UC Berkeley trees. Retains live edge and natural curvature, shaped from a single 12-foot log."],
+    beam: ["Redwood Beam Stool", "2026", "Formed from a salvaged redwood log. Milled, planed, and joined into a heavy, singular object from one 8-foot section."],
+    scrapbench: ["Scrap Bench", "2025", "Built from salvaged redwood siding and framing from a demolished Berkeley Hills house. Milled and assembled into a simple, durable bench."],
+
+    container: ["Shipping Container Dwelling", "2025", "Converted a storage container into a compact living space with insulation, windows, electrical, and doors. Explores adaptive reuse and small-scale habitation."],
+    pergola: ["2x2 4x4 Pergola", "2022", "First larger-scale structure using self-milled 2x2 and 4x4 members. Half-lap joinery and lattice create a framework for shade and plant growth."],
+    sauna: ["Floating Sauna", "2025", "Design-build sauna constructed on an old barge in Copenhagen. A wood-fired, communal space floating within the harbor."],
+    steam: ["Steam Pavilion", "2024", "Built from reclaimed redwood decking and fencing. Inspired by fog and sauna rituals; installed as an interactive structure at the UC Botanical Garden."],
+    greenhouse: ["Greenhouse", "2025", "Designed and built using materials sourced entirely from a Copenhagen recycling center. Supports small-scale plant growth."],
+    mobilesauna: ["Mobile Sauna", "2025", "Trailer-mounted sauna built collaboratively in Denmark. Designed to host 8–10 people."],
+    stage: ["Circle Stage", "2025", "Circular stage for performances. Constructed from plywood and 2x6 framing in a grid structure."],
+    shade: ["Shade Structure II", "2025", "Second iteration of a pergola, incorporating refined Japanese joinery. Built in Berkeley."],
+    scrapsauna: ["Scrap Sauna", "2026", "Built entirely from found materials. Wood frame wrapped in a sewn billboard tarp for insulation, heated by a modified wood stove."],
+    dock: ["Submerged Dock", "2025", "Small dock built in a Copenhagen park using scrap wood. Designed to partially submerge with the tide."],
+
+    steel: ["Steel Pendants", "2023", "Built from scrap steel for a bedroom setting. Hardwired fixtures made from thin plate steel and 1/2 inch tubing."],
+    soji: ["Soji Light", "2024", "Lighting fixture inspired by Japanese shōji screens. Built from reclaimed materials after initial failure, balancing fragility and structure."],
+    gridlight: ["Grid Light", "2024", "Lighting piece using reclaimed headboard wood and precise joinery. Explores structure, repetition, and light diffusion."],
+    mushroom: ["Mini Wood Mushroom", "2026", "Made from scrap wood sourced from Berkeley Hills homes. Uses a laser-cut grid, paper shade, and redwood exterior."],
+    standinggrid: ["Standing Grid", "2026", "Self-standing light made from scrap wood and laser-cut cardstock. Plugs directly into the wall."],
+
+    cuttingboard: ["Cutting Board", "2023", "Made from reclaimed cabinet faces found on the curb. A quick transformation of discarded material into a functional kitchen object."],
+    fortunato: ["3716 Fortunato Way", "2022", "This project occurred during COVID when I renovated and upgraded my home’s yard. Designed and built a composite deck, custom lighting, irrigation system, and planting scheme, completing all labor myself over three months."]
   };
 
   const p = data[key];
 
   document.getElementById("content").innerHTML = `
-  <div class="project-title">${p[0]}</div>
-  <div class="project-year">${p[1]}</div>
-  <div class="project-description">${p[2]}</div>`;
+    <div class="project-title">${p[0]}</div>
+    <div class="project-year">${p[1]}</div>
+    <div class="project-description">${p[2]}</div>
+  `;
 }
 
-function updateClock(){
+function updateClock() {
   document.getElementById("clock").textContent = new Date().toLocaleString();
 }
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 updateClock();
 </script>
 
