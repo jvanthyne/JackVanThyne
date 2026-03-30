@@ -26,7 +26,6 @@ a, button {
   cursor: pointer;
   text-align: left;
   display: block;
-  margin-bottom: 2px;
 }
 
 a:visited {
@@ -39,37 +38,40 @@ a:visited {
 
 .page {
   display: flex;
-  gap: 36px;
+  gap: 42px;
   max-width: 1200px;
 }
 
 .nav {
-  width: 320px;
+  width: 340px;
   flex-shrink: 0;
 }
 
 .back-link {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .section {
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .subsection {
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .section-title {
-  padding-left: 10px;
+  padding-left: 0;
+  margin-bottom: 4px;
 }
 
 .subsection-title {
-  padding-left: 20px;
+  padding-left: 22px;
+  margin-bottom: 4px;
 }
 
 .project-link {
-  padding-left: 32px;
+  padding-left: 48px;
+  margin-bottom: 3px;
 }
 
 .section-children,
@@ -133,10 +135,19 @@ a:visited {
 @media (max-width: 800px) {
   .page {
     flex-direction: column;
+    gap: 24px;
   }
 
   .nav {
     width: 100%;
+  }
+
+  .subsection-title {
+    padding-left: 18px;
+  }
+
+  .project-link {
+    padding-left: 36px;
   }
 
   .site-footer {
@@ -156,8 +167,8 @@ a:visited {
   <div class="nav">
     <a href="index.html" class="back-link">Back</a>
 
-    <div class="section open">
-      <button class="section-title" onclick="toggle(this)">^Art</button>
+    <div class="section">
+      <button class="section-title" onclick="toggle(this)">Art</button>
       <div class="section-children">
 
         <div class="subsection">
@@ -171,19 +182,20 @@ a:visited {
           </div>
         </div>
 
-        <div class="subsection open">
-          <button class="subsection-title" onclick="toggle(this)">^Films</button>
+        <div class="subsection">
+          <button class="subsection-title" onclick="toggle(this)">Films</button>
           <div class="subsection-children">
             <button class="project-link" onclick="loadVideo('Treetops','2024','hWi82rb9htU','https://www.youtube.com/watch?v=hWi82rb9htU',this)">Treetops</button>
             <button class="project-link" onclick="loadVideo('Cykel','2024','O1BMu3R6Spc','https://youtu.be/O1BMu3R6Spc',this)">Cykel</button>
             <button class="project-link" onclick="loadVideo('Day of the Dead','2025','xrAxkaNebeE','https://www.youtube.com/watch?v=xrAxkaNebeE',this)">Day of the Dead</button>
             <button class="project-link" onclick="loadVideo('Deckhand','2025','1jONL0xIJhI','https://www.youtube.com/watch?v=1jONL0xIJhI',this)">Deckhand</button>
-            <button class="project-link" onclick="loadVideo('Chapter 1','2026','ka_RsPmn0Mk','https://www.youtube.com/watch?v=ka_RsPmn0Mk&t=3s',this)">Chapter 1</button>
+            <button class="project-link" onclick="loadVideo('Chapter 1 - MEAD','2026','ka_RsPmn0Mk','https://www.youtube.com/watch?v=ka_RsPmn0Mk&t=3s',this)">Chapter 1 - MEAD</button>
             <button class="project-link" onclick="loadVideo('Dig','2026','vnU5Fm2hM4M','https://youtu.be/vnU5Fm2hM4M',this)">Dig</button>
-            <button class="project-link" onclick="loadVideo('Chapter 2','2026','XlLYzm4eAcQ','https://www.youtube.com/watch?v=XlLYzm4eAcQ&t=2s',this)">Chapter 2</button>
-            <button class="project-link" onclick="loadVideo('Chapter 3','2026','Qbsi1yu2uzw','https://www.youtube.com/watch?v=Qbsi1yu2uzw',this)">Chapter 3</button>
+            <button class="project-link" onclick="loadVideo('Chapter 2 - MEAD','2026','XlLYzm4eAcQ','https://www.youtube.com/watch?v=XlLYzm4eAcQ&t=2s',this)">Chapter 2 - MEAD</button>
+            <button class="project-link" onclick="loadVideo('Chapter 3 - MEAD','2026','Qbsi1yu2uzw','https://www.youtube.com/watch?v=Qbsi1yu2uzw',this)">Chapter 3 - MEAD</button>
             <button class="project-link" onclick="loadVideo('Comfort','2026','HOAjy1_L9gU','https://youtu.be/HOAjy1_L9gU',this)">Comfort</button>
-            <button class="project-link" onclick="loadVideo('Jargon','2026','uoApaNS5F2I','https://www.youtube.com/watch?v=uoApaNS5F2I',this)">Jargon</button>
+            <button class="project-link" onclick="loadVideo('Chapter 5 - MEAD','2026','c3a26EA8uW4','https://www.youtube.com/watch?v=c3a26EA8uW4&t=167s',this)">Chapter 5 - MEAD</button>
+            <button class="project-link" onclick="loadVideo('Jargon - MEAD','2026','uoApaNS5F2I','https://www.youtube.com/watch?v=uoApaNS5F2I',this)">Jargon - MEAD</button>
           </div>
         </div>
 
