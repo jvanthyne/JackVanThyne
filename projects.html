@@ -36,6 +36,16 @@ a:visited {
   color: #551a8b !important;
 }
 
+.notice {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: right;
+  z-index: 1000;
+}
+
 .page {
   display: flex;
   gap: 42px;
@@ -150,6 +160,12 @@ a:visited {
     padding-left: 36px;
   }
 
+  .notice {
+    position: static;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
   .site-footer {
     position: static;
     margin-top: 20px;
@@ -161,6 +177,11 @@ a:visited {
 </head>
 
 <body>
+
+<div class="notice">
+  Photos coming soon,<br>
+  website under construction
+</div>
 
 <div class="page">
 
